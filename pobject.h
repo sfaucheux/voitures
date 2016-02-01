@@ -29,7 +29,7 @@ class PObject
         bool isStatic();
 
         float getVolume();
-        virtual ~PObject() = 0;
+        virtual ~PObject();
 
     private:
         glm::mat4 m_model;

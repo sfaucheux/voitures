@@ -82,3 +82,7 @@ float PObject::getVolume()
 {
     return m_volume;
 }
+
+PObject::~PObject()
+{
+}
