@@ -1,5 +1,5 @@
 BUILD := build
-LIBS := GLEW glfw stdc++
+LIBS := GL GLEW glfw stdc++
 PREFIX := $(HOME)/dev
 
 SOURCES := $(wildcard *.cpp)

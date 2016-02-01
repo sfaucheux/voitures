@@ -1,5 +1,12 @@
 #include "pobject.h"
 
+PObject::PObject()
+{
+	m_mass = 0.;
+	m_volume = 0.;
+	m_static = false;
+}
+
 void PObject::setMass(float m)
 {
     if (m >= 0.0)
@@ -41,27 +48,27 @@ void PObject::translate(glm::vec3 t)
     m_model = glm::translate(m_model, t);
 }
 
-float getMass()
+float PObject::getMass()
 {
     return m_mass;
 }
 
-glm::vec3 getSpeed()
+glm::vec3 PObject::getSpeed()
 {
     return m_speed;
 }
 
-glm::vec3 getAcceleration()
+glm::vec3 PObject::getAcceleration()
 {
     return m_acceleration;
 }
 
-glm::vec3 getAngularSpeed()
+glm::vec3 PObject::getAngularSpeed()
 {
     return m_angularSpeed;
 }
 
-glm::vec3 getAngularAcceleration()
+glm::vec3 PObject::getAngularAcceleration()
 {
     return m_angularAcceleration;
 }

@@ -2,13 +2,14 @@
 #define PObject_H
 
 #include "glm/glm.hpp"
+#include "glm/gtc/matrix_transform.hpp"
 #include <string>
 
 class PObject
 {
     public:
-        virtual PObject() = 0;
-        virtual void loadObject();
+        PObject();
+        virtual void loadObject() = 0;
 
         void setMass(float m);
         void setSpeed(glm::vec3 s);
@@ -28,7 +29,7 @@ class PObject
         bool isStatic();
 
         float getVolume();
-        virtual ~PObject();
+        virtual ~PObject() = 0;
 
     private:
         glm::mat4 m_model;
