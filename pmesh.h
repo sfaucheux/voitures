@@ -1,7 +1,7 @@
 #ifndef PMesh_H
 #define PMesh_H
 
-class PMesh : public PObject
+/*class PMesh : public PObject
 {
 	public:
 		PMesh();
@@ -10,6 +10,6 @@ class PMesh : public PObject
 
 		virtual ~PMesh();
 	private:
-};
+};*/
 
 #endif
