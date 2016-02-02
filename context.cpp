@@ -22,7 +22,8 @@ bool Context::init(int width, int height, std::string title, int MSAA)
     //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
 
-	glfwWindowHint(GLFW_SAMPLES, MSAA);
+	//glfwWindowHint(GLFW_SAMPLES, MSAA);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
 	m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	if (!m_window)
 	{
@@ -43,7 +44,7 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 		return false;
 	}
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_MULTISAMPLE);
+	//glEnable(GL_MULTISAMPLE);
 
 	return true;
 }
