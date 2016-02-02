@@ -14,6 +14,7 @@ Shader::Shader(Shader const &shaderACopier)
 Shader::Shader(std::string vertexSource, std::string fragmentSource) : m_vertexID(0), m_fragmentID(0), m_programID(0),
                                                                        m_vertexSource(vertexSource), m_fragmentSource(fragmentSource)
 {
+    load();
 }
 
 Shader::~Shader()
