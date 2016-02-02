@@ -8,27 +8,27 @@
 class PObject
 {
     public:
-        PObject();
-        virtual void loadObject() = 0;
+    PObject();
+    virtual void loadObject() = 0;
 
-        void setMass(float m);
-        void setSpeed(glm::vec3 s);
-        void setAcceleration(glm::vec3 a);
-        void setAngularSpeed(glm::vec3 s);
-        void setAngularAcceleration(glm::vec3 a);
-        void setStatic(bool s);
+    void setMass(float m);
+    void setSpeed(glm::vec3 s);
+    void setAcceleration(glm::vec3 a);
+    void setAngularSpeed(glm::vec3 s);
+    void setAngularAcceleration(glm::vec3 a);
+    void setStatic(bool s);
 
-        void rotate(glm::vec3 axis, float  angle);
-        void translate(glm::vec3 t);
+    void rotate(glm::vec3 axis, float  angle);
+    void translate(glm::vec3 t);
 
-        float getMass();
-        glm::vec3 getSpeed();
-        glm::vec3 getAcceleration();
-        glm::vec3 getAngularSpeed();
-        glm::vec3 getAngularAcceleration();
-        bool isStatic();
+    float getMass();
+    glm::vec3 getSpeed();
+    glm::vec3 getAcceleration();
+    glm::vec3 getAngularSpeed();
+    glm::vec3 getAngularAcceleration();
+    bool isStatic();
 
-        float getVolume();
+    float getVolume();
         virtual ~PObject();
 
     private:
