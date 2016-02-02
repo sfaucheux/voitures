@@ -13,9 +13,9 @@ void PObject::setMass(float m)
         m_mass = m;
 }
 
-void PObject::setSpeed(glm::vec3 s)
+void PObject::setVelocity(glm::vec3 s)
 {
-    m_speed = s;
+    m_velocity = s;
 }
 
 void PObject::setAcceleration(glm::vec3 a)
@@ -23,9 +23,9 @@ void PObject::setAcceleration(glm::vec3 a)
     m_acceleration = a;
 }
 
-void PObject::setAngularSpeed(glm::vec3 s)
+void PObject::setAngularVelocity(glm::vec3 s)
 {
-    m_angularSpeed = s;
+    m_angularVelocity = s;
 }
 
 void PObject::setAngularAcceleration(glm::vec3 a)
@@ -38,14 +38,14 @@ void PObject::setStatic(bool s)
     m_static = s;
 }
 
-void PObject::rotate(glm::vec3 axis, float angle)
+void PObject::rotate(glm::vec3 angle)
 {
-    m_model = glm::rotate(m_model, angle, axis);
+    m_angle += angle ;
 }
 
 void PObject::translate(glm::vec3 t)
 {
-    m_model = glm::translate(m_model, t);
+    m_position += t ;
 }
 
 float PObject::getMass()
@@ -53,9 +53,9 @@ float PObject::getMass()
     return m_mass;
 }
 
-glm::vec3 PObject::getSpeed()
+glm::vec3 PObject::getVelocity()
 {
-    return m_speed;
+    return m_velocity;
 }
 
 glm::vec3 PObject::getAcceleration()
@@ -63,9 +63,9 @@ glm::vec3 PObject::getAcceleration()
     return m_acceleration;
 }
 
-glm::vec3 PObject::getAngularSpeed()
+glm::vec3 PObject::getAngularVelocity()
 {
-    return m_angularSpeed;
+    return m_angularVelocity;
 }
 
 glm::vec3 PObject::getAngularAcceleration()
