@@ -1,15 +1,11 @@
 #ifndef Drawable_H
 #define Drawable_H
 
-#ifndef BUFFER_OFFSET
-
-    #define BUFFER_OFFSET(offset) ((char*)NULL + (offset))
-
-#endif
+#define GET_ADDRESS(base, offset) ((char*)(base) + (offset))
 
 #ifdef __LINUX__
     #include <unistd.h>
-#endif // __LINUX__
+#endif
 
 #include <GL/glew.h>
 #include "glm/glm.hpp"
@@ -17,54 +13,42 @@
 #include "glm/gtc/type_ptr.hpp"
 #include <vector>
 #include <iostream>
-//#include "Shader.h"
+#include "shader.h"
 
 class Drawable
 {
     public:
         Drawable() ;
-        //Drawable(std::vector<float> textures, Shader* shader, std::string nomTexture);
         virtual ~Drawable();
 
-        /*void SetVertices(std::vector<float> vertices);
-        void SetCouleurs(std::vector<float> couleurs);
-        void SetTextures(std::vector<float> textures);
-        void SetNomTexture(std::string nom);
-        void SetShader(Shader *shader);
-        void SetModel(glm::mat4 model) ;
+        void setShader(Shader* shader);
+        void setModel(glm::mat4 model) ;
 
+        const Shader* getShader() const;
+        const glm::mat4& getModel() const;
+        GLuint getIdVAO() const;
+        GLuint getIdVBO() const;
+        GLuint getIdIndices() const;
+        int getIndicesNumber() const;
 
-        const std::vector<float>& GetVertices() const;
-        const std::vector<float>& GetCouleurs() const;
-        const std::vector<float>& GetTextures() const;
-        const glm::mat4& GetModel() const;
+        void rotate(glm::vec3 axis, float angle);
+        void translate(glm::vec3 translation);
+        void homothetie(glm::vec3 homoth) ;
 
-        std::string GetNomTexture() const;
-        const Shader* GetShader() const;
-        GLuint GetIdVAO() const;
-        GLuint GetIdVBO() const;
-        int GetVerticesNumber() const;
-
-        void Tourner(glm::vec3 axe, float angle);
-        void Translater(glm::vec3 translation);
-        void Homothetie(glm::vec3 homothetie) ;
-
-		void Charger(std::vector<float> &vertices, std::vector<float> &couleurs);
-        void MiseAJour(const std::vector<float> &donnees, int decalage);*/
+		void load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices);
+        void update(const std::vector<float> &data, int offset);
 
 
     protected:
 
         GLuint m_idVAO;
         GLuint m_idVBO;
+        GLuint m_idIndices;
 
-        std::vector<float> m_vertices;
-        std::vector<float> m_couleurs;
-        std::vector<float> m_textures;
-        //Shader* m_shader;
-        std::string m_nomTexture;
-        int m_verticesNumber;
+        Shader* m_shader;
+        int m_indicesNumber;
         glm::mat4 m_model;
+
 };
 
 #endif
