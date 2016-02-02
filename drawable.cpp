@@ -91,12 +91,12 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uve
 
     glGenVertexArrays(1, &m_idVAO);
     glBindVertexArray(m_idVAO);
-        glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIndices);
             glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, GET_ADDRESS(NULL, 0));
             glEnableVertexAttribArray(0);
             glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, GET_ADDRESS(NULL, sizeVertices));
             glEnableVertexAttribArray(1);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
     m_indicesNumber = indices.size() * 3 ;
