@@ -19,11 +19,11 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 	if (!glfwInit())
 		return false;
 
-    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1); // 3.2 ça fait planter glfwCreateWindow chez moi
+    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE); // il faut demander 3.2 ou plus pour ça
 
-	//glfwWindowHint(GLFW_SAMPLES, MSAA);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE);
+	glfwWindowHint(GLFW_SAMPLES, MSAA);
 	m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	if (!m_window)
 	{
@@ -37,14 +37,23 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 	glfwSetCursorPosCallback(m_window, cursorCallback);
 	glfwSetWindowSizeCallback(m_window, windowSizeCallback);
 
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        glfwTerminate();
+        return false;
+    }
+
     glewExperimental=true;
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
+        glfwTerminate();
 		return false;
 	}
+
 	glEnable(GL_DEPTH_TEST);
-	//glEnable(GL_MULTISAMPLE);
+	glEnable(GL_MULTISAMPLE);
 
 	return true;
 }

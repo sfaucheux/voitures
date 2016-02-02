@@ -7,7 +7,8 @@ int main(int argc, char** argv)
 {
     Renderer renderer;
 	Context context(renderer);
-    context.init(1024, 768, "Jeu de voitures trop de ouf !!!", 0);
+    if (!context.init(1024, 768, "Jeu de voitures trop de ouf !!!", 0))
+        exit(EXIT_FAILURE);
 
     PMesh* obj = new PMesh();
     obj->loadObject("cube.obj");
