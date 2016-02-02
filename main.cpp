@@ -5,20 +5,23 @@
 
 int main(int argc, char** argv)
 {
-    PMesh* obj = new PMesh();
-    obj->loadObject("cube.obj");
     Renderer renderer;
 	Context context(renderer);
+    context.init(1024, 768, "Jeu de voitures trop de ouf !!!", 0);
+
+    PMesh* obj = new PMesh();
+    obj->loadObject("cube.obj");
 
     Drawable drw;
+    drw.load(obj->getVertices(), obj->getIndices());
+
     Shader shdr("shaders/couleur3D.vert", "shaders/couleur3D.frag");
     drw.setShader(&shdr);
 
-
-    context.init(1024, 768, "Jeu de voitures trop de ouf !!!", 0);
     while (context.eventLoop())
     {
         context.clean();
+        renderer.draw(drw);
         context.show();
     }
 

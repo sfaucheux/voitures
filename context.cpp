@@ -19,6 +19,9 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 	if (!glfwInit())
 		return false;
 
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+
 	glfwWindowHint(GLFW_SAMPLES, MSAA);
 	m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	if (!m_window)
