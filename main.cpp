@@ -1,8 +1,11 @@
 #include "context.h"
 #include "renderer.h"
+#include "pmesh.h"
 
 int main(int argc, char** argv)
 {
+    PMesh* obj = new PMesh();
+    obj->loadObject("cube.obj");
 	Renderer renderer;
 	Context context(renderer);
 
