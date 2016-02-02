@@ -1,14 +1,8 @@
 #include "drawable.h"
 
-Drawable::Drawable() : m_idVAO(0) , m_idVBO(0), m_vertices(),m_couleurs(), m_textures(), /* m_shader(nullptr),*/ m_nomTexture (), m_model(1.0)
+Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_shader(nullptr), m_model(1.0)
 {
 }
-
-/*Drawable::Drawable(std::vector<float> textures, Shader* shader, std::string nomTexture) : m_idVAO(0), m_idVBO(0), m_vertices(std::vector<float>(0)),
-m_couleurs(std::vector<float> (0)), m_textures(textures), m_shader(shader), m_nomTexture(nomTexture), m_model(1.0), m_verticesNumber(0)
-{
-
-}*/
 
 Drawable::~Drawable()
 {
@@ -16,124 +10,112 @@ Drawable::~Drawable()
     glDeleteVertexArrays(1, &m_idVAO);
 }
 
-/*void Affichable::Charger(std::vector<float> &vertices, std::vector<float> &couleurs)
+void Drawable::setShader(Shader* shader)
 {
-    if(glIsBuffer(m_idVBO) == GL_TRUE)
-        glDeleteBuffers(1, &m_idVBO);
+    m_shader = shader;
+}
 
-    int tailleVertices = sizeof(float)*vertices.size();
-    int tailleCouleurs = sizeof(float)*couleurs.size();
+void Drawable::setModel(glm::mat4 model)
+{
+    m_model = model;
+}
+
+const Shader* Drawable::getShader() const
+{
+    return m_shader;
+}
+
+const glm::mat4& Drawable::getModel() const
+{
+    return m_model;
+}
+
+GLuint Drawable::getIdVAO() const
+{
+    return m_idVAO;
+}
+
+GLuint Drawable::getIdVBO() const
+{
+    return m_idVBO;
+}
+
+GLuint Drawable::getIdIndices() const
+{
+    return m_idIndices;
+}
+
+int Drawable::getIndicesNumber() const
+{
+    return m_indicesNumber;
+}
+
+void Drawable::rotate(glm::vec3 axis, float angle)
+{
+    m_model = glm::rotate(m_model, angle, axis);
+}
+
+void Drawable::translate(glm::vec3 translation)
+{
+    m_model = glm::translate(m_model, translation);
+}
+
+void Drawable::homothetie(glm::vec3 homoth)
+{
+    m_model = glm::scale(m_model, homoth);
+}
+
+void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices)
+{
+    int sizeVertices = 3 * sizeof(float) * vertices.size();
+    int sizeIndices = 3 * sizeof(unsigned int) * indices.size();
+
+    if (glIsBuffer(m_idVBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idVBO);
 
     glGenBuffers(1, &m_idVBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
-        glBufferData(GL_ARRAY_BUFFER, tailleCouleurs + tailleVertices, 0, GL_STATIC_DRAW);
-        glBufferSubData(GL_ARRAY_BUFFER, 0, tailleVertices, &vertices[0]);
-        glBufferSubData(GL_ARRAY_BUFFER, tailleVertices, tailleCouleurs, &couleurs[0]);
+        glBufferData(GL_ARRAY_BUFFER, sizeVertices, &vertices[0], GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    if(glIsVertexArray(m_idVAO) == GL_TRUE)
+    if (glIsBuffer(m_idIndices) == GL_TRUE)
+        glDeleteBuffers(1, &m_idVBO);
+
+    glGenBuffers(1, &m_idIndices);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIndices);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIndices, &indices[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    if (glIsVertexArray(m_idVAO) == GL_TRUE)
         glDeleteVertexArrays(1, &m_idVAO);
 
     glGenVertexArrays(1, &m_idVAO);
     glBindVertexArray(m_idVAO);
         glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
-            glVertexAttribPointer(0,3, GL_FLOAT, GL_FALSE, 0,BUFFER_OFFSET(0));
+            glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, GET_ADDRESS(NULL, 0));
             glEnableVertexAttribArray(0);
-            glVertexAttribPointer(1,3, GL_FLOAT, GL_FALSE, 0, BUFFER_OFFSET(vertices.size()*sizeof(float)));
+            glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, GET_ADDRESS(NULL, sizeVertices));
             glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    m_verticesNumber = vertices.size() / 3 ;
+    m_indicesNumber = indices.size() * 3 ;
 }
-void Affichable::MiseAJour(const std::vector<float> &donnees, int decalage)
+
+void Drawable::update(const std::vector<float> &data, int offset)
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
-        void *adresseVBO = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        if(adresseVBO == NULL)
+        void* VBOAddress = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+        if (VBOAddress == NULL)
         {
             std::cerr << "Erreur au niveau de la récupération du VBO" << std::endl;
             glBindBuffer(GL_ARRAY_BUFFER, 0);
             return;
         }
-        memcpy((char*)adresseVBO + decalage, &donnees[0], donnees.size()*sizeof(float));
+        memcpy(GET_ADDRESS(VBOAddress, offset), &data[0], data.size() * sizeof(float));
 
         glUnmapBuffer(GL_ARRAY_BUFFER);
-        adresseVBO = 0;
+        VBOAddress = NULL;
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
-void Affichable::SetVertices(std::vector<float> vertices)
-{
-    m_vertices = vertices ;
-    MiseAJour(m_vertices, 0);
-}
-void Affichable::SetCouleurs(std::vector<float> couleurs)
-{
-    m_couleurs = couleurs ;
-    MiseAJour(m_vertices, m_vertices.size()*sizeof(float));
-}
-void Affichable::SetTextures(std::vector<float> textures)
-{
-    m_textures = textures ;
-}
-void Affichable::SetNomTexture(std::string nom)
-{
-    m_nomTexture = nom ;
-}
-void Affichable::SetShader(Shader *shader)
-{
-    m_shader = shader;
-}
-const std::vector<float>& Affichable::GetVertices() const
-{
-    return m_vertices ;
-}
-const std::vector<float>& Affichable::GetCouleurs() const
-{
-    return m_couleurs ;
-}
-const std::vector<float>& Affichable::GetTextures() const
-{
-    return m_textures ;
-}
-const glm::mat4& Affichable::GetModel() const
-{
-    return m_model ;
-}
-std::string Affichable::GetNomTexture() const
-{
-    return m_nomTexture;
-}
-const Shader* Affichable::GetShader() const
-{
-    return m_shader;
-}
-GLuint Affichable::GetIdVAO() const
-{
-    return m_idVAO;
-}
-GLuint Affichable::GetIdVBO() const
-{
-    return m_idVBO;
-}
-int Affichable::GetVerticesNumber() const
-{
-    return m_verticesNumber;
-}
-void Affichable::Tourner(glm::vec3 axe, float angle)
-{
-    m_model = glm::rotate(m_model,angle,axe);
-}
-void Affichable::Translater(glm::vec3 translation)
-{
-    m_model = glm::translate(m_model, translation);
-}
-void Affichable::Homothetie(glm::vec3 homothetie)
-{
-    m_model = glm::scale(m_model, homothetie);
-}
-void Affichable::SetModel(glm::mat4 model)
-{
-    m_model = model ;
-}*/
