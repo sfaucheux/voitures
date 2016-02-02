@@ -4,6 +4,7 @@
 #include "glm/glm.hpp"
 #include "glm/gtc/matrix_transform.hpp"
 #include <string>
+#include <liste>
 
 class PObject
 {
@@ -53,6 +54,10 @@ class PObject
         float m_volume;
         bool m_static;
         bool m_awake ;
+/*
+        std::list<Fixture> m_fixtures ;
+        std::list<Joint> m_joints ;
+        */
 };
 
 #endif
