@@ -7,11 +7,6 @@
 #include <fstream>
 #include <sstream>
 
-struct Face
-{
-    int A,B,C;
-};
-
 class PMesh : public PObject
 {
 	public:
@@ -20,10 +15,13 @@ class PMesh : public PObject
         virtual void loadObject();
 		virtual void loadObject(std::string filename);
 
+        const std::vector<glm::vec3>& getVertices() const;
+        const std::vector<glm::uvec3>& getIndices() const;
+
 		virtual ~PMesh();
 	private:
 		std::vector<glm::vec3> m_vertices;
-        std::vector<Face> m_faces;
+        std::vector<glm::uvec3> m_faces;
         std::vector<int> m_normals;
 };
 

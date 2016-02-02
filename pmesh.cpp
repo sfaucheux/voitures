@@ -10,7 +10,7 @@ PMesh::PMesh()
 //Load a default mesh
 void PMesh::loadObject()
 {
-    loadObject("suzanne.obj");
+    loadObject("cube.obj");
 }
 
 void PMesh::loadObject(string filename)
@@ -21,9 +21,7 @@ void PMesh::loadObject(string filename)
 
     if (inFile.is_open())
     {
-        char ident;
-        Face face;
-        int normal;
+        string ident;
         vec3 point;
 
         while (getline(inFile, line))
@@ -33,34 +31,64 @@ void PMesh::loadObject(string filename)
             
             ss >> ident;
 
-            switch (ident)
+            if (ident == "v")
             {
-                case 'v':
-                    //cout << line << endl;
-                    ss >> point.x >> point.y >> point.z;
-                    cout << "Loaded vertex " << point.x << " " << point.y << " " << point.z << endl;
+                //cout << line << endl;
+                ss >> point.x >> point.y >> point.z;
+                cout << "Loaded vertex " << point.x << " " << point.y << " " << point.z << endl;
 
-                    m_vertices.push_back(point);
-                    break;
+                m_vertices.push_back(point);
+            }
+            else if (ident == "f")
+            {
+                int c = 0;
+                int last;
+                int vert[4];
+                uvec3 face;
+                string cur = "plop";
+                string subcur;
 
-                case 'f':
-                    ss >> face.A >> face.B >> face.C;
-                    face.A --;
-                    face.B --;
-                    face.C --;
+                cout << "loading face ";
+                while (cur != "" && c < 4)
+                {
+                    cout << "*";
+                    cur = "";
+                    ss >> cur;
+                    stringstream subss (stringstream::in | stringstream::out);
+                    subss << cur;
+                    getline(subss, subcur, '/');
+                    vert[c] = stof(subcur);
+                    c++;
+                }
+                cout << endl;
 
-                    ss >> normal;
-                    normal --;
+                face.x = vert[0];
+                face.y = vert[1];
+                face.z = vert[2];
 
+                m_faces.push_back(face);
+                cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
+
+                if(c == 4)
+                {
+                    face.y = face.z;
+                    face.z = vert[3];
                     m_faces.push_back(face);
-                    m_normals.push_back(normal);
-
-                    cout << "Loaded face " << face.A << " " << face.B << " " << face.C << endl;
-                    cout << "Loaded normal " << normal << endl;
-                    break;
+                    cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
+                }
             }
         }
     }
+}
+
+const vector<glm::vec3>& PMesh::getVertices() const
+{
+    return m_vertices;
+}
+
+const vector<glm::uvec3>& PMesh::getIndices() const
+{
+    return m_faces;
 }
 
 PMesh::~PMesh()
