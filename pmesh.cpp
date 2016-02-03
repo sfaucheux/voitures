@@ -57,7 +57,7 @@ void PMesh::loadObject(string filename)
                     stringstream subss (stringstream::in | stringstream::out);
                     subss << cur;
                     getline(subss, subcur, '/');
-                    vert[c] = stof(subcur);
+                    vert[c] = stof(subcur) - 1;
                     c++;
                 }
                 cout << endl;
