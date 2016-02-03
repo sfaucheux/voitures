@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     while (context.eventLoop())
     {
         context.clean();
-        renderer.draw(drw); 
+        renderer.draw(drw, GL_LINE); 
         context.show();
     }
 

@@ -18,7 +18,7 @@ class Renderer
         Camera& getCamera();
         void setProjection(glm::mat4& projection);
         void setPerspective(float fov, float ratio, float near, float far);
-        void draw(Drawable const& objet);
+        void draw(Drawable const& objet, GLenum mode = GL_FILL);
 
 
     private:
