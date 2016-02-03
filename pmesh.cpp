@@ -78,7 +78,10 @@ void PMesh::loadObject(string filename)
                 }
             }
         }
+        cout << "Loading succesful" << endl;
     }
+    else
+        cout << "Error while loading model, no file found" << endl;
 }
 
 const vector<glm::vec3>& PMesh::getVertices() const
