@@ -77,7 +77,7 @@ void  Context::cursor(double xpos, double ypos)
 	double dy = ypos - m_yCursor;
 	m_xCursor = xpos;
 	m_yCursor = ypos;
-	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_2) == GLFW_PRESS)
+	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 	{
 		m_renderer.getCamera().setOrientation(-dx, -dy);
 	}
