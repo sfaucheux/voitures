@@ -35,7 +35,7 @@ void PMesh::loadObject(string filename)
             {
                 //cout << line << endl;
                 ss >> point.x >> point.y >> point.z;
-                cout << "Loaded vertex " << point.x << " " << point.y << " " << point.z << endl;
+                //cout << "Loaded vertex " << point.x << " " << point.y << " " << point.z << endl;
 
                 m_vertices.push_back(point);
             }
@@ -48,11 +48,11 @@ void PMesh::loadObject(string filename)
                 string cur = "plop";
                 string subcur;
 
-                cout << "loading face ";
+                //cout << "loading face ";
                 while (cur != "" && c < 4)
                 {
-					cout << "parsing line: " << line << endl;
-                    cout << "*";
+					//cout << "parsing line: " << line << endl;
+                    //cout << "*";
                     cur = "";
                     ss >> cur;
                     stringstream subss (stringstream::in | stringstream::out);
@@ -60,26 +60,26 @@ void PMesh::loadObject(string filename)
                     getline(subss, subcur, '/');
 					if (subcur != "")
 					{
-						cout << "stoi of " << subcur << endl;
+						//cout << "stoi of " << subcur << endl;
                     	vert[c] = stoi(subcur) - 1;
                     	c++;
 					}
                 }
-                cout << endl;
+                //cout << endl;
 
                 face.x = vert[0];
                 face.y = vert[1];
                 face.z = vert[2];
 
                 m_faces.push_back(face);
-                cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
+                //cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
 
                 if(c == 4)
                 {
                     face.y = face.z;
                     face.z = vert[3];
                     m_faces.push_back(face);
-                    cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
+                    //cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
                 }
             }
         }
