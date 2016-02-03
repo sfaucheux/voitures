@@ -1,8 +1,8 @@
+#include "glm/glm.hpp"
+
 #include "context.h"
 #include "renderer.h"
-#include "pmesh.h"
-#include "glm/glm.hpp"
-#include <unistd.h>
+#include "mesh.h"
 
 #define width 1024
 #define height 768
@@ -19,11 +19,11 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    PMesh* obj = new PMesh();
-    obj->loadObject("van.obj");
+    Mesh obj = Mesh();
+    obj.loadObject("van.obj");
 
     Drawable drw;
-    drw.load(obj->getVertices(), obj->getIndices());
+    drw.load(obj.getVertices(), obj.getIndices());
 	drw.rotate(glm::vec3(1,0,0), 90);
 	//drw.homothetie(glm::vec3(0.001,0.001,0.001));
 
