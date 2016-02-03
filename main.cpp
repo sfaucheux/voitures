@@ -13,7 +13,7 @@ int main(int argc, char** argv)
 {
     Renderer renderer;
 	Context context(renderer);
-    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 0))
+    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 16))
     {
         cerr << "Impossible d'initialiser le contexte OpenGL." << endl ;
         return 0;
@@ -25,12 +25,15 @@ int main(int argc, char** argv)
     Drawable drw;
     drw.load(obj->getVertices(), obj->getIndices());
 
-    Shader shdr("shaders/couleur3D.vert", "shaders/couleur3D.frag");
-    drw.setShader(&shdr);
+    Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
+    Shader shdr2("shaders/gris.vert", "shaders/couleur3D.frag");
 
     while (context.eventLoop())
     {
         context.clean();
+        drw.setShader(&shdr2);
+        renderer.draw(drw); 
+        drw.setShader(&shdr1);
         renderer.draw(drw, GL_LINE); 
         context.show();
     }
