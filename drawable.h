@@ -28,7 +28,7 @@ class Drawable
         const glm::mat4& getModel() const;
         GLuint getIdVAO() const;
         GLuint getIdVBO() const;
-        GLuint getIdIndices() const;
+        GLuint getIdIBO() const;
         int getIndicesNumber() const;
         int getVerticesNumber() const;
 
@@ -44,7 +44,7 @@ class Drawable
 
         GLuint m_idVAO;
         GLuint m_idVBO;
-        GLuint m_idIndices;
+        GLuint m_idIBO;
 
         Shader* m_shader;
         int m_indicesNumber;
