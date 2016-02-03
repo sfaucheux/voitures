@@ -18,9 +18,10 @@ void Renderer::setPerspective(float angle, float ratio, float near, float far)
     m_projection = glm::perspective(angle, ratio, near, far);
 }
 
-void Renderer::draw(Drawable const& objet)
+void Renderer::draw(Drawable const& objet, GLenum mode)
 {
     GLuint shader = objet.getShader()->getProgramID() ;
+    glPolygonMode(GL_FRONT_AND_BACK, mode);
     glUseProgram(shader);
         glBindVertexArray(objet.getIdVAO());
                 glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));

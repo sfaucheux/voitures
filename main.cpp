@@ -20,7 +20,7 @@ int main(int argc, char** argv)
     }
 
     PMesh* obj = new PMesh();
-    obj->loadObject("cube.obj");
+    obj->loadObject("suzanne.obj");
 
     Drawable drw;
     drw.load(obj->getVertices(), obj->getIndices());
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
     while (context.eventLoop())
     {
         context.clean();
-        renderer.draw(drw); 
+        renderer.draw(drw, GL_LINE); 
         context.show();
     }
 
