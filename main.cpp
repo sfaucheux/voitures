@@ -2,6 +2,7 @@
 #include "renderer.h"
 #include "pmesh.h"
 #include "glm/glm.hpp"
+#include <unistd.h>
 
 int main(int argc, char** argv)
 {
@@ -22,7 +23,12 @@ int main(int argc, char** argv)
     while (context.eventLoop())
     {
         context.clean();
-        renderer.draw(drw);
+        drw.setModel(glm::mat4(1));
+        for(int i = 0 ; i <= 100 ; i++)
+        {
+            renderer.draw(drw);
+            drw.translate(glm::vec3(i, (i%10)*10,0));
+        }
         context.show();
     }
 

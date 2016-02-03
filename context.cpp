@@ -96,6 +96,7 @@ void Context::key(int key, int scancode, int action, int mods)
 void Context::clean()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.5,0.5,0.5,0);
 }
 
 void Context::show()

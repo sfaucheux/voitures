@@ -1,6 +1,6 @@
 #include "renderer.h"
 
-Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(10, 10, 20), glm::vec3(0, 0, 20), glm::vec3(0, 0, 1))
+Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(1, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1))
 {
 }
 
@@ -27,7 +27,10 @@ void Renderer::draw(Drawable const& objet)
                 glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(m_camera.getView()));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(objet.getModel()));
                 //glBindTexture(GL_TEXTURE_2D, objet.getNomTexture());
-                glDrawElements(GL_TRIANGLES, objet.getIndicesNumber(), GL_UNSIGNED_INT, NULL);
+                //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, objet.getIdIndices());
+                //glDrawElements(GL_TRIANGLES, objet.getIndicesNumber(), GL_UNSIGNED_INT, NULL);
+            //Solution temporaire qui permet d'afficher les vertices (fonctionne).
+                glDrawArrays(GL_TRIANGLES, 0, objet.getVerticesNumber());
         glBindVertexArray(0);
     glUseProgram(0);
 }
