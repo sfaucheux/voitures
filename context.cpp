@@ -19,9 +19,9 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 	if (!glfwInit())
 		return false;
 
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1); // 3.2 ça fait planter glfwCreateWindow chez moi
-    //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_COMPAT_PROFILE); // il faut demander 3.2 ou plus pour ça
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
 	glfwWindowHint(GLFW_SAMPLES, MSAA);
 	m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
