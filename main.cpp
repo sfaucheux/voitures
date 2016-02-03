@@ -20,10 +20,11 @@ int main(int argc, char** argv)
     }
 
     PMesh* obj = new PMesh();
-    obj->loadObject("suzanne.obj");
+    obj->loadObject("gun.obj");
 
     Drawable drw;
     drw.load(obj->getVertices(), obj->getIndices());
+	drw.rotate(glm::vec3(1,0,0), 90);
 
     Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader shdr2("shaders/gris.vert", "shaders/couleur3D.frag");
@@ -36,6 +37,7 @@ int main(int argc, char** argv)
         drw.setShader(&shdr1);
         renderer.draw(drw, GL_LINE); 
         context.show();
+		drw.rotate(glm::vec3(0,1,0), 0.01);
     }
 
     return 0;
