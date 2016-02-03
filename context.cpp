@@ -19,6 +19,10 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 	if (!glfwInit())
 		return false;
 
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
 	glfwWindowHint(GLFW_SAMPLES, MSAA);
 	m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
 	if (!m_window)
@@ -27,18 +31,29 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 		return false;
 	}
 
+    m_renderer.setPerspective(70.0, ((float)(width)) / height, 0.01, 1000);
+
 	glfwMakeContextCurrent(m_window);
 	glfwSetWindowUserPointer(m_window, this);
 	glfwSetKeyCallback(m_window, keyCallback);
 	glfwSetCursorPosCallback(m_window, cursorCallback);
 	glfwSetWindowSizeCallback(m_window, windowSizeCallback);
 
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+        glfwTerminate();
+        return false;
+    }
+
     glewExperimental=true;
 	GLenum err = glewInit();
 	if (GLEW_OK != err)
 	{
+        glfwTerminate();
 		return false;
 	}
+
 	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_MULTISAMPLE);
 
@@ -83,6 +98,7 @@ void Context::key(int key, int scancode, int action, int mods)
 void Context::clean()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glClearColor(0.5,0.5,0.5,0);
 }
 
 void Context::show()
@@ -123,7 +139,7 @@ void Context::windowSizeCallback(GLFWwindow *window, int width, int height)
 void Context::windowSize(int width, int height)
 {
     glViewport(0, 0, width, height);
-    m_renderer.setPerspective(70.0, ((float)(width)) / height, 0.01, 1000);
+    m_renderer.setPerspective(120.0, ((float)(width)) / height, 0.01, 1000000);
 }
 
 void Context::cursorCallback(GLFWwindow* window, double xpos, double ypos)

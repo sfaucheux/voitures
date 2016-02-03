@@ -28,8 +28,9 @@ class Drawable
         const glm::mat4& getModel() const;
         GLuint getIdVAO() const;
         GLuint getIdVBO() const;
-        GLuint getIdIndices() const;
+        GLuint getIdIBO() const;
         int getIndicesNumber() const;
+        int getVerticesNumber() const;
 
         void rotate(glm::vec3 axis, float angle);
         void translate(glm::vec3 translation);
@@ -43,10 +44,11 @@ class Drawable
 
         GLuint m_idVAO;
         GLuint m_idVBO;
-        GLuint m_idIndices;
+        GLuint m_idIBO;
 
         Shader* m_shader;
         int m_indicesNumber;
+        int m_verticesNumber;
         glm::mat4 m_model;
 
 };

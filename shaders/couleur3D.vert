@@ -16,5 +16,6 @@ void main()
 
     gl_Position = projection * view * obj;
 
-    color = in_Color;
+    //color = in_Color;
+color=vec3(255,0,0);
 }

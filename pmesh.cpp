@@ -51,14 +51,19 @@ void PMesh::loadObject(string filename)
                 cout << "loading face ";
                 while (cur != "" && c < 4)
                 {
+					cout << "parsing line: " << line << endl;
                     cout << "*";
                     cur = "";
                     ss >> cur;
                     stringstream subss (stringstream::in | stringstream::out);
                     subss << cur;
                     getline(subss, subcur, '/');
-                    vert[c] = stof(subcur);
-                    c++;
+					if (subcur != "")
+					{
+						cout << "stoi of " << subcur << endl;
+                    	vert[c] = stoi(subcur) - 1;
+                    	c++;
+					}
                 }
                 cout << endl;
 
