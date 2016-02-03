@@ -11,16 +11,23 @@ using namespace std ;
 
 int main(int argc, char** argv)
 {
+	string filename = "suzanne.obj";
+
+	if (argc > 1)
+	{
+		filename = string(argv[1]);
+	}
+
     Renderer renderer;
 	Context context(renderer);
-    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 0))
+    if (!context.init(width, height, "obj viewer", 4))
     {
         cerr << "Impossible d'initialiser le contexte OpenGL." << endl ;
         return 0;
     }
 
     PMesh* obj = new PMesh();
-    obj->loadObject("van.obj");
+    obj->loadObject(filename);
 
     Drawable drw;
     drw.load(obj->getVertices(), obj->getIndices());
