@@ -4,11 +4,14 @@
 #include "glm/glm.hpp"
 #include <unistd.h>
 
+#define width 1024
+#define height 768
+
 int main(int argc, char** argv)
 {
     Renderer renderer;
 	Context context(renderer);
-    if (!context.init(1024, 768, "Jeu de voitures trop de ouf !!!", 0))
+    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 0))
         exit(EXIT_FAILURE);
 
     PMesh* obj = new PMesh();
@@ -24,11 +27,7 @@ int main(int argc, char** argv)
     {
         context.clean();
         drw.setModel(glm::mat4(1));
-        for(int i = 0 ; i <= 100 ; i++)
-        {
-            renderer.draw(drw);
-            drw.translate(glm::vec3(i, (i%10)*10,0));
-        }
+        renderer.draw(drw); 
         context.show();
     }
 

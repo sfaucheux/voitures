@@ -96,9 +96,9 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uve
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIndices);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIndices, &indices[0], GL_STATIC_DRAW);
 
-     glBindVertexArray(0);
-     glBindBuffer(GL_ARRAY_BUFFER, 0);
-     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     m_indicesNumber = indices.size() * 3 ;
     m_verticesNumber = vertices.size() * 3 ;
