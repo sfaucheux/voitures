@@ -2,7 +2,7 @@
 
 using namespace std;
 
-Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_shader(nullptr), m_model(1.0)
+Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_shader(nullptr), m_model(1.0)
 {
 }
 
