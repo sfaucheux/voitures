@@ -15,16 +15,23 @@ using namespace std ;
 
 int main(int argc, char** argv)
 {
-	Renderer renderer;
-	Context context(renderer);
-    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 16))
+    string filename = "suzanne.obj";
+
+    if (argc > 1)
+    {
+        filename = string(argv[1]);
+    }
+
+    Renderer renderer;
+    Context context(renderer);
+    if (!context.init(width, height, "obj viewer", 4))
     {
         cerr << "Impossible d'initialiser le contexte OpenGL." << endl;
         return 0;
     }
 
     Object obj;
-    obj.load("van.obj");
+    obj.load(filename);
 
     // NB les rotations sont en radians
 
