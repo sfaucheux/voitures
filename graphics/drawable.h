@@ -32,6 +32,7 @@ class Drawable
         void translate(glm::vec3 translation);
         void homothetie(glm::vec3 homoth) ;
 
+        //void load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices, std::vector<glm::vec2> const &textures = std::vector<glm::vec2>());
         void load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices, std::vector<glm::vec2> const &textures = std::vector<glm::vec2>());
         void update(const std::vector<float> &data, int offset);
 
