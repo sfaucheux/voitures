@@ -68,6 +68,7 @@ Mesh::Mesh(string filename)
             }
         }
         m_gObj.load(m_vertices, m_faces/*, m_textures*/); //TODO
+        m_pObj = new PObject(); // = new PMesh();
         cout << "Loading successful" << endl;
     }
     else
@@ -76,6 +77,7 @@ Mesh::Mesh(string filename)
 
 Mesh::~Mesh()
 {
+    delete m_pObj;
 }
 
 Object::ObjectType Mesh::getType()

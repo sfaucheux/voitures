@@ -52,4 +52,3 @@ void Object::rotate(glm::vec3 r)
     m_gObj.rotate(glm::vec3(0, 1, 0), r.y);
     m_gObj.rotate(glm::vec3(0, 0, 1), r.z);
 }
-
