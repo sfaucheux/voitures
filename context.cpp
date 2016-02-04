@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "context.h"
 
 using namespace std;
@@ -19,17 +21,23 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 	if (!glfwInit())
 		return false;
 
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
 
-	glfwWindowHint(GLFW_SAMPLES, MSAA);
-	m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-	if (!m_window)
-	{
-		glfwTerminate();
-		return false;
-	}
+    glfwWindowHint(GLFW_SAMPLES, MSAA);
+    m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+    if (!m_window)
+    {
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        m_window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+        if (!m_window)
+        {
+            glfwTerminate();
+            return false;
+        }
+    }
 
     m_renderer.setPerspective(70.0, ((float)(width)) / height, 0.01, 1000);
 

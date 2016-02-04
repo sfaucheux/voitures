@@ -1,18 +1,11 @@
 #ifndef Drawable_H
 #define Drawable_H
 
-#define GET_ADDRESS(base, offset) ((char*)(base) + (offset))
-
-#ifdef __LINUX__
-    #include <unistd.h>
-#endif
-
-#include <GL/glew.h>
-#include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+#include <cstring>
 #include <vector>
-#include <iostream>
+
+#include "glm/glm.hpp"
+
 #include "shader.h"
 #include "texture.h"
 
