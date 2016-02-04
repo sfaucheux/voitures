@@ -3,7 +3,7 @@
 
 #include <list>
 
-#include "glm/glm.hpp"
+#include "../glm/glm.hpp"
 
 #include "pobject.h"
 

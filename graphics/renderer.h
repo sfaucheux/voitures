@@ -1,10 +1,10 @@
 #ifndef Renderer_H
 #define Renderer_H
 
-#include "glm/glm.hpp"
+#include "../glm/glm.hpp"
 
 #include "camera.h"
-#include "object.h"
+#include "../objects/object.h"
 #include "drawable.h"
 
 class Renderer

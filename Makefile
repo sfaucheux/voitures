@@ -1,15 +1,19 @@
 BUILD := build
 LIBS := GL GLEW glfw stdc++
 PREFIX := $(HOME)/dev
+DIRS := . graphics physic objects
 
-SOURCES := $(wildcard *.cpp)
-OBJECTS := $(addprefix $(BUILD)/,$(SOURCES:.cpp=.o))
+SOURCES := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.cpp))
+OBJECTS := $(addprefix $(BUILD)/,$(notdir $(SOURCES:.cpp=.o)))
+
+VPATH += $(DIRS)
 
 .PHONY: all
 all: $(BUILD) $(BUILD)/voitures
 
 $(BUILD):
 	mkdir -p $@
+	echo $(OBJECTS)
 
 $(BUILD)/voitures: $(OBJECTS)
 	g++ -o $@ -L$(PREFIX)/lib $(addprefix -l,$(LIBS)) $(OBJECTS)

@@ -4,7 +4,7 @@
 #include <cstring>
 #include <vector>
 
-#include "glm/glm.hpp"
+#include "../glm/glm.hpp"
 
 #include "shader.h"
 
