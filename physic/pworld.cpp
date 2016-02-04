@@ -14,4 +14,8 @@ void PWorld::addObject(PObject* object)
 {
     m_objects.push_back(object);
 }
+void PWorld::removeObject(PObject* object)
+{
+    m_objects.remove(object);
+}
 
