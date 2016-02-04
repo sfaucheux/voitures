@@ -8,6 +8,7 @@
 #include "graphics/renderer.h"
 #include "objects/mesh.h"
 #include "objects/box.h"
+#include "physic/pworld.h"
 
 #define width 1024
 #define height 768
@@ -32,22 +33,22 @@ int main(int argc, char** argv)
     }
 
     Mesh obj(filename);
-    //Box obj(20, 50, 20);
-
-    obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
+    //obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
 
     Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader shdr2("shaders/gris.vert", "shaders/couleur3D.frag");
 
     while (context.eventLoop())
     {
+        world.update(0.05);
+        obj.sync();
         context.clean();
         obj.setShader(&shdr2);
         renderer.draw(obj); 
         obj.setShader(&shdr1);
         renderer.draw(obj, GL_LINE); 
         context.show();
-        obj.rotate(glm::vec3(0,0.02,0));
+        //obj.rotate(glm::vec3(0,0.02,0));
 
         usleep(50000);
     }

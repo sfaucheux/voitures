@@ -10,9 +10,9 @@
 class PWorld 
 {
     public:
-        PWorld();
+        PWorld(glm::vec3 gravity);
         void setGravity(glm::vec3 gravity);
-        void update();
+        void update(float step);
         void addObject(PObject*);
         void removeObject(PObject*);
 
@@ -20,6 +20,8 @@ class PWorld
     private:
         std::list<PObject*> m_objects ;
         glm::vec3 m_gravity ;
+        void integrate(float step);
+        
 
 };
 

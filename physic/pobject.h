@@ -20,19 +20,27 @@ class PObject
         void setAngularAcceleration(glm::vec3 a);
         void setStatic(bool s);
 
-        float getMass();
         glm::vec3 getPosition();
         glm::vec3 getVelocity();
         glm::vec3 getAcceleration();
         glm::vec3 getRotation();
         glm::vec3 getAngularVelocity();
         glm::vec3 getAngularAcceleration();
+        glm::vec3 getForces();
+        glm::vec3 getTorques();
+        float getMass();
+        glm::mat3 getInertia();
+        float getLinearDamping();
+        float getAngularDamping();
         bool isStatic();
 
         float getVolume();
 
         void rotate(glm::vec3 angle);
         void translate(glm::vec3 t);
+        void addForce(glm::vec3 f);
+        void addTorque(glm::vec3 t);
+        void resetActions();
 
 
     private:
@@ -56,6 +64,9 @@ class PObject
         float m_volume;
         bool m_static;
         bool m_awake ;
+
+        glm::vec3 m_forces ;
+        glm::vec3 m_torques ;
 /*
         std::list<Fixture> m_fixtures ;
         std::list<Joint> m_joints ;
