@@ -36,7 +36,7 @@ int main(int argc, char** argv)
     //obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
 
     Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
-    Shader shdr2("shaders/gris.vert", "shaders/couleur3D.frag");
+    Shader shdr2("shaders/gris.vert", "shaders/texture.frag");
 
     while (context.eventLoop())
     {

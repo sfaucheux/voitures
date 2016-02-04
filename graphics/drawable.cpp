@@ -86,42 +86,61 @@ void Drawable::homothetie(glm::vec3 homoth)
     m_model = glm::scale(m_model, homoth);
 }
 
+//void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices, std::vector<glm::vec2> const &textures)
 void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices, std::vector<glm::vec2> const &textures)
 {
     int sizeVertices = sizeof(glm::vec3) * vertices.size();
-    int sizeIBO = sizeof(glm::uvec3) * indices.size();
+    //int sizeIBO = sizeof(unsigned int) * indices.size();
+    int sizeIBO = sizeof(glm::vec3) * indices.size();
     int sizeTBO = sizeof(glm::vec2) * textures.size();
 
+
+    //VAO
     if (glIsVertexArray(m_idVAO) == GL_TRUE)
         glDeleteVertexArrays(1, &m_idVAO);
-
+    
+    //Création et activation.
     glGenVertexArrays(1, &m_idVAO);
     glBindVertexArray(m_idVAO);
 
+    //VBO Vertices.
     if (glIsBuffer(m_idVBO) == GL_TRUE)
       glDeleteBuffers(1, &m_idVBO);
-
+    
+    //Création et activation.
     glGenBuffers(1, &m_idVBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
+    //Allocation.
     glBufferData(GL_ARRAY_BUFFER, sizeVertices, &vertices[0], GL_STATIC_DRAW);
+    //Identifiacation.
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     
+    //VBO Indices
     if (glIsBuffer(m_idIBO) == GL_TRUE)
         glDeleteBuffers(1, &m_idIBO);
-
+    
+    //Création et activation
     glGenBuffers(1, &m_idIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIBO);
+    //Allocation
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIBO, &indices[0], GL_STATIC_DRAW);
-
+    
+    //VBO Textures
     if (glIsBuffer(m_idTBO) == GL_TRUE)
         glDeleteBuffers(1, &m_idTBO) ;
-
+    
+    //Création et activation.
     glGenBuffers(1, &m_idTBO);
     glBindBufferARB(GL_ARRAY_BUFFER, m_idTBO) ;
+    //Allocation
     glBufferData(GL_ARRAY_BUFFER, sizeTBO, &textures[0], GL_STATIC_DRAW);
+    //Identification.
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    //a activer quand on pourra charger des textures.
+    //glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
