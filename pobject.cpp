@@ -1,3 +1,5 @@
+#include "glm/gtc/matrix_transform.hpp"
+
 #include "pobject.h"
 
 PObject::PObject()
@@ -5,6 +7,10 @@ PObject::PObject()
 	m_mass = 0.;
 	m_volume = 0.;
 	m_static = false;
+}
+
+PObject::~PObject()
+{
 }
 
 void PObject::setMass(float m)
@@ -38,19 +44,14 @@ void PObject::setStatic(bool s)
     m_static = s;
 }
 
-void PObject::rotate(glm::vec3 angle)
-{
-    m_angle += angle ;
-}
-
-void PObject::translate(glm::vec3 t)
-{
-    m_position += t ;
-}
-
 float PObject::getMass()
 {
     return m_mass;
+}
+
+glm::vec3 PObject::getPosition()
+{
+    return m_position;
 }
 
 glm::vec3 PObject::getVelocity()
@@ -61,6 +62,11 @@ glm::vec3 PObject::getVelocity()
 glm::vec3 PObject::getAcceleration()
 {
     return m_acceleration;
+}
+
+glm::vec3 PObject::getRotation()
+{
+    return m_angle;
 }
 
 glm::vec3 PObject::getAngularVelocity()
@@ -83,6 +89,12 @@ float PObject::getVolume()
     return m_volume;
 }
 
-PObject::~PObject()
+void PObject::rotate(glm::vec3 angle)
 {
+    m_angle += angle;
+}
+
+void PObject::translate(glm::vec3 t)
+{
+    m_position += t;
 }

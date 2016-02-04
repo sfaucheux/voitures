@@ -1,8 +1,12 @@
+#include <string>
+#include <iostream>
+
 #include "glm/glm.hpp"
 
 #include "context.h"
 #include "renderer.h"
-#include "mesh.h"
+#include "object.h"
+#include "pobject.h" // temporaire, pour la méthode 2. à enlever après les tests
 
 #define width 1024
 #define height 768
@@ -11,21 +15,35 @@ using namespace std ;
 
 int main(int argc, char** argv)
 {
-    Renderer renderer;
+	Renderer renderer;
 	Context context(renderer);
-    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 0))
+    if (!context.init(width, height, "Jeu de voitures trop de ouf !!!", 16))
     {
-        cerr << "Impossible d'initialiser le contexte OpenGL." << endl ;
+        cerr << "Impossible d'initialiser le contexte OpenGL." << endl;
         return 0;
     }
 
-    Mesh obj = Mesh();
-    obj.loadObject("van.obj");
+    Object obj;
+    obj.load("van.obj");
 
-    Drawable drw;
-    drw.load(obj.getVertices(), obj.getIndices());
-	drw.rotate(glm::vec3(1,0,0), 90);
-	//drw.homothetie(glm::vec3(0.001,0.001,0.001));
+    // NB les rotations sont en radians
+
+    // Méthode 1 : on appelle rotate sur l'Object
+    // => le PObject ainsi que le Drawable sont tournés
+    // ce qu'il faut faire dans le main
+    obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
+
+    // Méthode 2 : on appelle rotate sur le PObject
+    // puis on utilise Object::sync pour maj le Drawable
+    // PWorld pourra appeler translate sur un PObject, et le main, sync
+    /*PObject* pObj = obj.getPObject();
+    pObj->rotate(glm::vec3(90,0,0));
+    obj.sync();*/
+
+    // On notera que l'on ne peut pas faire tourner que le Drawable,
+    // le code suivant ne changera rien :
+    /*Drawable drw = obj.getDrawable();
+    drw.rotate(glm::vec3(1,0,0), 90);*/
 
     Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader shdr2("shaders/gris.vert", "shaders/couleur3D.frag");
@@ -33,12 +51,13 @@ int main(int argc, char** argv)
     while (context.eventLoop())
     {
         context.clean();
-        drw.setShader(&shdr2);
-        renderer.draw(drw); 
-        drw.setShader(&shdr1);
-        renderer.draw(drw, GL_LINE); 
+        obj.setShader(&shdr2);
+        renderer.draw(obj); 
+        obj.setShader(&shdr1);
+        renderer.draw(obj, GL_LINE); 
         context.show();
-		drw.rotate(glm::vec3(0,1,0), 0.01);
+        obj.rotate(glm::vec3(0,0.01,0));
+        cout << "Rotation en y : " << obj.getPObject()->getRotation().y << " radians" << endl;
     }
 
     return 0;

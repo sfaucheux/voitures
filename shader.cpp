@@ -1,13 +1,16 @@
+#include <iostream>
+#include <fstream>
+
 #include "shader.h"
 
 Shader::Shader() : m_vertexID(0), m_fragmentID(0), m_programID(0), m_vertexSource(), m_fragmentSource()
 {
 }
 
-Shader::Shader(Shader const &shaderACopier)
+Shader::Shader(Shader const &srcShader)
 {
-    m_vertexSource = shaderACopier.m_vertexSource;
-    m_fragmentSource = shaderACopier.m_fragmentSource;
+    m_vertexSource = srcShader.m_vertexSource;
+    m_fragmentSource = srcShader.m_fragmentSource;
     load();
 }
 

@@ -1,10 +1,7 @@
 #ifndef Camera_H
 #define Camera_H
 
-#include <iostream>
 #include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/constants.hpp"
 
 class Camera
 {

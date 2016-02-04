@@ -1,18 +1,14 @@
 #ifndef Shader_H
 #define Shader_H
 
-#include <GL/glew.h>
-#include <iostream>
 #include <string>
-#include <fstream>
-
+#include <GL/glew.h>
 
 class Shader
 {
     public:
-
         Shader();
-        Shader(Shader const &shaderACopier);
+        Shader(Shader const &srcShader);
         Shader(std::string vertexSource, std::string fragmentSource);
         ~Shader();
 
@@ -32,6 +28,7 @@ class Shader
 
         std::string m_vertexSource;
         std::string m_fragmentSource;
+
 };
 
 #endif

@@ -1,16 +1,11 @@
 #ifndef Context_H
 #define Context_H
 
+#include <string>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-#include <cstdlib>
-//#include "Shader.h"
-#include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
+
 #include "renderer.h"
-#include "camera.h"
 
 class Context
 {

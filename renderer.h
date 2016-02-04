@@ -1,13 +1,11 @@
 #ifndef Renderer_H
 #define Renderer_H
 
-#include <GL/glew.h>
-#include <cstdlib>
 #include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
-#include "glm/gtc/type_ptr.hpp"
-#include "drawable.h"
+
 #include "camera.h"
+#include "object.h"
+#include "drawable.h"
 
 class Renderer
 {
@@ -18,7 +16,8 @@ class Renderer
         Camera& getCamera();
         void setProjection(glm::mat4& projection);
         void setPerspective(float fov, float ratio, float near, float far);
-        void draw(Drawable const& objet, GLenum mode = GL_FILL);
+        void draw(Object const& object, GLenum mode = GL_FILL);
+        void draw(Drawable const& drawable, GLenum mode = GL_FILL);
 
 
     private:
