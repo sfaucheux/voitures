@@ -3,10 +3,9 @@
 
 #include "glm/glm.hpp"
 
-#include "context.h"
-#include "renderer.h"
-#include "object.h"
-#include "pobject.h" // temporaire, pour la méthode 2. à enlever après les tests
+#include "graphics/context.h"
+#include "graphics/renderer.h"
+#include "objects/object.h"
 
 #define width 1024
 #define height 768

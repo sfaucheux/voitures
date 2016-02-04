@@ -4,7 +4,7 @@
 #include <string>
 #include <list>
 
-#include "glm/glm.hpp"
+#include "../glm/glm.hpp"
 
 class PObject
 {

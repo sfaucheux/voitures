@@ -3,11 +3,11 @@
 
 #include <string>
 
-#include "glm/glm.hpp"
+#include "../glm/glm.hpp"
 
-#include "shader.h"
-#include "pobject.h"
-#include "drawable.h"
+#include "../graphics/shader.h"
+#include "../graphics/drawable.h"
+#include "../physic/pobject.h"
 #include "mesh.h"
 
 class Object
