@@ -32,7 +32,7 @@ Box::Box(float w, float h, float d)
     indices.push_back(uvec3(4, 0, 3));
     indices.push_back(uvec3(4, 3, 7));
 
-    m_gObj.load(vertices, indices);
+    //m_gObj.load(vertices, indices);
     m_pObj = new PBox(w, h, d);
 }
 

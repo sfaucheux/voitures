@@ -17,7 +17,7 @@ using namespace std ;
 
 int main(int argc, char** argv)
 {
-    string filename = "suzanne.obj";
+    string filename = "cube.obj";
 
     if (argc > 1)
     {
@@ -40,7 +40,7 @@ int main(int argc, char** argv)
 
     while (context.eventLoop())
     {
-        world.update(0.05);
+        //world.update(0.05);
         obj.sync();
         context.clean();
         obj.setShader(&shdr2);
