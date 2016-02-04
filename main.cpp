@@ -1,5 +1,6 @@
 #include <string>
 #include <iostream>
+#include <unistd.h>
 
 #include "glm/glm.hpp"
 
@@ -45,7 +46,9 @@ int main(int argc, char** argv)
         obj.setShader(&shdr1);
         renderer.draw(obj, GL_LINE); 
         context.show();
-        obj.rotate(glm::vec3(0,0.01,0));
+        obj.rotate(glm::vec3(0,0.001,0));
+
+        usleep(100);
     }
 
     return 0;
