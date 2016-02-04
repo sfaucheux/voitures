@@ -7,6 +7,7 @@
 #include "graphics/context.h"
 #include "graphics/renderer.h"
 #include "objects/mesh.h"
+#include "objects/box.h"
 
 #define width 1024
 #define height 768
@@ -30,7 +31,8 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    Mesh obj(filename);
+    //Mesh obj(filename);
+    Box obj(20, 50, 20);
 
     obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
 

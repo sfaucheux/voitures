@@ -35,9 +35,6 @@ class Object
 
     protected:
 		Drawable m_gObj;
-
-
-	private:
 		PObject* m_pObj;
 
 };
