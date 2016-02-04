@@ -35,11 +35,9 @@ void Renderer::draw(Drawable const& drawable, GLenum mode)
                 glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(m_camera.getView()));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(drawable.getModel()));
-                //glBindTexture(GL_TEXTURE_2D, drawable.getNomTexture());
-                //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, drawable.getIdIndices());
+                //a activer quand on pourra charger des textures.
+                //glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
                 glDrawElements(GL_TRIANGLES, drawable.getIndicesNumber(), GL_UNSIGNED_INT, NULL);
-            //Solution temporaire qui permet d'afficher les vertices (fonctionne).
-                //glDrawArrays(GL_TRIANGLES, 0, drawable.getVerticesNumber());
         glBindVertexArray(0);
     glUseProgram(0);
 }

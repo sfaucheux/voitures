@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_shader(nullptr), m_model(1.0)
+Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_idTBO(0), m_shader(nullptr), m_model(1.0)
 {
 }
 
@@ -22,6 +22,10 @@ void Drawable::setShader(Shader* shader)
 {
     m_shader = shader;
 }
+void Drawable::setTexture(Texture* texture)
+{
+    m_texture = texture;
+}
 
 void Drawable::setModel(glm::mat4 model)
 {
@@ -31,6 +35,10 @@ void Drawable::setModel(glm::mat4 model)
 const Shader* Drawable::getShader() const
 {
     return m_shader;
+}
+const Texture* Drawable::getTexture() const
+{
+    return m_texture;
 }
 
 const glm::mat4& Drawable::getModel() const
@@ -78,10 +86,11 @@ void Drawable::homothetie(glm::vec3 homoth)
     m_model = glm::scale(m_model, homoth);
 }
 
-void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices)
+void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices, std::vector<glm::vec2> const &textures)
 {
     int sizeVertices = sizeof(glm::vec3) * vertices.size();
     int sizeIBO = sizeof(glm::uvec3) * indices.size();
+    int sizeTBO = sizeof(glm::vec2) * textures.size();
 
     if (glIsVertexArray(m_idVAO) == GL_TRUE)
         glDeleteVertexArrays(1, &m_idVAO);
@@ -90,20 +99,29 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uve
     glBindVertexArray(m_idVAO);
 
     if (glIsBuffer(m_idVBO) == GL_TRUE)
-        glDeleteBuffers(1, &m_idVBO);
+      glDeleteBuffers(1, &m_idVBO);
 
     glGenBuffers(1, &m_idVBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeVertices, &vertices[0], GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-
+    
     if (glIsBuffer(m_idIBO) == GL_TRUE)
         glDeleteBuffers(1, &m_idIBO);
 
     glGenBuffers(1, &m_idIBO);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIBO);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIBO, &indices[0], GL_STATIC_DRAW);
+
+    if (glIsBuffer(m_idTBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idTBO) ;
+
+    glGenBuffers(1, &m_idTBO);
+    glBindBufferARB(GL_ARRAY_BUFFER, m_idTBO) ;
+    glBufferData(GL_ARRAY_BUFFER, sizeTBO, &textures[0], GL_STATIC_DRAW);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
