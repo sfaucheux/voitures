@@ -1,4 +1,10 @@
+#include <iostream>
+
+#include "glm/gtx/transform.hpp"
+
 #include "drawable.h"
+
+#define GET_ADDRESS(base, offset) ((char*)(base) + (offset))
 
 using namespace std;
 
@@ -46,6 +52,7 @@ GLuint Drawable::getIdIBO() const
 {
     return m_idIBO;
 }
+
 int Drawable::getVerticesNumber() const
 {
     return m_verticesNumber;

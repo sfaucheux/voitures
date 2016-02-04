@@ -1,5 +1,14 @@
+#ifndef Object_H
+#define Object_H
+
+#include <string>
+
+#include "glm/glm.hpp"
+
+#include "shader.h"
 #include "pobject.h"
 #include "drawable.h"
+#include "mesh.h"
 
 class Object
 {
@@ -7,12 +16,23 @@ class Object
 		Object();
 		virtual ~Object();
 
-		void loadObject(
+        void setShader(Shader* shader);
 
-		void rotate(glm::vec3 axis, float angle);
-		void translate(glm::vec3 t);
-		void homothetie(glm::vec3 h);
+        PObject* getPObject();
+        Drawable const& getDrawable() const;
+        const Shader* getShader() const;
+
+		void load(std::string filename);
+        void sync();
+        void translate(glm::vec3 t);
+        void rotate(glm::vec3 r);
+
+
 	private:
-		PObject physMesh;
-		Drawable graphMesh;
+		PObject m_pObj;
+		Drawable m_gObj;
+        Mesh m_mesh;
+
 };
+
+#endif
