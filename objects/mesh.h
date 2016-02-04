@@ -6,16 +6,15 @@
 
 #include "../glm/glm.hpp"
 
-class Mesh
+#include "object.h"
+
+class Mesh : public Object
 {
 	public:
-		Mesh();
+		Mesh(std::string filename);
 		virtual ~Mesh();
 
-		virtual void loadObject(std::string filename);
-
-        const std::vector<glm::vec3>& getVertices() const;
-        const std::vector<glm::uvec3>& getIndices() const;
+        ObjectType getType();
 
 
 	private:

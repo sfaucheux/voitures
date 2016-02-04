@@ -7,15 +7,7 @@
 using namespace std;
 using namespace glm;
 
-Mesh::Mesh()
-{
-}
-
-Mesh::~Mesh()
-{
-}
-
-void Mesh::loadObject(string filename)
+Mesh::Mesh(string filename)
 {
 	cout << "Loading " << filename << endl;
     ifstream inFile ("models/" + filename);
@@ -35,10 +27,7 @@ void Mesh::loadObject(string filename)
 
             if (ident == "v")
             {
-                //cout << line << endl;
                 ss >> point.x >> point.y >> point.z;
-                //cout << "Loaded vertex " << point.x << " " << point.y << " " << point.z << endl;
-
                 m_vertices.push_back(point);
             }
             else if (ident == "f")
@@ -50,11 +39,8 @@ void Mesh::loadObject(string filename)
                 string cur = "plop";
                 string subcur;
 
-                //cout << "loading face ";
                 while (cur != "" && c < 4)
                 {
-					//cout << "parsing line: " << line << endl;
-                    //cout << "*";
                     cur = "";
                     ss >> cur;
                     stringstream subss (stringstream::in | stringstream::out);
@@ -62,41 +48,37 @@ void Mesh::loadObject(string filename)
                     getline(subss, subcur, '/');
 					if (subcur != "")
 					{
-						//cout << "stoi of " << subcur << endl;
                     	vert[c] = stoi(subcur) - 1;
                     	c++;
 					}
                 }
-                //cout << endl;
 
                 face.x = vert[0];
                 face.y = vert[1];
                 face.z = vert[2];
 
                 m_faces.push_back(face);
-                //cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
 
                 if(c == 4)
                 {
                     face.y = face.z;
                     face.z = vert[3];
                     m_faces.push_back(face);
-                    //cout << "Loaded face " << face.x << " " << face.y << " " << face.z << endl;
                 }
             }
         }
+        m_gObj.load(m_vertices, m_faces/*, m_textures*/); //TODO
         cout << "Loading successful" << endl;
     }
     else
         cout << "Error while loading model, no file found" << endl;
 }
 
-const vector<glm::vec3>& Mesh::getVertices() const
+Mesh::~Mesh()
 {
-    return m_vertices;
 }
 
-const vector<glm::uvec3>& Mesh::getIndices() const
+Object::ObjectType Mesh::getType()
 {
-    return m_faces;
+    return Object::Mesh;
 }
