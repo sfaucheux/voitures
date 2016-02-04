@@ -31,8 +31,8 @@ int main(int argc, char** argv)
         return 0;
     }
 
-    //Mesh obj(filename);
-    Box obj(20, 50, 20);
+    Mesh obj(filename);
+    //Box obj(20, 50, 20);
 
     obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
 
