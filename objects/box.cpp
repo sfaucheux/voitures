@@ -1,6 +1,7 @@
 #include "../glm/glm.hpp"
 
 #include "box.h"
+#include "../physic/pbox.h"
 
 using namespace glm;
 
@@ -32,7 +33,7 @@ Box::Box(float w, float h, float d)
     indices.push_back(uvec3(4, 3, 7));
 
     m_gObj.load(vertices, indices);
-    m_pObj = new PObject(); // = new PBox();
+    m_pObj = new PBox(w, h, d);
 }
 
 Box::~Box()

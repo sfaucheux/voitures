@@ -146,7 +146,7 @@ void Context::windowSizeCallback(GLFWwindow *window, int width, int height)
 void Context::windowSize(int width, int height)
 {
     glViewport(0, 0, width, height);
-    m_renderer.setPerspective(120.0, ((float)(width)) / height, 0.01, 1000000);
+    m_renderer.setPerspective(100.0, ((float)(width)) / height, 0.01, 1000);
 }
 
 void Context::cursorCallback(GLFWwindow* window, double xpos, double ypos)
