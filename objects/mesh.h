@@ -24,25 +24,16 @@ class Mesh : public Object
         std::vector<glm::vec2> m_uvmap;
         std::vector<unsigned int> m_normals;
 
-		void loadRawData(std::ifstream* filename);
-		void processData();
+		void loadRawData(std::ifstream* filename, std::vector<glm::vec3>& v,std::vector<unsigned int>& vi, std::vector<glm::vec2>& t,std::vector<unsigned int>& ti );
+		void processData(std::vector<glm::vec3>& v,std::vector<unsigned int>& vi, std::vector<glm::vec2>& t,std::vector<unsigned int>& ti );;
 
-		//Super bof de déclarer ceux-là en membres de la classe, mais bon...
-
-		struct comp
+        struct comp
 		{
 			bool operator()(const glm::uvec2& a, const glm::uvec2& b) const
 			{
 				return a.x < b.x;
 			}
 		};
-
-		void addCouple(unsigned int vertID, unsigned int uvID);
-		std::map<glm::uvec2,unsigned int,comp> knowns;
-		std::vector<glm::vec3> vertTmp;
-		std::vector<glm::vec2> uvsTmp;
-        std::vector<unsigned int> uvsIDTmp;
-        std::vector<unsigned int> facesIDTmp;
 
 };
 
