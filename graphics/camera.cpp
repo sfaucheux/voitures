@@ -4,9 +4,9 @@
 
 using namespace glm;
 
-Camera::Camera(vec3 pos, vec3 tar, vec3 up) : m_position(pos), m_target(tar), m_up(normalize(up))
+Camera::Camera(vec3 pos, vec3 tar, vec3 up) : m_position(pos), m_up(normalize(up))
 {
-	setTarget(m_target);
+	setTarget(tar);
 	update();
 }
 
@@ -24,7 +24,7 @@ void Camera::updateAngles()
 {
 	vec3 m_vect = m_passageInverse * m_orientation;
 	m_phi = asin(m_vect.z);
-	m_theta = acos(m_vect.y / cos(m_phi));
+	m_theta = asin(m_vect.y / cos(m_phi));
 }
 
 void Camera::setPosition(glm::vec3 pos)
@@ -46,7 +46,7 @@ void Camera::setUp(glm::vec3 up)
 
 void Camera::setTarget(glm::vec3 tar)
 {
-	m_orientation = normalize(m_target - m_position);
+	m_orientation = normalize(tar - m_position);
 	m_left = normalize(cross(m_up, m_orientation));
 	m_forward = normalize(cross(m_left, m_up));
 
