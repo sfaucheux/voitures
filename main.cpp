@@ -17,7 +17,7 @@ using namespace std ;
 
 int main(int argc, char** argv)
 {
-    string filename = "cube.obj";
+    string filename = "suzanne.obj";
 
     if (argc > 1)
     {
@@ -31,22 +31,32 @@ int main(int argc, char** argv)
         cerr << "Impossible d'initialiser le contexte OpenGL." << endl;
         return 0;
     }
-
+    PWorld world(glm::vec3(0,0,-9.81));
     Mesh obj(filename);
+    Box obj2(15,20,8);
+    obj2.translate(glm::vec3(20,20,20));
+
+    world.addObject(obj.getPObject());
+    world.addObject(obj2.getPObject());
     //obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
 
     Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
-    Shader shdr2("shaders/gris.vert", "shaders/texture.frag");
+    Shader shdr2("shaders/gris.vert", "shaders/couleur3D.frag");
 
     while (context.eventLoop())
     {
-        //world.update(0.05);
+        world.update(0.05);
         obj.sync();
+        obj2.sync();
         context.clean();
         obj.setShader(&shdr2);
+        obj2.setShader(&shdr2);
         renderer.draw(obj); 
+        renderer.draw(obj2); 
         obj.setShader(&shdr1);
+        obj2.setShader(&shdr1);
         renderer.draw(obj, GL_LINE); 
+        renderer.draw(obj2, GL_LINE); 
         context.show();
         //obj.rotate(glm::vec3(0,0.02,0));
 
