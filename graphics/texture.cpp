@@ -20,7 +20,7 @@ void Texture::load(string name)
     {
         reader<ifstream> read(file);
         bool rgb = false ; //(read.get_color_type() == color_type_rgb) ;
-        image<rgba_pixel> img(name);
+        image<rgba_pixel> img(file);
 
         if(glIsTexture(m_id) == GL_TRUE)
             glDeleteTextures(1, &m_id);

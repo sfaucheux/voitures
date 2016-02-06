@@ -136,8 +136,8 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned
     //Allocation
     glBufferData(GL_ARRAY_BUFFER, sizeTBO, &textures[0], GL_STATIC_DRAW);
     //Identification.
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    glEnableVertexAttribArray(2);
 
     //a activer quand on pourra charger des textures.
    // glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());

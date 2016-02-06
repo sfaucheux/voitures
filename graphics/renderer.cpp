@@ -35,7 +35,6 @@ void Renderer::draw(Drawable const& drawable, GLenum mode)
                 glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(m_camera.getView()));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(drawable.getModel()));
-                //a activer quand on pourra charger des textures.
                 glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
                 glDrawElements(GL_TRIANGLES, drawable.getIndicesNumber(), GL_UNSIGNED_INT, NULL);
         glBindVertexArray(0);
