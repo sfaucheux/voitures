@@ -87,13 +87,11 @@ void Drawable::homothetie(glm::vec3 homoth)
 }
 
 void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices, std::vector<glm::vec2> const &textures)
-//void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices, std::vector<glm::vec2> const &textures)
 {
     int sizeVertices = sizeof(glm::vec3) * vertices.size();
     int sizeIBO = sizeof(unsigned int) * indices.size();
     //int sizeIBO = sizeof(glm::vec3) * indices.size();
     int sizeTBO = sizeof(glm::vec2) * textures.size();
-
 
     //VAO
     if (glIsVertexArray(m_idVAO) == GL_TRUE)
@@ -132,15 +130,12 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned
     
     //Création et activation.
     glGenBuffers(1, &m_idTBO);
-    glBindBufferARB(GL_ARRAY_BUFFER, m_idTBO) ;
+    glBindBuffer(GL_ARRAY_BUFFER, m_idTBO) ;
     //Allocation
     glBufferData(GL_ARRAY_BUFFER, sizeTBO, &textures[0], GL_STATIC_DRAW);
     //Identification.
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(2);
-
-    //a activer quand on pourra charger des textures.
-   // glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
 
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
