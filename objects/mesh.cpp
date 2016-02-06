@@ -17,52 +17,50 @@ Mesh::Mesh(string filename)
 
 	if (inFile.is_open())
 	{
-        vector<vec3> v ;
-        vector<vec2> t ;
-        vector<unsigned int> vi ;
-        vector<unsigned int> ti ;
+        vector<vec3> vraw, v ;
+        vector<vec2> traw, t ;
+        vector<unsigned int> viraw, tiraw, id ;
 		std::map<glm::uvec2,unsigned int, comp> knowns ; //,comp> knowns;
 
 		//Charge les données brutes dans des vecteurs temporaires
-		loadRawData(&inFile, v, vi, t, ti);
+		loadRawData(&inFile, vraw, viraw, traw, tiraw);
 
-		if (v.size() == t.size()) //On traite les données pour être texture-compatibles s'il y a lieu
+		if (tiraw.size() == viraw.size()) //On traite les données pour être texture-compatibles s'il y a lieu
 		{
 			cout << "loading with textures" << endl;
             cout << "processing UV data..." << endl;
-            for (int i = 0; i < vi.size(); i++)
+            for (int i = 0; i < viraw.size(); i++)
             {
                 map<uvec2,unsigned int>::iterator it;
 
                 //Has the couple (vert,uv) already been seen ?
-                it = knowns.find(uvec2(vi[i], ti[i]));
+                it = knowns.find(uvec2(viraw[i], tiraw[i]));
 
                 if (it != knowns.end())
                 {
                     //cout << "couple known" << endl;
                     //If yes, all we have to do is add the index we stored in the indices array
-                    m_indices.push_back(it->second);
+                    id.push_back(it->second);
                 }
                 else
                 {
                     //If no, we add a new couple of (vertex,uv) to the definitive array, a new index
                     //pointing to this couple and we declare the couple in the "knowns" map.
 
-                    cout << v.size() << " " << t.size() << endl;
-                    m_vertices.push_back(v.at(vi[i]));
-                    m_uvmap.push_back(t.at(ti[i]));
-                    m_indices.push_back(m_vertices.size() - 1);
+                    //cout << v.size() << " " << t.size() << endl;
+                    id.push_back(v.size());
+                    knowns[uvec2(viraw[i],tiraw[i])] = v.size();
 
-                    knowns[uvec2(vi[i],ti[i])] = m_vertices.size() - 1;
+                    v.push_back(vraw.at(viraw[i]));
+                    t.push_back(traw.at(tiraw[i]));
                 }
 
             }
-    cout << "done" << endl;
-
-			m_gObj.load(m_vertices, m_indices, m_uvmap);
+            cout << "done" << endl;
+			m_gObj.load(v, id, t);
 		}
 		else
-			m_gObj.load(v, vi); //Les donées brutes suffisent s'il n'y a pas de textures
+			m_gObj.load(vraw, viraw); //Les donées brutes suffisent s'il n'y a pas de textures
 		m_pObj = new PObject(); // = new PMesh();
 		cout << "Loading successful" << endl;
 	}
@@ -70,18 +68,6 @@ Mesh::Mesh(string filename)
 		cout << "Error while loading model, no file found" << endl;
     inFile.clear();
     inFile.seekg(0, ios::beg); 
-
-	m_vertices.clear();
-	m_vertices.shrink_to_fit();
-
-	m_indices.clear();
-	m_indices.shrink_to_fit();
-
-	m_uvmap.clear();
-	m_uvmap.shrink_to_fit();
-
-	m_normals.clear();
-	m_normals.shrink_to_fit();
 }
 
 
@@ -94,7 +80,6 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 	string ident;
 	vec3 point;
 	vec2 UV;
-
 	//Temporary vectors filled with vertices and uvs, they are not necessarily in the same order
 
 	while (getline(*filename, line))
@@ -108,7 +93,7 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 		{
 			ss >> point.x >> point.y >> point.z;
 			v.push_back(point);
-			cout << "vert: " << point.x << " " << point.y << " " << point.z << endl;
+			//cout << "vert: " << point.x << " " << point.y << " " << point.z << endl;
 		}
 		else if (ident == "vt")
 		{
@@ -124,6 +109,7 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 			uvec3 uvFace;
 			string cur = "plop";
 			string subcur;
+            bool tex = false ;
 
 			while (cur != "" && c < 4)
 			{
@@ -135,17 +121,19 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 
 				while (getline(subss, subcur, '/'))
 				{
+                    //si f x//y il faudrait l'enlever.
 					if (subcur != "")
 					{
 						switch (fLineInd)
 						{
 							case 0:
 								vert[c] = stoi(subcur) - 1;
-								cout << "ind: " << vert[c] << endl;
+								//cout << "ind: " << vert[c] << endl;
 								break;
 
 							case 1:
 								uvs[c] = stoi(subcur) - 1;
+                                tex = true ;
 								break;
 
 							case 2:
@@ -163,11 +151,13 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 			vi.push_back(vert[0]);
 			vi.push_back(vert[1]);
 			vi.push_back(vert[2]);
-
-			ti.push_back(uvs[0]);
-			ti.push_back(uvs[1]);
-			ti.push_back(uvs[2]);
-
+            
+            if(tex)
+            {
+                ti.push_back(uvs[0]);
+                ti.push_back(uvs[1]);
+                ti.push_back(uvs[2]);
+            }
 
 
 			if(c == 4)
@@ -175,16 +165,22 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 				vi.push_back(vert[0]);
 				vi.push_back(vert[2]);
 				vi.push_back(vert[3]);
-
-				ti.push_back(uvs[0]);
-				ti.push_back(uvs[2]);
-				ti.push_back(uvs[3]);
-
+                if(tex)
+                {
+                    ti.push_back(uvs[0]);
+                    ti.push_back(uvs[2]);
+                    ti.push_back(uvs[3]);
+                }
 
 			}
 		}
 	}
-	cout << "Loaded " << v.size() << " vertices, " << vi.size() << " indices"  << endl;
+    /*
+    for(int i = 0 ; i < vi.size()/3 ; i++)
+    {
+        cout << vi[3*i] << ";" << vi[3*i+1] << ";" << vi[3*i+2] << endl ;
+    }*/
+	cout << "Loaded " << v.size() << " vertices with " << vi.size() << " indices, "<< t.size() << " uvs with "<< ti.size() << " indices."  << endl;
 }
 
 Mesh::~Mesh()

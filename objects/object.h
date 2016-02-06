@@ -22,6 +22,7 @@ class Object
         virtual ~Object();
 
         void setShader(Shader* shader);
+        void setTexture(Texture* tex);
 
         virtual ObjectType getType() = 0;
         PObject* getPObject();

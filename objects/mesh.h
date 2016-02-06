@@ -19,10 +19,6 @@ class Mesh : public Object
 
 
 	private:
-		std::vector<glm::vec3> m_vertices;
-        std::vector<unsigned int> m_indices;
-        std::vector<glm::vec2> m_uvmap;
-        std::vector<unsigned int> m_normals;
 
 		void loadRawData(std::ifstream* filename, std::vector<glm::vec3>& v,std::vector<unsigned int>& vi, std::vector<glm::vec2>& t,std::vector<unsigned int>& ti );
 		void processData(std::vector<glm::vec3>& v,std::vector<unsigned int>& vi, std::vector<glm::vec2>& t,std::vector<unsigned int>& ti );;
@@ -31,7 +27,7 @@ class Mesh : public Object
 		{
 			bool operator()(const glm::uvec2& a, const glm::uvec2& b) const
 			{
-				return a.x < b.x;
+				return a.x < b.x || ((a.x == b.x) && (a.y < a.y)) ;
 			}
 		};
 

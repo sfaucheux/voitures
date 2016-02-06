@@ -12,6 +12,10 @@ void Object::setShader(Shader* shader)
 {
     m_gObj.setShader(shader);
 }
+void Object::setTexture(Texture* tex)
+{
+    m_gObj.setTexture(tex);
+}
 
 PObject* Object::getPObject()
 {
