@@ -33,12 +33,12 @@ int main(int argc, char** argv)
     }
     PWorld world(glm::vec3(0,0,-9.81));
     Mesh obj(filename);
-    //Box obj2(15,20,8);
-    //obj2.translate(glm::vec3(20,20,20));
+    Box obj2(15,20,8);
+    obj2.translate(glm::vec3(20,20,20));
 
     world.addObject(obj.getPObject());
-    //world.addObject(obj2.getPObject());
-    //obj.rotate(glm::vec3(3.1415 / 2.0, 0, 0)); // 90 degrés
+    world.addObject(obj2.getPObject());
+    obj.rotate(glm::vec3(3.1415 / 2.0, 10, 30)); // 90 degrés
 
     Texture tex ;
     tex.load("textures/mushroom.png");
@@ -48,20 +48,20 @@ int main(int argc, char** argv)
 
     while (context.eventLoop())
     {
-        //world.update(0.05);
+        world.update(0.05);
         obj.sync();
-        //obj2.sync();
+        obj2.sync();
         context.clean();
         obj.setShader(&shdr2);
-        //obj2.setShader(&shdr2);
+        obj2.setShader(&shdr2);
         renderer.draw(obj); 
-        //renderer.draw(obj2); 
+        renderer.draw(obj2); 
         obj.setShader(&shdr1);
-        //obj2.setShader(&shdr1);
+        obj2.setShader(&shdr1);
         renderer.draw(obj, GL_LINE); 
-        //renderer.draw(obj2, GL_LINE); 
+        renderer.draw(obj2, GL_LINE); 
         context.show();
-        //obj.rotate(glm::vec3(0,0.02,0));
+        obj.rotate(glm::vec3(0,0.02,0));
 
         usleep(50000);
     }
