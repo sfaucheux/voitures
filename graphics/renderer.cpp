@@ -3,7 +3,7 @@
 
 #include "renderer.h"
 
-Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(10, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0))
+Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(50, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1))
 {
 }
 
@@ -35,8 +35,13 @@ void Renderer::draw(Drawable const& drawable, GLenum mode)
                 glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(m_camera.getView()));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(drawable.getModel()));
-                glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
+                if(drawable.getTexture()->getId() != 0)
+                {
+                    glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
+                }
                 glDrawElements(GL_TRIANGLES, drawable.getIndicesNumber(), GL_UNSIGNED_INT, NULL);
+                glBindTexture(GL_TEXTURE_2D,0); 
+
         glBindVertexArray(0);
     glUseProgram(0);
 }
