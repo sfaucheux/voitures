@@ -88,11 +88,68 @@ void Drawable::homothetie(glm::vec3 homoth)
 
 void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices, std::vector<glm::vec2> const &textures)
 {
-    int sizeVertices = sizeof(glm::vec3) * vertices.size();
-    int sizeIBO = sizeof(unsigned int) * indices.size();
-    //int sizeIBO = sizeof(glm::vec3) * indices.size();
-    int sizeTBO = sizeof(glm::vec2) * textures.size();
+    loadVerticesVBO(vertices);
+    loadTexturesVBO(textures);
+    loadIndicesVBO(indices);
+    loadVAO();
+    m_indicesNumber = indices.size() * 3 ;
+    m_verticesNumber = vertices.size() * 3 ;
 
+}
+void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices)
+{
+    loadVerticesVBO(vertices);
+    loadIndicesVBO(indices);
+    loadVAO();
+    m_indicesNumber = indices.size() * 3 ;
+    m_verticesNumber = vertices.size() * 3 ;
+
+}
+void Drawable::loadVerticesVBO(std::vector<glm::vec3> const &vertices)
+{
+    int sizeVertices = sizeof(glm::vec3) * vertices.size();
+    if (glIsBuffer(m_idVBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idVBO);
+
+    //Création et activation.
+    glGenBuffers(1, &m_idVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
+    //Allocation.
+    glBufferData(GL_ARRAY_BUFFER, sizeVertices, &vertices[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+void Drawable::loadIndicesVBO(std::vector<unsigned int> const &indices)
+{
+    int sizeIBO = sizeof(unsigned int) * indices.size();
+    if (glIsBuffer(m_idIBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idIBO);
+
+    //Création et activation
+    glGenBuffers(1, &m_idIBO);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIBO);
+    //Allocation
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIBO, &indices[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
+}
+void Drawable::loadTexturesVBO(std::vector<glm::vec2> const &textures)
+{
+
+    int sizeTBO = sizeof(glm::vec2) * textures.size();
+    if (glIsBuffer(m_idTBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idTBO) ;
+
+    //Création et activation.
+    glGenBuffers(1, &m_idTBO);
+    glBindBuffer(GL_ARRAY_BUFFER, m_idTBO) ;
+    //Allocation
+    glBufferData(GL_ARRAY_BUFFER, sizeTBO, &textures[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+}
+
+void Drawable::loadVAO()
+{
     //VAO
     if (glIsVertexArray(m_idVAO) == GL_TRUE)
         glDeleteVertexArrays(1, &m_idVAO);
@@ -101,51 +158,20 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned
     glGenVertexArrays(1, &m_idVAO);
     glBindVertexArray(m_idVAO);
 
-    //VBO Vertices.
-    if (glIsBuffer(m_idVBO) == GL_TRUE)
-      glDeleteBuffers(1, &m_idVBO);
-    
-    //Création et activation.
-    glGenBuffers(1, &m_idVBO);
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
-    //Allocation.
-    glBufferData(GL_ARRAY_BUFFER, sizeVertices, &vertices[0], GL_STATIC_DRAW);
     //Identifiacation.
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
     
-    //VBO Indices
-    if (glIsBuffer(m_idIBO) == GL_TRUE)
-        glDeleteBuffers(1, &m_idIBO);
-    
-    //Création et activation
-    glGenBuffers(1, &m_idIBO);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIBO);
-    //Allocation
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeIBO, &indices[0], GL_STATIC_DRAW);
-    
-    //VBO Textures
-    if (glIsBuffer(m_idTBO) == GL_TRUE)
-        glDeleteBuffers(1, &m_idTBO) ;
-    
-    //Création et activation.
-    glGenBuffers(1, &m_idTBO);
-    glBindBuffer(GL_ARRAY_BUFFER, m_idTBO) ;
-    //Allocation
-    glBufferData(GL_ARRAY_BUFFER, sizeTBO, &textures[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ARRAY_BUFFER, m_idTBO);
     //Identification.
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
     glEnableVertexAttribArray(2);
 
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIBO);
     glBindVertexArray(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    m_indicesNumber = indices.size() * 3 ;
-    m_verticesNumber = vertices.size() * 3 ;
 
 }
-
 void Drawable::update(const std::vector<float> &data, int offset)
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);

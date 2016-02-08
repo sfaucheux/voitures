@@ -1,9 +1,10 @@
 #include "texture.h"
 #include <iostream>
 #include <istream>
+#include <png.h>//#include <SOIL/SOIL2.h>
+#include <unistd.h>
 
 using namespace std;
-using namespace png;
 
 Texture::Texture() : m_id(0)
 {
@@ -15,14 +16,25 @@ GLuint Texture::getId() const
 }
 void Texture::load(string name)
 {
-    //Code adapté d'un post sur le net.
-    //Provisoire en attendant un vrai gestionnaire d'image !
-    //Je pense qu'on va abandonner png++ c'est une grosse *****.
+    /*
+    GLuint tex_2d = SOIL_load_OGL_texture
+        (
+         name.c_str(),
+         SOIL_LOAD_AUTO,
+         SOIL_CREATE_NEW_ID,
+         SOIL_FLAG_MIPMAPS | SOIL_FLAG_INVERT_Y | SOIL_FLAG_NTSC_SAFE_RGB | SOIL_FLAG_COMPRESS_TO_DXT
+        );
 
-    int width = 700, height =700;
+     check for an error during the load process 
+    if( 0 == tex_2d )
+    {
+        cerr <<  "SOIL loading error:" <<  SOIL_last_result() ;
+    } 
+    */
+       int width = 700, height =700;
        png_byte header[8];
 
-    FILE *fp = fopen(name.c_str(), "rb");
+       FILE *fp = fopen(name.c_str(), "rb");
     if (fp == 0)
     {
         perror(name.c_str());

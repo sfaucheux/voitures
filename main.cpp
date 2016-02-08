@@ -31,7 +31,7 @@ int main(int argc, char** argv)
         cerr << "Impossible d'initialiser le contexte OpenGL." << endl;
         return 0;
     }
-    PWorld world(glm::vec3(0,0,-9.81));
+    PWorld world(glm::vec3(0,0,-0.981));
     Mesh obj(filename);
     Box obj2(15,20,8);
     obj2.translate(glm::vec3(20,20,20));
@@ -43,6 +43,7 @@ int main(int argc, char** argv)
     Texture tex ;
     tex.load("textures/mushroom.png");
     obj.setTexture(&tex);
+    obj2.setTexture(&tex);
     Shader shdr1("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader shdr2("shaders/gris.vert", "shaders/texture.frag");
 

@@ -1,6 +1,5 @@
 #include <GL/glew.h>
 #include <string>
-#include <png++/png.hpp>
 #include <iostream>
 #include <istream>
 
