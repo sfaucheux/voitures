@@ -187,31 +187,6 @@ void Drawable::loadTexturesVBO(std::vector<glm::vec2> const &textures)
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
 }
-
-void Drawable::loadVAO()
-{
-    //VAO
-    if (glIsVertexArray(m_idVAO) == GL_TRUE)
-        glDeleteVertexArrays(1, &m_idVAO);
-    
-    //Création et activation.
-    glGenVertexArrays(1, &m_idVAO);
-    glBindVertexArray(m_idVAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
-    //Identifiacation.
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
-    
-    glBindBuffer(GL_ARRAY_BUFFER, m_idTBO);
-    //Identification.
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, 0);
-    glEnableVertexAttribArray(2);
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_idIBO);
-    glBindVertexArray(0);
-
-}
 void Drawable::update(const std::vector<float> &data, int offset)
 {
     glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
