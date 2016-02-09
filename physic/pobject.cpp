@@ -10,8 +10,8 @@ PObject::PObject() : m_centroid(0), m_position(0), m_angle(0), m_inertia(1), m_v
 	m_static = false ;
     m_awake= true ;
     m_static = false ;
-    m_linearDamping = 0.2;
-    m_angularDamping = 0.2;
+    m_linearDamping = 0.1;
+    m_angularDamping = 0.1;
 }
 
 PObject::~PObject()
