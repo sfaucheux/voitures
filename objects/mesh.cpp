@@ -4,6 +4,7 @@
 #include <map>
 
 #include "mesh.h"
+#include "../physic/pmesh.h"
 
 using namespace std;
 using namespace glm;
@@ -60,8 +61,8 @@ Mesh::Mesh(string filename)
 			m_gObj.load(v, id, t);
 		}
 		else
-			m_gObj.load(vraw, viraw); //Les donées brutes suffisent s'il n'y a pas de textures
-		m_pObj = new PObject(); // = new PMesh();
+		m_gObj.load(vraw, viraw); //Les donées brutes suffisent s'il n'y a pas de textures
+		m_pObj = new PMesh();
 		cout << "Loading successful" << endl;
 	}
 	else

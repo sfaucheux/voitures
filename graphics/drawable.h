@@ -35,8 +35,6 @@ class Drawable
         void load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices, std::vector<glm::vec2> const &textures);
         void load(std::vector<glm::vec3> const &vertices, std::vector<unsigned int> const &indices);
         
-        void loadVAO();
-        
         void loadVerticesVBO(std::vector<glm::vec3> const &vertices);
         void loadIndicesVBO(std::vector<unsigned int> const &indices);
         void loadTexturesVBO(std::vector<glm::vec2> const &textures);
