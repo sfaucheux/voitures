@@ -1,4 +1,4 @@
-#version 150 core 
+#version 130 
 #
 in vec2 coordTexture;
 uniform sampler2D tex;
