@@ -123,7 +123,6 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned
 {
     loadVerticesVBO(vertices);
     loadIndicesVBO(indices);
-    loadVAO();
     //VAO
     if (glIsVertexArray(m_idVAO) == GL_TRUE)
         glDeleteVertexArrays(1, &m_idVAO);
