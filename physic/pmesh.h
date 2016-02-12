@@ -4,9 +4,14 @@ class PMesh : public PObject
 {
     public:
         PMesh();
-        int collide(PObject* obj);
-        int collideWithSphere(PSphere *s);
-        int collideWithBox(PBox* b);
-        int collideWithMesh(PMesh* b);
+        bool collide(PObject* obj);
+        bool collideWithSphere(PSphere *s);
+        bool collideWithBox(PBox* b);
+        bool collideWithMesh(PMesh* b);
+
+        virtual std::vector<glm::vec3> collisionPoints(PObject* obj);
+        virtual std::vector<glm::vec3> collisionPointsWithBox(PBox* obj) ;
+        virtual std::vector<glm::vec3> collisionPointsWithMesh(PMesh* obj) ;
+        virtual std::vector<glm::vec3> collisionPointsWithSphere(PSphere* obj) ;
     private:
 };

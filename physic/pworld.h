@@ -6,6 +6,7 @@
 #include "../glm/glm.hpp"
 
 #include "pobject.h"
+#include <array>
 
 class PWorld 
 {
@@ -16,11 +17,13 @@ class PWorld
         void addObject(PObject*);
         void removeObject(PObject*);
 
-
     private:
         std::list<PObject*> m_objects ;
         glm::vec3 m_gravity ;
         void integrate(float step);
+        void broadPhase();
+        void narrowPhase();
+        std::list<std::array<PObject*,2>> m_potentialCollisions ;
         
 
 };

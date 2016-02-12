@@ -1,7 +1,8 @@
 #include "pworld.h"
 #include "../glm/gtx/norm.hpp"
 
-using namespace glm ;
+using namespace glm;
+using namespace std;
 
 PWorld::PWorld(vec3 gravity)
 {
@@ -23,6 +24,27 @@ void PWorld::update(float step)
 {
     //Integration des grandeurs
     integrate(step);
+}
+void PWorld::broadPhase()
+{
+    for(auto it = m_objects.begin() ; it != m_objects.end() ; it++)
+    {
+        for(auto jt = m_objects.begin() ; jt != it ; jt++)
+        {
+            if((*it)->collide(*jt))
+                m_potentialCollisions.push_back({*it, *jt});
+        }
+    }
+}
+void PWorld::narrowPhase()
+{
+    for(auto it = m_potentialCollisions.begin() ; it != m_potentialCollisions.end() ; it++)
+    {
+        //if(((*it)[0])->collisionPoints(((*it)[1])));
+        //{
+
+        //}
+    }
 }
 void PWorld::integrate(float step)
 {
