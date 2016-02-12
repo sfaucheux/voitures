@@ -35,7 +35,6 @@ class Camera
         double m_theta, m_phi;
 
         glm::mat4 m_view;
-        glm::mat4 m_projection;
 
         glm::mat3 m_passage ;
         glm::mat3 m_passageInverse ;
