@@ -3,13 +3,14 @@
 #include <sstream>
 
 #include "mesh.h"
+#include "../physic/pmesh.h"
 
 using namespace std;
 using namespace glm;
 
 Mesh::Mesh(string filename)
 {
-	cout << "Loading " << filename << endl;
+    cout << "Loading " << filename << endl;
     ifstream inFile ("models/" + filename);
     string line;
 
@@ -22,7 +23,7 @@ Mesh::Mesh(string filename)
         {
             stringstream ss (stringstream::in | stringstream::out);
             ss << line;
-            
+
             ss >> ident;
 
             if (ident == "v")
@@ -46,11 +47,11 @@ Mesh::Mesh(string filename)
                     stringstream subss (stringstream::in | stringstream::out);
                     subss << cur;
                     getline(subss, subcur, '/');
-					if (subcur != "")
-					{
-                    	vert[c] = stoi(subcur) - 1;
-                    	c++;
-					}
+                    if (subcur != "")
+                    {
+                        vert[c] = stoi(subcur) - 1;
+                        c++;
+                    }
                 }
 
                 face.x = vert[0];
@@ -67,8 +68,8 @@ Mesh::Mesh(string filename)
                 }
             }
         }
-        m_gObj.load(m_vertices, m_faces/*, m_textures*/); //TODO
-        m_pObj = new PObject(); // = new PMesh();
+        m_gObj.load(m_vertices, m_faces);
+        m_pObj = new PMesh();
         cout << "Loading successful" << endl;
     }
     else
