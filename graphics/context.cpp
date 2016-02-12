@@ -56,6 +56,7 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 
     glewExperimental=true;
 	GLenum err = glewInit();
+    glGetError(); //reinitialise le flag d'erreur.
 	if (GLEW_OK != err)
 	{
         glfwTerminate();

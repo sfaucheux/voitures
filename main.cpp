@@ -49,6 +49,10 @@ int main(int argc, char** argv)
 
     while (context.eventLoop())
     {
+        GLenum err ;
+        while(err = glGetError())
+            cerr << "OpenGl error : " << err << endl ;
+
         world.update(0.05);
         obj.sync();
         obj2.sync();
@@ -63,7 +67,6 @@ int main(int argc, char** argv)
         renderer.draw(obj2, GL_LINE); 
         context.show();
         obj.rotate(glm::vec3(0,0.02,0));
-
         usleep(50000);
     }
 
