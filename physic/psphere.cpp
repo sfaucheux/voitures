@@ -1,4 +1,5 @@
 #include "psphere.h"
+#include "pbox.h"
 
 PSphere::PSphere(float radius)
 {
@@ -17,7 +18,7 @@ int PSphere::collideWithSphere(PSphere *s)
 
 int PSphere::collideWithBox(PBox* b)
 {
-    return -1;
+    return b->collideWithSphere(this);
 }
 
 int PSphere::collideWithMesh(PMesh* b)
