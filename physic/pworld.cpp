@@ -1,5 +1,6 @@
 #include "pworld.h"
 #include "../glm/gtx/norm.hpp"
+#include <iostream>
 
 using namespace glm;
 using namespace std;
@@ -26,6 +27,11 @@ void PWorld::removeObject(PObject* object)
 
 void PWorld::update(float step)
 {
+    broadPhase();
+    narrowPhase();
+    collisionResponse();
+    m_potentialCollisions.clear();
+    m_collided.clear();
     //Integration des grandeurs
     integrate(step);
 }
@@ -65,9 +71,16 @@ void PWorld::narrowPhase()
 
 void PWorld::collisionResponse()
 {
+    vector<vec3> newVelocities ;
     for (auto it = m_collided.begin(); it != m_collided.end(); it++)
     {
-        (*it)->doContactsResponse();
+        newVelocities.push_back((*it)->doContactsResponse());
+    }
+    auto it = m_collided.begin() ;
+    for(int i = 0; i < newVelocities.size() ; i++)
+    {
+        (*it)->setVelocity(newVelocities[i]);
+        it++;
     }
 }
 
@@ -91,7 +104,6 @@ void PWorld::integrate(float step)
 
         obj->translate(obj->getVelocity() * step);
         obj->rotate(obj->getAngularVelocity() * step);
-
         //On réinitialise les forces et couples.
         obj->resetActions();
 

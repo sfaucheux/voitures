@@ -1,11 +1,13 @@
-#include "../glm/gtc/matrix_transform.hpp"
 #include "pobject.h"
+#include "../glm/gtc/matrix_transform.hpp"
+#include <iostream>
 
 using namespace glm;
 using namespace std;
 
-PObject::PObject() : m_centroid(0), m_position(0), m_angle(0), m_inertia(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0)
+PObject::PObject() : m_centroid(0), m_position(0), m_angle(0), m_inertia(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0), m_model(1)
 {
+    m_modelInv = transpose(m_model);
     m_mass = 1;
     m_volume = 1;
     m_static = false ;
@@ -19,11 +21,33 @@ PObject::~PObject()
 {
 }
 
-void PObject::doContactsResponse()
+vec3 PObject::doContactsResponse()
 {
-
+    PObject* obj;
+    vec3 contactPoint;
+    vec3 normal;
+    float masses = 0;
+    vec3 velocities(0,0,0) ;
+    for(auto it = m_contacts.begin() ; it != m_contacts.end() ; it++)
+    {
+        tie(obj, contactPoint, normal) = *it ;
+        normal = normalize(normal);
+        vec3 pointVelocity = obj->getVelocity() - obj->getLocalPoint(contactPoint) * obj->getAngularVelocity();
+        float velocity = dot(pointVelocity, normal);
+        velocities += obj->getMass()*velocity*normal;
+        masses+= obj->getMass() ;
+    }
+    velocities /= masses;
+    m_contacts.clear();
+    //Choc elastique.
+    return (m_mass-masses)/(m_mass+masses)*m_velocity + (2*masses)/(masses+ m_mass)*velocities ;
+    //Choc inelastique.
+    //return (m_mass/(m_mass+masses))*m_velocity + (masses/(masses+ m_mass))*velocities ;
 }
-
+vec3 PObject::getLocalPoint(vec3 point)
+{
+   return vec3(m_modelInv*vec4(point,1));
+}
 void PObject::setMass(float m)
 {
     if (m >= 0.0)
@@ -103,11 +127,21 @@ float PObject::getVolume()
 void PObject::rotate(glm::vec3 angle)
 {
     m_angle += angle;
+    m_model = glm::translate(mat4(1), m_position);
+    m_model = glm::rotate(m_model, m_angle.x, vec3(1,0,0));
+    m_model = glm::rotate(m_model, m_angle.y, vec3(0,1,0));
+    m_model = glm::rotate(m_model, m_angle.z, vec3(0,0,1));
+    m_modelInv = glm::transpose(m_model);
 }
 
 void PObject::translate(glm::vec3 t)
 {
     m_position += t;
+    m_model = glm::translate(mat4(1), m_position);
+    m_model = glm::rotate(m_model, m_angle.x, vec3(1,0,0));
+    m_model = glm::rotate(m_model, m_angle.y, vec3(0,1,0));
+    m_model = glm::rotate(m_model, m_angle.z, vec3(0,0,1));
+    m_modelInv = glm::transpose(m_model);
 }
 
 vec3 PObject::getForces()

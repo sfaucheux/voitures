@@ -35,7 +35,7 @@ class PObject
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(PMesh* obj) = 0;
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(PSphere* obj) = 0;
 
-        void doContactsResponse();
+        glm::vec3 doContactsResponse();
 
         void setMass(float m);
         void setVelocity(glm::vec3 s);
@@ -44,6 +44,7 @@ class PObject
         void setAngularAcceleration(glm::vec3 a);
         void setStatic(bool s);
 
+        glm::vec3 getLocalPoint(glm::vec3 point);
         glm::vec3 getPosition();
         glm::vec3 getVelocity();
         glm::vec3 getAcceleration();
@@ -71,6 +72,8 @@ class PObject
     protected:
 
         type m_type;
+        glm::mat4 m_model;
+        glm::mat4 m_modelInv;
         glm::vec3 m_position;
         glm::vec3 m_angle;
         glm::mat3 m_inertia;
