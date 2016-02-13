@@ -2,20 +2,26 @@
 #include "pobject.h"
 
 using namespace glm;
+using namespace std;
 
 PObject::PObject() : m_centroid(0), m_position(0), m_angle(0), m_inertia(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0)
 {
-	m_mass = 1;
-	m_volume = 1;
-	m_static = false ;
+    m_mass = 1;
+    m_volume = 1;
+    m_static = false ;
     m_awake= true ;
     m_static = false ;
-    m_linearDamping = 0.2;
-    m_angularDamping = 0.2;
+    m_linearDamping = 0.1;
+    m_angularDamping = 0.1;
 }
 
 PObject::~PObject()
 {
+}
+
+void PObject::doContactsResponse()
+{
+
 }
 
 void PObject::setMass(float m)
@@ -122,6 +128,11 @@ void PObject::addForce(vec3 f)
 void PObject::addTorque(vec3 t)
 {
     m_torques += t ;
+}
+
+void PObject::addContact(tuple<PObject*, vec3, vec3> contact)
+{
+    m_contacts.push_back(contact);
 }
 
 glm::mat3 PObject::getInertia()

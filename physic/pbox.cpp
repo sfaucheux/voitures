@@ -5,6 +5,9 @@
 #include "pbox.h"
 #include "psphere.h"
 
+using namespace std;
+using namespace glm;
+
 PBox::PBox(float width, float height, float depth)
 {
     m_width = width;
@@ -22,14 +25,23 @@ bool PBox::collide(PObject* obj)
     return obj->collideWithBox(this);
 }
 
+bool PBox::collideWithBox(PBox* b)
+{
+    return false;
+}
+
+bool PBox::collideWithMesh(PMesh* b)
+{
+    return false;
+}
+
 bool PBox::collideWithSphere(PSphere *s)
 {
     // calculating s's position relative to this
     glm::vec3 sphPos = s->getPosition() - this->getPosition();
-    glm::vec3 rot = this->getRotation();
-    sphPos = glm::vec3(glm::rotate(-rot.x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-rot.y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-rot.z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-m_angle.x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-m_angle.y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-m_angle.z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
 
     float xc = fabsf(sphPos.x);
     float yc = fabsf(sphPos.y);
@@ -68,12 +80,22 @@ bool PBox::collideWithSphere(PSphere *s)
         return false;
 }
 
-bool PBox::collideWithBox(PBox* b)
+vector<tuple<vec3,vec3>> PBox::collisionPoints(PObject* obj)
 {
-    return -1;
+    return obj->collisionPointsWithBox(this);
 }
 
-bool PBox::collideWithMesh(PMesh* b)
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithBox(PBox* obj) 
 {
-    return -1;
+    return vector<tuple<vec3,vec3>>();
+}
+
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithMesh(PMesh* obj) 
+{
+    return vector<tuple<vec3,vec3>>();
+}
+
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithSphere(PSphere* obj) 
+{
+    return vector<tuple<vec3,vec3>>();
 }
