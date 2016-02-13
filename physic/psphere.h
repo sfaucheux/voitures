@@ -10,10 +10,10 @@ class PSphere : public PObject
         virtual bool collideWithMesh(PMesh* obj);
         virtual bool collideWithSphere(PSphere* obj);
 
-        virtual std::vector<glm::vec3> collisionPoints(PObject* obj);
-        virtual std::vector<glm::vec3> collisionPointsWithBox(PBox* obj);
-        virtual std::vector<glm::vec3> collisionPointsWithMesh(PMesh* obj);
-        virtual std::vector<glm::vec3> collisionPointsWithSphere(PSphere* obj);
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(PObject* obj);
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithBox(PBox* obj);
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(PMesh* obj);
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(PSphere* obj);
 
         float getRadius() const;
 

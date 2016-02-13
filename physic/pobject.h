@@ -4,6 +4,7 @@
 #include <string>
 #include <list>
 #include <vector>
+#include <tuple>
 
 #include "../glm/glm.hpp"
 
@@ -29,10 +30,12 @@ class PObject
         virtual bool collideWithMesh(PMesh* obj) = 0 ;
         virtual bool collideWithSphere(PSphere* obj) = 0 ;
 
-        virtual std::vector<glm::vec3> collisionPoints(PObject* obj) = 0 ;
-        virtual std::vector<glm::vec3> collisionPointsWithBox(PBox* obj) = 0 ;
-        virtual std::vector<glm::vec3> collisionPointsWithMesh(PMesh* obj) = 0 ;
-        virtual std::vector<glm::vec3> collisionPointsWithSphere(PSphere* obj) = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(PObject* obj) = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithBox(PBox* obj) = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(PMesh* obj) = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(PSphere* obj) = 0 ;
+
+        void doContactsResponse();
 
         void setMass(float m);
         void setVelocity(glm::vec3 s);
@@ -61,6 +64,7 @@ class PObject
         void translate(glm::vec3 t);
         void addForce(glm::vec3 f);
         void addTorque(glm::vec3 t);
+        void addContact(std::tuple<PObject*, glm::vec3, glm::vec3> contact);
         void resetActions();
 
 
@@ -88,6 +92,8 @@ class PObject
 
         glm::vec3 m_forces ;
         glm::vec3 m_torques ;
+
+        std::list<std::tuple<PObject*, glm::vec3, glm::vec3>> m_contacts;
 /*
         std::list<Fixture> m_fixtures ;
         std::list<Joint> m_joints ;

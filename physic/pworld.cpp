@@ -38,13 +38,31 @@ void PWorld::broadPhase()
 }
 void PWorld::narrowPhase()
 {
+    PObject *obj1, *obj2 ;
     for(auto it = m_potentialCollisions.begin() ; it != m_potentialCollisions.end() ; it++)
     {
-        //if(((*it)[0])->collisionPoints(((*it)[1])));
-        //{
-
-        //}
+        obj1 = (*it)[0];
+        obj2 = (*it)[1];
+        vector<tuple<vec3,vec3>> points = obj1->collisionPoints(obj2);
+        for(int j = 0 ; j < points.size() ; j++)
+        {
+           obj1->addContact(make_tuple(obj2, get<0>(points[j]), get<1>(points[j])));
+           obj2->addContact(make_tuple(obj1, get<0>(points[j]), -get<1>(points[j])));
+        }
+        if(points.size())
+        {
+            m_collided.push_back(obj1);
+            m_collided.push_back(obj2);
+        }
     }
+}
+void PWorld::collisionResponse()
+{
+    for(auto it = m_collided.begin() ; it != m_collided.end() ; it++)
+    {
+        (*it)->doContactsResponse();
+    }
+
 }
 void PWorld::integrate(float step)
 {

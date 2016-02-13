@@ -20,7 +20,7 @@ bool PSphere::collide(PObject* obj)
 
 bool PSphere::collideWithSphere(PSphere *s)
 {
-    return length(m_position - s->getPosition()) - abs(m_radius + s->getRadius());
+    return distance2(m_position, s->getPosition()) < (m_radius + s->getRadius())*(m_radius + s->getRadius());
 }
 
 bool PSphere::collideWithBox(PBox* b)
@@ -33,24 +33,29 @@ bool PSphere::collideWithMesh(PMesh* b)
     return false;
 }
 
-vector<vec3> PSphere::collisionPoints(PObject* obj)
+vector<tuple<vec3,vec3>> PSphere::collisionPoints(PObject* obj)
 {
     return obj->collisionPointsWithSphere(this);
 }
 
-vector<vec3> PSphere::collisionPointsWithBox(PBox* obj) 
+vector<tuple<vec3,vec3>> PSphere::collisionPointsWithBox(PBox* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
 
-vector<vec3> PSphere::collisionPointsWithMesh(PMesh* obj) 
+vector<tuple<vec3,vec3>> PSphere::collisionPointsWithMesh(PMesh* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
 
-vector<vec3> PSphere::collisionPointsWithSphere(PSphere* obj) 
+vector<tuple<vec3,vec3>> PSphere::collisionPointsWithSphere(PSphere* obj) 
 {
-    return vector<vec3>();
+    //On retourne la moyenne des centres ponderees par les rayons.
+    //La normale est définie comme le vecteur formé par les deux centres.
+    //Suppose que les spheres sont en collision (c'est le cas, la broadphase est exacte pour les solides de base).
+    vec3 point((m_radius*m_position + obj->getRadius()*obj->getPosition())/(m_radius + obj->getRadius()));
+    vec3 normal(m_position - obj->getPosition());
+    return vector<tuple<vec3,vec3>>({make_tuple(point, normal)});
 }
 
 float PSphere::getRadius() const
