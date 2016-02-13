@@ -79,7 +79,7 @@ bool Context::eventLoop()
 
 }
 
-void  Context::cursor(double xpos, double ypos)
+void Context::cursor(double xpos, double ypos)
 {
 	double dx = xpos - m_xCursor;
 	double dy = ypos - m_yCursor;
@@ -116,6 +116,11 @@ void Context::show()
 double Context::getFrametime()
 {
 	return m_frameTime;
+}
+
+bool Context::keyIsPressed(int key)
+{
+	return glfwGetKey(m_window, key) == GLFW_PRESS;
 }
 
 void Context::processEvents()
