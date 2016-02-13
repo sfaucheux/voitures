@@ -13,7 +13,6 @@ all: $(BUILD) $(BUILD)/voitures
 
 $(BUILD):
 	mkdir -p $@
-	echo $(OBJECTS)
 
 $(BUILD)/voitures: $(OBJECTS)
 	g++ -g -o $@ -L$(PREFIX)/lib $(addprefix -l,$(LIBS)) $(OBJECTS)
