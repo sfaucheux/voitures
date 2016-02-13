@@ -27,19 +27,19 @@ bool PBox::collideWithMesh(PMesh* b)
 {
     return false ;
 }
-vector<vec3> PBox::collisionPoints(PObject* obj)
+vector<tuple<vec3,vec3>> PBox::collisionPoints(PObject* obj)
 {
     return obj->collisionPointsWithBox(this);
 }
-vector<vec3> PBox::collisionPointsWithBox(PBox* obj) 
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithBox(PBox* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
-vector<vec3> PBox::collisionPointsWithMesh(PMesh* obj) 
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithMesh(PMesh* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
-vector<vec3> PBox::collisionPointsWithSphere(PSphere* obj) 
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithSphere(PSphere* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }

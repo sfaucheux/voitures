@@ -18,12 +18,15 @@ class PWorld
         void removeObject(PObject*);
 
     private:
-        std::list<PObject*> m_objects ;
-        glm::vec3 m_gravity ;
         void integrate(float step);
         void broadPhase();
         void narrowPhase();
+        void collisionResponse();
+
+        std::list<PObject*> m_objects ;
+        glm::vec3 m_gravity ;
         std::list<std::array<PObject*,2>> m_potentialCollisions ;
+        std::list<PObject*> m_collided ;
         
 
 };

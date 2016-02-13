@@ -22,19 +22,19 @@ bool PMesh::collideWithMesh(PMesh* b)
 {
     return false ;
 }
-vector<vec3> PMesh::collisionPoints(PObject* obj)
+vector<tuple<vec3,vec3>> PMesh::collisionPoints(PObject* obj)
 {
     return obj->collisionPointsWithMesh(this);
 }
-vector<vec3> PMesh::collisionPointsWithBox(PBox* obj) 
+vector<tuple<vec3,vec3>> PMesh::collisionPointsWithBox(PBox* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
-vector<vec3> PMesh::collisionPointsWithMesh(PMesh* obj) 
+vector<tuple<vec3,vec3>> PMesh::collisionPointsWithMesh(PMesh* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
-vector<vec3> PMesh::collisionPointsWithSphere(PSphere* obj) 
+vector<tuple<vec3,vec3>> PMesh::collisionPointsWithSphere(PSphere* obj) 
 {
-    return vector<vec3>();
+    return vector<tuple<vec3,vec3>>();
 }
