@@ -3,6 +3,7 @@
 
 #include <string>
 #include <list>
+#include <vector>
 
 #include "../glm/glm.hpp"
 
@@ -27,6 +28,11 @@ class PObject
         virtual bool collideWithBox(PBox* obj) = 0 ;
         virtual bool collideWithMesh(PMesh* obj) = 0 ;
         virtual bool collideWithSphere(PSphere* obj) = 0 ;
+
+        virtual std::vector<glm::vec3> collisionPoints(PObject* obj) = 0 ;
+        virtual std::vector<glm::vec3> collisionPointsWithBox(PBox* obj) = 0 ;
+        virtual std::vector<glm::vec3> collisionPointsWithMesh(PMesh* obj) = 0 ;
+        virtual std::vector<glm::vec3> collisionPointsWithSphere(PSphere* obj) = 0 ;
 
         void setMass(float m);
         void setVelocity(glm::vec3 s);

@@ -10,6 +10,11 @@ class PMesh : public PObject
         bool collideWithBox(PBox* b);
         bool collideWithMesh(PMesh* b);
 
+        virtual std::vector<glm::vec3> collisionPoints(PObject* obj);
+        virtual std::vector<glm::vec3> collisionPointsWithBox(PBox* obj);
+        virtual std::vector<glm::vec3> collisionPointsWithMesh(PMesh* obj);
+        virtual std::vector<glm::vec3> collisionPointsWithSphere(PSphere* obj);
+
 
     private:
 

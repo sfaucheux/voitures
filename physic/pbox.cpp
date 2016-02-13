@@ -5,6 +5,11 @@
 #include "pbox.h"
 #include "psphere.h"
 
+#include <vector>
+
+using namespace std;
+using namespace glm;
+
 PBox::PBox(float width, float height, float depth)
 {
     m_width = width;
@@ -20,6 +25,16 @@ float square(float f)
 bool PBox::collide(PObject* obj)
 {
     return obj->collideWithBox(this);
+}
+
+bool PBox::collideWithBox(PBox* b)
+{
+    return false ;
+}
+
+bool PBox::collideWithMesh(PMesh* b)
+{
+    return false ;
 }
 
 bool PBox::collideWithSphere(PSphere *s)
@@ -68,12 +83,22 @@ bool PBox::collideWithSphere(PSphere *s)
         return false;
 }
 
-bool PBox::collideWithBox(PBox* b)
+vector<vec3> PBox::collisionPoints(PObject* obj)
 {
-    return -1 ;
+    return obj->collisionPointsWithBox(this);
 }
 
-bool PBox::collideWithMesh(PMesh* b)
+vector<vec3> PBox::collisionPointsWithBox(PBox* obj) 
 {
-    return -1 ;
+    return vector<vec3>();
+}
+
+vector<vec3> PBox::collisionPointsWithMesh(PMesh* obj) 
+{
+    return vector<vec3>();
+}
+
+vector<vec3> PBox::collisionPointsWithSphere(PSphere* obj) 
+{
+    return vector<vec3>();
 }
