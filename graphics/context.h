@@ -27,6 +27,7 @@ class Context
         void show();
 
         double getFrametime();
+        bool keyIsPressed(int key);
 
 
     private:
