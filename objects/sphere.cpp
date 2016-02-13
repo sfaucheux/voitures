@@ -34,7 +34,7 @@ Sphere::Sphere(float radius)
     }
     vertices.push_back(glm::vec3(0, 0, radius));
 
-    m_gObj.load(vertices, indices);
+    m_gObj.load(vertices, *((std::vector<unsigned int>*) &indices));
     m_pObj = new PSphere(radius);
 }
 
