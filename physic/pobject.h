@@ -19,14 +19,14 @@ class PObject
 
         //Fonctions de collision précises, le type de retour int n'est que temporaire,
         //le plus adapté serait une structure ou un objet avec (point, normale, distance d'interpénétration).
-        
+
         //fonction qui renvoit la collision d'un pobject quelconque avec soit même.
-        virtual int collide(PObject* obj) = 0 ;
+        virtual bool collide(PObject* obj) = 0 ;
 
         //collision avec tous les autres pobjects.
-        virtual int collideWithBox(PBox* obj) = 0 ;
-        virtual int collideWithMesh(PMesh* obj) = 0 ;
-        virtual int collideWithSphere(PSphere* obj) = 0 ;
+        virtual bool collideWithBox(PBox* obj) = 0 ;
+        virtual bool collideWithMesh(PMesh* obj) = 0 ;
+        virtual bool collideWithSphere(PSphere* obj) = 0 ;
 
         void setMass(float m);
         void setVelocity(glm::vec3 s);
