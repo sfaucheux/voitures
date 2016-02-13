@@ -16,10 +16,10 @@ $(BUILD):
 	echo $(OBJECTS)
 
 $(BUILD)/voitures: $(OBJECTS)
-	g++ -o $@ -L$(PREFIX)/lib $(addprefix -l,$(LIBS)) $(OBJECTS)
+	g++ -g -o $@ -L$(PREFIX)/lib $(addprefix -l,$(LIBS)) $(OBJECTS)
 
 $(BUILD)/%.o:%.cpp
-	g++ -o $@ -I$(PREFIX)/include --std=c++14 -c $<
+	g++ -g -o $@ -I$(PREFIX)/include --std=c++14 -c $<
 
 .PHONY: clean
 clean:
