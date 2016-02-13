@@ -7,10 +7,10 @@ class PMesh : public PObject
 {
     public:
         PMesh();
-        int collide(PObject* obj);
-        int collideWithSphere(PSphere *s);
-        int collideWithBox(PBox* b);
-        int collideWithMesh(PMesh* b);
+        bool collide(PObject* obj);
+        bool collideWithSphere(PSphere *s);
+        bool collideWithBox(PBox* b);
+        bool collideWithMesh(PMesh* b);
 
 
     private:

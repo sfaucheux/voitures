@@ -4,22 +4,22 @@ PMesh::PMesh()
 {
 }
 
-int PMesh::collide(PObject* obj)
+bool PMesh::collide(PObject* obj)
 {
     return obj->collideWithMesh(this);
 }
 
-int PMesh::collideWithSphere(PSphere *s)
+bool PMesh::collideWithSphere(PSphere *s)
 {
     return -1 ; 
 }
 
-int PMesh::collideWithBox(PBox* b)
+bool PMesh::collideWithBox(PBox* b)
 {
     return -1 ;
 }
 
-int PMesh::collideWithMesh(PMesh* b)
+bool PMesh::collideWithMesh(PMesh* b)
 {
     return -1 ;
 }

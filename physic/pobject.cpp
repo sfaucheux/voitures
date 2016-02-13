@@ -103,35 +103,43 @@ void PObject::translate(glm::vec3 t)
 {
     m_position += t;
 }
+
 vec3 PObject::getForces()
 {
     return m_forces;
 }
+
 vec3 PObject::getTorques()
 {
     return m_torques;
 }
+
 void PObject::addForce(vec3 f)
 {
     m_forces += f ;
 }
+
 void PObject::addTorque(vec3 t)
 {
     m_torques += t ;
 }
+
 glm::mat3 PObject::getInertia()
 {
     return m_inertia;
 }
+
 void PObject::resetActions()
 {
     m_forces = vec3(0);
     m_torques = vec3(0);
 }
+
 float PObject::getLinearDamping()
 {
     return m_linearDamping ;
 }
+
 float PObject::getAngularDamping()
 {
     return m_angularDamping ;

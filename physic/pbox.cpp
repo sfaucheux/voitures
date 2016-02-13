@@ -17,12 +17,12 @@ float square(float f)
     return f * f;
 }
 
-int PBox::collide(PObject* obj)
+bool PBox::collide(PObject* obj)
 {
     return obj->collideWithBox(this);
 }
 
-int PBox::collideWithSphere(PSphere *s)
+bool PBox::collideWithSphere(PSphere *s)
 {
     // calculating s's position relative to this
     glm::vec3 sphPos = s->getPosition() - this->getPosition();
@@ -68,12 +68,12 @@ int PBox::collideWithSphere(PSphere *s)
         return false;
 }
 
-int PBox::collideWithBox(PBox* b)
+bool PBox::collideWithBox(PBox* b)
 {
     return -1;
 }
 
-int PBox::collideWithMesh(PMesh* b)
+bool PBox::collideWithMesh(PMesh* b)
 {
     return -1;
 }
