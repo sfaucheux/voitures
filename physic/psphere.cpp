@@ -9,6 +9,7 @@ using namespace glm;
 PSphere::PSphere(float radius)
 {
     m_radius = radius;
+    m_inertia = mat3(2*m_mass*radius*radius/5.);
 }
 
 bool PSphere::collide(PObject* obj)

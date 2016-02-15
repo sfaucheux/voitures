@@ -13,6 +13,9 @@ PBox::PBox(float width, float height, float depth)
     m_width = width;
     m_height = height;   
     m_depth = depth;
+    m_inertia[0][0] = m_mass*(height*height + depth*depth)/12.;
+    m_inertia[1][1] = m_mass*(width*width + depth*depth)/12.;
+    m_inertia[2][2] = m_mass*(height*height + width*width)/12.;
 }
 
 float square(float f)
