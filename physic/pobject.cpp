@@ -28,7 +28,7 @@ vec3 PObject::getLocalPoint(vec3 point)
 }
 vec3 PObject::getPointVelocity(vec3 point)
 {
-   return m_velocity - point * m_angularVelocity;
+   return m_velocity + cross(m_angularVelocity, point);
 }
 void PObject::setMass(float m)
 {
@@ -37,7 +37,7 @@ void PObject::setMass(float m)
 }
 float PObject::getInertiaMomentum(glm::vec3 axis)
 {
-    if(axis == vec3(0,0,0))
+    if(l1Norm(axis) == 0)
         return 1;
     axis = normalize(axis);
     return dot(m_inertia*axis, axis);

@@ -25,7 +25,7 @@ class PWorld
         void broadPhase();
         void narrowPhase();
         void collisionResponse();
-        float computeImpulse(PObject* obj1, PObject* obj2, glm::vec3 point, glm::vec3 normal);
+        glm::vec3 computeImpulse(PObject* obj1, PObject* obj2, glm::vec3 point, glm::vec3 normal);
 
         std::list<PObject*> m_objects;
         glm::vec3 m_gravity;

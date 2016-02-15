@@ -78,62 +78,83 @@ void PWorld::collisionResponse()
     bool computeAgain = true;
     PObject *obj1, *obj2;
     vec3 normal, point ;
-    while(computeAgain)
-    {
+    //while(computeAgain)
+    //{
         computeAgain = false ;
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {
+            //Ne marche peut etre pas pour plusieurs points de contacts.
+            //Si bug, il faudrait traiter les objets un par un et stocker tous les vecteurs puis les appliquer ensuite.
             obj1 = get<0>(*it);
             obj2 = get<1>(*it);
             vector<tuple<vec3,vec3>> points = get<2>((*it));
             for (int j = 0; j < points.size(); j++)
             {
                 tie(point, normal) = points[j] ;
-                vec3 relV = obj1->getPointVelocity(point) - obj2->getPointVelocity(point)  ;
-                float dV = dot(normal, relV);
-                if(dV < 0)
+                vec3 v12 = obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
+                float dV = dot(normal, v12);
+                if(dV > 0)
                 {
                     normal = normalize(normal);
-                    float j = computeImpulse(obj1, obj2, point, normal);
-                    obj1->setLinearImpulse(j*normal);
-                    obj2->setLinearImpulse(-j*normal);
-                    obj2->setAngularImpulse(j*cross(normal,obj1->getLocalPoint(point)));
-                    obj2->setAngularImpulse(-j*cross(normal,obj2->getLocalPoint(point)));
+                    vec3 impulse = computeImpulse(obj1, obj2, point, normal);
+                    obj1->setLinearImpulse(impulse);
+                    obj2->setLinearImpulse(-impulse);
+                    obj2->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
+                    obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
                     computeAgain = true ;
                 }
             }
         }
-    }
+    //}
     m_contacts.clear();
 }
-float PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
+vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
 {
     //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
     float e = 1;
+
     //masse des deux objet.
     float m1 = obj1->getMass(), m2 = obj2->getMass() ;
-    //Distance entre le centres d'inertie et le point de collision au carré.
-    float r1 = length2(cross(obj1->getLocalPoint(point), normal));
-    float r2 = length2(cross(obj2->getLocalPoint(point), normal));
 
     //On calcule la vitesse relative.
-    vec3 v12 =  obj1->getPointVelocity(obj1->getLocalPoint(point)) - obj2->getPointVelocity(obj2->getLocalPoint(point));
+    vec3 v12 =  obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
+    vec3 impulse = normal ; //Support de l'impulsion.
 
-    //On calcule les deux axes de rotation.
-    vec3 axis1 = cross(obj1->getLocalPoint(point),normal) ;
-    vec3 axis2 = cross(obj2->getLocalPoint(point),normal) ;
+    float r1 = 0, r2 = 0 ; //Distance centre d'inertie/point de contact au carré ou s'appliquerait l'impulsion si elle était orthgonale.
+    float I1 = 1, I2 = 1 ; //Moments d'inertie.
 
-    //vec3 tan = normalize(normal*v12);
+    //Si la réaction n'est pas une simple translation.
+    if(l1Norm(cross(v12, normal)) != 0)
+    {
+        vec3 tan = normalize(cross(normal, cross(v12, normal)));
+        
+        //Coefficient de frottement dynamique.
+        //Pour le statique c'est plus compliqué à simuler.
+        float f =  0.5 ;
 
-    //On recupere les moments d'inertie associes aux axes
-    float I1 = obj1->getInertiaMomentum(axis1) , I2 = obj2->getInertiaMomentum(axis2);
-    float j = -(1+e)*dot(v12, normal)/((1/m1+1/m2) + r1/I1 + r2/I2);
-    //float f = 0.5 ;
+        float tangentVelocity = dot(v12, tan) ;
+        float normalVelocity = dot(v12, normal) ;
 
-    //if(tgtVelocity > f*velocity)
-    //    tgtVelocity = f*velocity;
+        //Si glissement.
+        if(tangentVelocity > f*normalVelocity)
+            tangentVelocity = f*tangentVelocity ;
 
-        return j ;
+        //On calcule le support de l'impulsion.
+        impulse = normalize(normalVelocity*normal + tangentVelocity*tan) ;
+
+        //On calcule les deux axes de rotation.
+        vec3 axis1 = cross(point - obj1->getPosition(),impulse) ;
+        vec3 axis2 = cross(point - obj2->getPosition(),impulse) ;
+
+        //On recupere les moments d'inertie associes aux axes
+        I1 = obj1->getInertiaMomentum(axis1);
+        I2 = obj2->getInertiaMomentum(axis2);
+
+        //Distance entre le centres d'inertie et le point de collision au carre.
+        r1 = length2(cross(point - obj1->getPosition(), impulse));
+        r2 = length2(cross(point - obj2->getPosition(), impulse));
+    }
+    return  (1+e)*dot(v12, impulse)/((1/m1+1/m2) + r1/I1 + r2/I2) * impulse ;
 }
 void PWorld::integrate(float step)
 {
@@ -151,7 +172,7 @@ void PWorld::integrate(float step)
 
         //On simule les effets des frottements
         obj->setVelocity(obj->getVelocity()/(length2((obj->getVelocity()*obj->getLinearDamping()*step))+1));
-        obj->setAngularVelocity(obj->getAngularVelocity()/(obj->getAngularVelocity()*obj->getAngularDamping()*step + vec3(1)));
+        //obj->setAngularVelocity(obj->getAngularVelocity()/(obj->getAngularVelocity()*obj->getAngularDamping()*step + vec3(1)));
 
         obj->translate(obj->getVelocity() * step);
         obj->rotate(obj->getAngularVelocity() * step);
