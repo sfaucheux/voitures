@@ -30,13 +30,7 @@ const Shader* Object::getShader() const
 
 void Object::sync()
 {
-    glm::vec3 rot = m_pObj->getRotation();
-
-    m_gObj.setModel(glm::mat4(1.0));
-    m_gObj.translate(m_pObj->getPosition());
-    m_gObj.rotate(glm::vec3(1, 0, 0), rot.x);
-    m_gObj.rotate(glm::vec3(0, 1, 0), rot.y);
-    m_gObj.rotate(glm::vec3(0, 0, 1), rot.z);
+    m_gObj.setModel(m_pObj->getModel());
 }
 
 void Object::translate(glm::vec3 t)
