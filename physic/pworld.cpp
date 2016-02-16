@@ -75,11 +75,12 @@ void PWorld::collisionResponse()
      * Cela revient à traiter les collision d'objet 2 à 2 (aucune collision en même temps)
      * mais avec un pas de temps nul.
      */
-    bool computeAgain = true;
+    bool computeAgain = m_contacts.size() > 0;
     PObject *obj1, *obj2;
     vec3 normal, point ;
-    //while(computeAgain)
-    //{
+    int i = 0;
+    while(computeAgain)
+    {
         computeAgain = false ;
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {
@@ -99,13 +100,23 @@ void PWorld::collisionResponse()
                     vec3 impulse = computeImpulse(obj1, obj2, point, normal);
                     obj1->setLinearImpulse(impulse);
                     obj2->setLinearImpulse(-impulse);
-                    obj2->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
+                    obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
                     obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
                     computeAgain = true ;
                 }
             }
         }
-    //}
+        int z = m_contacts.size()+1;
+        if(i > z*z*z)
+        {
+            cout << "ATTENTION : PAS DE SOLUTION DU SYSTEME QUI REDUISE L'INTERPENETRATION !!!" << endl
+                 << m_contacts.size() << " CONTACTS, " << i << " ITERATIONS."
+                 << "BOUCLE STOPEE !!!" << endl ;
+            break;
+        }
+        i++;
+        //break;
+    }
     m_contacts.clear();
 }
 vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
@@ -130,14 +141,14 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         
         //Coefficient de frottement dynamique.
         //Pour le statique c'est plus compliqué à simuler.
-        float f =  0.5 ;
+        float f =  0.5;
 
         float tangentVelocity = dot(v12, tan) ;
         float normalVelocity = dot(v12, normal) ;
 
         //Si glissement.
         if(tangentVelocity > f*normalVelocity)
-            tangentVelocity = f*tangentVelocity ;
+            tangentVelocity = f*normalVelocity ;
 
         //On calcule le support de l'impulsion.
         impulse = normalize(normalVelocity*normal + tangentVelocity*tan) ;
@@ -158,7 +169,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
     //On utilise alors 0 ou 1 en fateur des expression ou l'on divise par une masse.
     float static1 =(obj1->isStatic()) ? 0 : 1 ;
     float static2 =(obj2->isStatic()) ? 0 : 1 ;
-    return  (1+e)*dot(v12, impulse)/((static1/m1+static2/m2) + static1*r1/I1 + static2*r2/I2) * impulse ;
+    return  (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
 }
 void PWorld::integrate(float step)
 {
