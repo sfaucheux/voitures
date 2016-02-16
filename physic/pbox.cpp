@@ -13,9 +13,10 @@ PBox::PBox(float width, float height, float depth)
     m_width = width;
     m_height = height;   
     m_depth = depth;
-    m_inertia[0][0] = m_mass*(height*height + depth*depth)/12.;
-    m_inertia[1][1] = m_mass*(width*width + depth*depth)/12.;
-    m_inertia[2][2] = m_mass*(height*height + width*width)/12.;
+    mat3 inertia(0);
+    inertia[0][0] = getMass()*(height*height + depth*depth)/12.;
+    inertia[1][1] = getMass()*(width*width + depth*depth)/12.;
+    inertia[2][2] = getMass()*(height*height + width*width)/12.;
 }
 
 float square(float f)
@@ -42,9 +43,9 @@ bool PBox::collideWithSphere(PSphere *s)
 {
     // calculating s's position relative to this
     glm::vec3 sphPos = s->getPosition() - this->getPosition();
-    sphPos = glm::vec3(glm::rotate(-m_angle.x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-m_angle.y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-m_angle.z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-getRotation().x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-getRotation().y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-getRotation().z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
 
     float xc = fabsf(sphPos.x);
     float yc = fabsf(sphPos.y);

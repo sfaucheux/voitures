@@ -6,120 +6,67 @@
 using namespace glm;
 using namespace std;
 
-PObject::PObject() : m_centroid(0), m_position(0), m_angle(0), m_inertia(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0), m_model(1)
+PObject::PObject() : m_position(0), m_angle(0), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0), m_model(1), m_modelInv(1)
 {
-    m_modelInv = inverse(m_model);
     m_mass = 1;
-    m_volume = 1;
     m_static = false ;
     m_awake= true ;
-    m_static = false ;
-    m_linearDamping = 0.1;
-    m_angularDamping = 0.1;
+    m_linearDamping = 0.2;
+    m_angularDamping = 0.9;
 }
 
 PObject::~PObject()
 {
 }
-
-vec3 PObject::getLocalPoint(vec3 point)
-{
-   return vec3(m_modelInv*vec4(point,1));
-}
-vec3 PObject::getPointVelocity(vec3 point)
-{
-   return m_velocity + cross(m_angularVelocity, point);
-}
+/*Modificateurs*/
 void PObject::setMass(float m)
 {
-    if (m >= 0.0)
-        m_mass = m;
+    m = fabs(m);
+    m_inertia = (m/m_mass)*m_inertia ;
+    m_inertiaInv = (m_mass/m)*m_inertiaInv;
+    m_mass = m;
 }
-float PObject::getInertiaMomentum(glm::vec3 axis)
+void PObject::setInertia(mat3 inertia)
 {
-    if(l1Norm(axis) == 0)
-        return 1;
-    axis = normalize(axis);
-    return dot(m_inertia*axis, axis);
+    m_inertia = inertia ;
+    m_inertiaInv = inverse(inertia);
 }
 void PObject::setLinearImpulse(glm::vec3 i)
 {
-    m_velocity += i/m_mass;
+    if(!m_static)
+        m_velocity += i/m_mass;
 }
 void PObject::setAngularImpulse(glm::vec3 i)
 {
-    m_angularVelocity += i/getInertiaMomentum(i);
+    if(!m_static)
+        m_angularVelocity += i/getInertiaMomentum(i);
 }
 void PObject::setVelocity(glm::vec3 s)
 {
-    m_velocity = s;
+    if(!m_static)
+        m_velocity = s;
 }
-
 void PObject::setAcceleration(glm::vec3 a)
 {
-    m_acceleration = a;
+    if(!m_static)
+        m_acceleration = a;
 }
-
 void PObject::setAngularVelocity(glm::vec3 s)
 {
-    m_angularVelocity = s;
+    if(!m_static)
+        m_angularVelocity = s;
 }
-
 void PObject::setAngularAcceleration(glm::vec3 a)
 {
-    m_angularAcceleration = a;
+    if(!m_static)
+        m_angularAcceleration = a;
 }
-
 void PObject::setStatic(bool s)
 {
+    if(s)
+        m_velocity = m_angularVelocity = m_acceleration = m_angularAcceleration = vec3(0,0,0) ;
     m_static = s;
 }
-
-float PObject::getMass()
-{
-    return m_mass;
-}
-
-glm::vec3 PObject::getPosition()
-{
-    return m_position;
-}
-
-glm::vec3 PObject::getVelocity()
-{
-    return m_velocity;
-}
-
-glm::vec3 PObject::getAcceleration()
-{
-    return m_acceleration;
-}
-
-glm::vec3 PObject::getRotation()
-{
-    return m_angle;
-}
-
-glm::vec3 PObject::getAngularVelocity()
-{
-    return m_angularVelocity;
-}
-
-glm::vec3 PObject::getAngularAcceleration()
-{
-    return m_angularAcceleration;
-}
-
-bool PObject::isStatic()
-{
-    return m_static;
-}
-
-float PObject::getVolume()
-{
-    return m_volume;
-}
-
 void PObject::rotate(glm::vec3 angle)
 {
     m_angle += angle;
@@ -129,7 +76,6 @@ void PObject::rotate(glm::vec3 angle)
     m_model = glm::rotate(m_model, m_angle.z, vec3(0,0,1));
     m_modelInv = glm::inverse(m_model);
 }
-
 void PObject::translate(glm::vec3 t)
 {
     m_position += t;
@@ -139,17 +85,6 @@ void PObject::translate(glm::vec3 t)
     m_model = glm::rotate(m_model, m_angle.z, vec3(0,0,1));
     m_modelInv = glm::inverse(m_model);
 }
-
-vec3 PObject::getForces()
-{
-    return m_forces;
-}
-
-vec3 PObject::getTorques()
-{
-    return m_torques;
-}
-
 void PObject::addForce(vec3 f)
 {
     m_forces += f ;
@@ -159,29 +94,88 @@ void PObject::addTorque(vec3 t)
 {
     m_torques += t ;
 }
-
-void PObject::addContact(tuple<PObject*, vec3, vec3> contact)
-{
-    m_contacts.push_back(contact);
-}
-
-glm::mat3 PObject::getInertia()
-{
-    return m_inertia;
-}
-
 void PObject::resetActions()
 {
     m_forces = vec3(0);
     m_torques = vec3(0);
 }
+void PObject::addContact(tuple<PObject*, vec3, vec3> contact)
+{
+    m_contacts.push_back(contact);
+}
 
-float PObject::getLinearDamping()
+/*Accesseurs*/
+float PObject::getInertiaMomentum(const glm::vec3& axis) const
+{
+    if(l1Norm(axis) == 0)
+        return 1;
+    vec3 a = normalize(axis);
+    return dot(m_inertia*a, a);
+}
+vec3 PObject::getLocalPoint(const vec3& point) const
+{
+   return vec3(m_modelInv*vec4(point,1));
+}
+vec3 PObject::getPointVelocity(const vec3& point) const 
+{
+   return m_velocity + cross(m_angularVelocity, point);
+}
+float PObject::getMass() const
+{
+    return m_mass;
+}
+bool PObject::isStatic() const
+{
+    return m_static;
+}
+float PObject::getLinearDamping() const
 {
     return m_linearDamping ;
 }
-
-float PObject::getAngularDamping()
+float PObject::getAngularDamping() const
 {
     return m_angularDamping ;
 }
+const vec3& PObject::getPosition() const
+{
+    return m_position;
+}
+const vec3& PObject::getVelocity() const
+{
+    return m_velocity;
+}
+const vec3& PObject::getAcceleration() const
+{
+    return m_acceleration;
+}
+const vec3& PObject::getRotation() const
+{
+    return m_angle;
+}
+const vec3& PObject::getAngularVelocity() const
+{
+    return m_angularVelocity;
+}
+const vec3& PObject::getAngularAcceleration() const
+{
+    return m_angularAcceleration;
+}
+const vec3& PObject::getForces() const
+{
+    return m_forces;
+}
+const vec3& PObject::getTorques() const
+{
+    return m_torques;
+}
+const glm::mat3& PObject::getInertia() const
+{
+    return m_inertia;
+}
+const glm::mat3& PObject::getInertiaInv() const
+{
+    return m_inertiaInv;
+}
+
+
+

@@ -154,7 +154,11 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         r1 = length2(cross(point - obj1->getPosition(), impulse));
         r2 = length2(cross(point - obj2->getPosition(), impulse));
     }
-    return  (1+e)*dot(v12, impulse)/((1/m1+1/m2) + r1/I1 + r2/I2) * impulse ;
+    //Si les objets sont statiques, leur masse est infinie.
+    //On utilise alors 0 ou 1 en fateur des expression ou l'on divise par une masse.
+    float static1 =(obj1->isStatic()) ? 0 : 1 ;
+    float static2 =(obj2->isStatic()) ? 0 : 1 ;
+    return  (1+e)*dot(v12, impulse)/((static1/m1+static2/m2) + static1*r1/I1 + static2*r2/I2) * impulse ;
 }
 void PWorld::integrate(float step)
 {
@@ -166,7 +170,7 @@ void PWorld::integrate(float step)
         //On ajoute la gravité.
         obj->addForce(m_gravity*obj->getMass());
         obj->setAcceleration(obj->getForces()/obj->getMass());
-        obj->setAngularAcceleration(inverse(obj->getInertia())*obj->getTorques());
+        obj->setAngularAcceleration(obj->getInertiaInv()*obj->getTorques());
         obj->setVelocity(obj->getVelocity() + obj->getAcceleration() * step);
         obj->setAngularVelocity(obj->getAngularVelocity() + obj->getAngularAcceleration() * step);
 
