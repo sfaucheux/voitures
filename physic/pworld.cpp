@@ -169,17 +169,19 @@ void PWorld::integrate(float step)
 
         //On ajoute la gravité.
         obj->addForce(m_gravity*obj->getMass());
+        
+        //On ajoute les forces de frottement.
+        obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
+        obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
+
         obj->setAcceleration(obj->getForces()/obj->getMass());
         obj->setAngularAcceleration(obj->getInertiaInv()*obj->getTorques());
         obj->setVelocity(obj->getVelocity() + obj->getAcceleration() * step);
         obj->setAngularVelocity(obj->getAngularVelocity() + obj->getAngularAcceleration() * step);
 
-        //On simule les effets des frottements
-        obj->setVelocity(obj->getVelocity()/(length2((obj->getVelocity()*obj->getLinearDamping()*step))+1));
-        //obj->setAngularVelocity(obj->getAngularVelocity()/(obj->getAngularVelocity()*obj->getAngularDamping()*step + vec3(1)));
-
         obj->translate(obj->getVelocity() * step);
         obj->rotate(obj->getAngularVelocity() * step);
+
         //On réinitialise les forces et couples.
         obj->resetActions();
 
