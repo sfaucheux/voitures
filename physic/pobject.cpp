@@ -2,17 +2,19 @@
 #include "../glm/gtc/matrix_transform.hpp"
 #include <iostream>
 #include "../glm/gtx/norm.hpp"
+#include "../glm/gtx/euler_angles.hpp"
 
 using namespace glm;
 using namespace std;
 
-PObject::PObject() : m_position(0), m_angle(0), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0), m_model(1), m_modelInv(1)
+PObject::PObject() : m_position(0), m_angle(0), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
 {
+    updateMatrices();
     m_mass = 1;
     m_static = false ;
     m_awake= true ;
-    m_linearDamping = 0.2;
-    m_angularDamping = 0.9;
+    m_linearDamping = 0.1;
+    m_angularDamping = 0.1;
 }
 
 PObject::~PObject()
@@ -70,19 +72,19 @@ void PObject::setStatic(bool s)
 void PObject::rotate(glm::vec3 angle)
 {
     m_angle += angle;
-    m_model = glm::translate(mat4(1), m_position);
-    m_model = glm::rotate(m_model, m_angle.x, vec3(1,0,0));
-    m_model = glm::rotate(m_model, m_angle.y, vec3(0,1,0));
-    m_model = glm::rotate(m_model, m_angle.z, vec3(0,0,1));
-    m_modelInv = glm::inverse(m_model);
+    updateMatrices();
 }
 void PObject::translate(glm::vec3 t)
 {
     m_position += t;
+    updateMatrices();
+}
+void PObject::updateMatrices()
+{
     m_model = glm::translate(mat4(1), m_position);
-    m_model = glm::rotate(m_model, m_angle.x, vec3(1,0,0));
-    m_model = glm::rotate(m_model, m_angle.y, vec3(0,1,0));
-    m_model = glm::rotate(m_model, m_angle.z, vec3(0,0,1));
+    float norm = l2Norm(m_angle) ;
+    if(norm != 0)
+        m_model = glm::rotate(m_model, norm, m_angle);
     m_modelInv = glm::inverse(m_model);
 }
 void PObject::addForce(vec3 f)
@@ -176,6 +178,9 @@ const glm::mat3& PObject::getInertiaInv() const
 {
     return m_inertiaInv;
 }
-
+const glm::mat4& PObject::getModel() const
+{
+    return m_model;
+}
 
 

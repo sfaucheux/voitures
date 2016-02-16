@@ -46,6 +46,7 @@ class PObject
         const glm::vec3& getTorques() const ;
         const glm::mat3& getInertia() const ;
         const glm::mat3& getInertiaInv() const ;
+        const glm::mat4& getModel() const ;
         glm::vec3 getLocalPoint(const glm::vec3& point) const ;
         glm::vec3 getPointVelocity(const glm::vec3& point) const ;
         bool isStatic() const ;
@@ -94,6 +95,8 @@ class PObject
 
         //Masqué aussi pour les classes filles
     private:
+        void updateMatrices();
+
         glm::mat4 m_model;
         glm::mat4 m_modelInv;
         glm::vec3 m_position;
