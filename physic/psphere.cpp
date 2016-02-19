@@ -2,6 +2,7 @@
 
 #include "psphere.h"
 #include "pbox.h"
+#include "collisions.h"
 
 using namespace std;
 using namespace glm;
@@ -19,7 +20,8 @@ bool PSphere::collide(PObject* obj)
 
 bool PSphere::collideWithSphere(PSphere *s)
 {
-    return distance2(getPosition(), s->getPosition()) <= (m_radius + s->getRadius()) * (m_radius + s->getRadius()) ;
+    return collideSphereWithSphere(this, s);
+    //return distance2(getPosition(), s->getPosition()) <= (m_radius + s->getRadius()) * (m_radius + s->getRadius()) ;
 }
 
 bool PSphere::collideWithBox(PBox* b)
@@ -49,12 +51,13 @@ vector<tuple<vec3,vec3>> PSphere::collisionPointsWithMesh(PMesh* obj)
 
 vector<tuple<vec3,vec3>> PSphere::collisionPointsWithSphere(PSphere* obj) 
 {
-    //On retourne la moyenne des centres ponderees par les rayons.
+    return collisionPointsSphereWithSphere(this, obj);
+    /*//On retourne la moyenne des centres ponderees par les rayons.
     //La normale est définie comme le vecteur formé par les deux centres.
     //Suppose que les spheres sont en collision (c'est le cas, la broadphase est exacte pour les solides de base).
     vec3 point((m_radius * getPosition() + obj->getRadius() * obj->getPosition()) / (m_radius + obj->getRadius()));
     vec3 normal(obj->getPosition()-getPosition());
-    return vector<tuple<vec3,vec3>>({make_tuple(point, normal)});
+    return vector<tuple<vec3,vec3>>({make_tuple(point, normal)});*/
 }
 
 float PSphere::getRadius() const

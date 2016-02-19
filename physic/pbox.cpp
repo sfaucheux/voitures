@@ -4,6 +4,7 @@
 
 #include "pbox.h"
 #include "psphere.h"
+#include "collisions.h"
 
 using namespace std;
 using namespace glm;
@@ -17,11 +18,20 @@ PBox::PBox(float width, float height, float depth)
     inertia[0][0] = getMass()*(height*height + depth*depth)/12.;
     inertia[1][1] = getMass()*(width*width + depth*depth)/12.;
     inertia[2][2] = getMass()*(height*height + width*width)/12.;
+    setInertia(inertia);
 }
 
-float square(float f)
+float PBox::getHeight() const
 {
-    return f * f;
+    return m_height;
+}
+float PBox::getWidth() const
+{
+    return m_width;
+}
+float PBox::getDepth() const
+{
+    return m_depth;
 }
 
 bool PBox::collide(PObject* obj)
@@ -41,47 +51,7 @@ bool PBox::collideWithMesh(PMesh* b)
 
 bool PBox::collideWithSphere(PSphere *s)
 {
-    // calculating s's position relative to this
-    glm::vec3 sphPos = s->getPosition() - this->getPosition();
-    sphPos = glm::vec3(glm::rotate(-getRotation().x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-getRotation().y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-getRotation().z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
-
-    float xc = fabsf(sphPos.x);
-    float yc = fabsf(sphPos.y);
-    float zc = fabsf(sphPos.z);
-    float r = s->getRadius();
-    if (xc <= m_width / 2.0)
-    {
-        if (yc <= m_height / 2.0)
-            return zc - r <= m_depth / 2.0;
-        if (zc <= m_depth / 2.0)
-            return yc - r <= m_height / 2.0;
-        else if (yc <= m_height / 2.0 + r)
-            return square(yc - (m_height / 2.0)) + square(zc - (m_depth / 2.0)) <= square(r);
-        else
-            return false;
-    }
-    else if (yc <= m_height / 2.0)
-    {
-        if (zc <= m_depth / 2.0)
-            return xc - r <= m_width / 2.0;
-        else if (zc <= m_depth / 2.0 + r)
-            return square(xc - (m_width / 2.0)) + square(zc - (m_depth / 2.0)) <= square(r);
-        else
-            return false;
-    }
-    else if (zc <= m_depth / 2.0)
-    {
-        if (xc <= m_width / 2.0 + r)
-            return square(xc - (m_width / 2.0)) + square(yc - (m_height / 2.0)) <= square(r);
-        else
-            return false;
-    }
-    else if ((xc <= m_width / 2.0 + r) && (yc <= m_height / 2.0 + r) && (zc <= m_depth / 2.0 + r))
-        return square(xc - (m_width / 2.0)) + square(yc - (m_height / 2.0)) + square(zc - (m_depth / 2.0)) <= square(r);
-    else
-        return false;
+    return collideSphereWithBox(s, this);
 }
 
 vector<tuple<vec3,vec3>> PBox::collisionPoints(PObject* obj)

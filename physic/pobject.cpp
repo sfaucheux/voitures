@@ -66,7 +66,7 @@ void PObject::setAngularAcceleration(glm::vec3 a)
 void PObject::setStatic(bool s)
 {
     if(s)
-        m_velocity = m_angularVelocity = m_acceleration = m_angularAcceleration = vec3(0,0,0) ;
+        m_velocity = m_angularVelocity = m_acceleration = m_angularAcceleration = m_torques = m_forces = vec3(0,0,0) ;
     m_static = s;
 }
 void PObject::rotate(glm::vec3 angle)
@@ -86,15 +86,19 @@ void PObject::updateMatrices()
     if(norm != 0)
         m_model = glm::rotate(m_model, norm, m_angle);
     m_modelInv = glm::inverse(m_model);
+    //m_modelInv = glm::rotate(mat4(1), -norm, m_angle);
+    //m_modelInv = glm::translate(m_modelInv, -m_position);
 }
 void PObject::addForce(vec3 f)
 {
-    m_forces += f ;
+    if(!m_static)
+        m_forces += f ;
 }
 
 void PObject::addTorque(vec3 t)
 {
-    m_torques += t ;
+    if(!m_static)
+        m_torques += t ;
 }
 void PObject::resetActions()
 {
@@ -121,6 +125,10 @@ vec3 PObject::getLocalPoint(const vec3& point) const
 vec3 PObject::getPointVelocity(const vec3& point) const 
 {
    return m_velocity + cross(m_angularVelocity, point);
+}
+vec3 PObject::getPointForce(const vec3& point) const 
+{
+   return m_forces + cross(m_torques, point);
 }
 float PObject::getMass() const
 {

@@ -18,6 +18,9 @@ class PBox : public PObject
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(PMesh* obj);
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(PSphere* obj);
 
+        float getHeight() const;
+        float getWidth() const;
+        float getDepth() const;
 
     private:
         float m_width;

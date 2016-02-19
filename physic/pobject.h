@@ -49,6 +49,7 @@ class PObject
         const glm::mat4& getModel() const ;
         glm::vec3 getLocalPoint(const glm::vec3& point) const ;
         glm::vec3 getPointVelocity(const glm::vec3& point) const ;
+        glm::vec3 getPointForce(const glm::vec3& point) const ;
         bool isStatic() const ;
         float getMass() const ;
         float getInertiaMomentum(const glm::vec3& axis) const ;
