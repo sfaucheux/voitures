@@ -6,7 +6,7 @@
 class PMesh : public PObject
 {
     public:
-        PMesh();
+        PMesh(Coordinates& coord);
         bool collide(PObject* obj);
         bool collideWithSphere(PSphere *s);
         bool collideWithBox(PBox* b);

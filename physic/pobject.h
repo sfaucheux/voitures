@@ -8,6 +8,8 @@
 
 #include "../glm/glm.hpp"
 
+#include "../objects/coordinates.h"
+
 class PBox;
 class PMesh;
 class PSphere;
@@ -16,7 +18,7 @@ class PObject
 {
     public:
         enum type {Dynamic, Kinematic, Static} ;
-        PObject();
+        PObject(Coordinates& coord);
         virtual ~PObject();
 
         //Fonctions de collision précises, le type de retour int n'est que temporaire,
@@ -44,15 +46,14 @@ class PObject
         void setAngularAcceleration(glm::vec3 a);
         void setStatic(bool s);
 
-        glm::vec3 getPosition();
+        float getMass();
+        Coordinates& getCoordinates();
         glm::vec3 getVelocity();
         glm::vec3 getAcceleration();
-        glm::vec3 getRotation();
         glm::vec3 getAngularVelocity();
         glm::vec3 getAngularAcceleration();
         glm::vec3 getForces();
         glm::vec3 getTorques();
-        float getMass();
         glm::mat3 getInertia();
         float getLinearDamping();
         float getAngularDamping();
@@ -60,8 +61,6 @@ class PObject
 
         float getVolume();
 
-        void rotate(glm::vec3 angle);
-        void translate(glm::vec3 t);
         void addForce(glm::vec3 f);
         void addTorque(glm::vec3 t);
         void addContact(std::tuple<PObject*, glm::vec3, glm::vec3> contact);
@@ -71,8 +70,7 @@ class PObject
     protected:
 
         type m_type;
-        glm::vec3 m_position;
-        glm::vec3 m_angle;
+        Coordinates& m_coord;
         glm::mat3 m_inertia;
         glm::vec3 m_centroid;
 

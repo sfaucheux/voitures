@@ -6,7 +6,7 @@
 class PBox : public PObject
 {
     public:
-        PBox(float width, float height, float depth);
+        PBox(float width, float height, float depth, Coordinates& coord);
 
         virtual bool collide(PObject* obj);
         virtual bool collideWithBox(PBox* obj);

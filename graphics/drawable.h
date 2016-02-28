@@ -7,27 +7,23 @@
 #include "../glm/glm.hpp"
 
 #include "shader.h"
+#include "../objects/coordinates.h"
 
 class Drawable
 {
     public:
-        Drawable() ;
+        Drawable(Coordinates* coord);
         virtual ~Drawable();
 
         void setShader(Shader* shader);
-        void setModel(glm::mat4 model) ;
 
         const Shader* getShader() const;
-        const glm::mat4& getModel() const;
+        Coordinates* getCoordinates() const;
         GLuint getIdVAO() const;
         GLuint getIdVBO() const;
         GLuint getIdIBO() const;
         int getIndicesNumber() const;
         int getVerticesNumber() const;
-
-        void rotate(glm::vec3 axis, float angle);
-        void translate(glm::vec3 translation);
-        void homothetie(glm::vec3 homoth) ;
 
         void load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices);
         void update(const std::vector<float> &data, int offset);
@@ -42,7 +38,7 @@ class Drawable
         Shader* m_shader;
         int m_indicesNumber;
         int m_verticesNumber;
-        glm::mat4 m_model;
+        Coordinates* m_coord;
 
 };
 

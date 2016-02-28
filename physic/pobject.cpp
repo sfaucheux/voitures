@@ -4,7 +4,7 @@
 using namespace glm;
 using namespace std;
 
-PObject::PObject() : m_centroid(0), m_position(0), m_angle(0), m_inertia(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0)
+PObject::PObject(Coordinates& coord) : m_centroid(0), m_coord(coord), m_inertia(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0)
 {
     m_mass = 1;
     m_volume = 1;
@@ -60,9 +60,9 @@ float PObject::getMass()
     return m_mass;
 }
 
-glm::vec3 PObject::getPosition()
+Coordinates& PObject::getCoordinates()
 {
-    return m_position;
+    return m_coord;
 }
 
 glm::vec3 PObject::getVelocity()
@@ -73,11 +73,6 @@ glm::vec3 PObject::getVelocity()
 glm::vec3 PObject::getAcceleration()
 {
     return m_acceleration;
-}
-
-glm::vec3 PObject::getRotation()
-{
-    return m_angle;
 }
 
 glm::vec3 PObject::getAngularVelocity()
@@ -98,16 +93,6 @@ bool PObject::isStatic()
 float PObject::getVolume()
 {
     return m_volume;
-}
-
-void PObject::rotate(glm::vec3 angle)
-{
-    m_angle += angle;
-}
-
-void PObject::translate(glm::vec3 t)
-{
-    m_position += t;
 }
 
 vec3 PObject::getForces()

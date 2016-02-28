@@ -1,3 +1,7 @@
+#include <iostream>
+using namespace std;
+#include "../glm/gtx/string_cast.hpp"
+
 #include "../glm/gtx/transform.hpp"
 #include "../glm/gtc/type_ptr.hpp"
 
@@ -21,20 +25,17 @@ void Renderer::setPerspective(float angle, float ratio, float near, float far)
     m_projection = glm::perspective(angle, ratio, near, far);
 }
 
-void Renderer::draw(Object const& object, GLenum mode)
-{
-    draw(object.getDrawable(), mode);
-}
-
 void Renderer::draw(Drawable const& drawable, GLenum mode)
 {
+    Coordinates* coord = drawable.getCoordinates();
     GLuint shader = drawable.getShader()->getProgramID() ;
     glPolygonMode(GL_FRONT_AND_BACK, mode);
     glUseProgram(shader);
         glBindVertexArray(drawable.getIdVAO());
                 glUniformMatrix4fv(glGetUniformLocation(shader, "projection"), 1, GL_FALSE, glm::value_ptr(m_projection));
                 glUniformMatrix4fv(glGetUniformLocation(shader, "view"), 1, GL_FALSE, glm::value_ptr(m_camera.getView()));
-                glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(drawable.getModel()));
+                glUniformMatrix4fv(glGetUniformLocation(shader, "model"), 1, GL_FALSE, glm::value_ptr(coord->getModel()));
+                //cout << glm::to_string(drawable.getCoordinates().getModel()) << endl;
                 //a activer quand on pourra charger des textures.
                 //glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
                 glDrawElements(GL_TRIANGLES, drawable.getIndicesNumber(), GL_UNSIGNED_INT, NULL);

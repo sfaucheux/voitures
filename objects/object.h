@@ -5,6 +5,7 @@
 
 #include "../glm/glm.hpp"
 
+#include "coordinates.h"
 #include "../graphics/shader.h"
 #include "../graphics/drawable.h"
 #include "../physic/pobject.h"
@@ -21,20 +22,15 @@ class Object
         Object();
         virtual ~Object();
 
-        void setShader(Shader* shader);
-
         virtual ObjectType getType() = 0;
-        PObject* getPObject();
-        Drawable const& getDrawable() const;
-        const Shader* getShader() const;
-
-        void sync();
-        void translate(glm::vec3 t);
-        void rotate(glm::vec3 r);
+        PObject* getPObject() const;
+        Drawable* getDrawable() const;
+        Coordinates& getCoordinates();
 
 
     protected:
-		Drawable m_gObj;
+        Coordinates m_coord;
+		Drawable* m_gObj;
 		PObject* m_pObj;
 
 };

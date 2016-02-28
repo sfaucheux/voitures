@@ -3,7 +3,7 @@
 using namespace std;
 using namespace glm;
 
-PMesh::PMesh()
+PMesh::PMesh(Coordinates& coord) : PObject(coord)
 {
 }
 

@@ -89,8 +89,8 @@ void PWorld::integrate(float step)
         obj->setVelocity(obj->getVelocity()/(length2((obj->getVelocity()*obj->getLinearDamping()*step))+1));
         obj->setAngularVelocity(obj->getAngularVelocity()/(obj->getAngularVelocity()*obj->getAngularDamping()*step + vec3(1)));
 
-        obj->translate(obj->getVelocity() * step);
-        obj->rotate(obj->getAngularVelocity() * step);
+        obj->getCoordinates().translate(obj->getVelocity() * step);
+        obj->getCoordinates().rotate(obj->getAngularVelocity() * step);
 
         //On réinitialise les forces et couples.
         obj->resetActions();

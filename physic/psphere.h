@@ -6,7 +6,7 @@
 class PSphere : public PObject
 {
     public:
-        PSphere(float radius);
+        PSphere(float radius, Coordinates& coord);
 
         virtual bool collide(PObject* obj);
         virtual bool collideWithBox(PBox* obj);

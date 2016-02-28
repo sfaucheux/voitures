@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_shader(nullptr), m_model(1.0)
+Drawable::Drawable(Coordinates* coord) : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_shader(nullptr), m_coord(coord)
 {
 }
 
@@ -24,19 +24,14 @@ void Drawable::setShader(Shader* shader)
     m_shader = shader;
 }
 
-void Drawable::setModel(glm::mat4 model)
-{
-    m_model = model;
-}
-
 const Shader* Drawable::getShader() const
 {
     return m_shader;
 }
 
-const glm::mat4& Drawable::getModel() const
+Coordinates* Drawable::getCoordinates() const
 {
-    return m_model;
+    return m_coord;
 }
 
 GLuint Drawable::getIdVAO() const
@@ -62,21 +57,6 @@ int Drawable::getVerticesNumber() const
 int Drawable::getIndicesNumber() const
 {
     return m_indicesNumber;
-}
-
-void Drawable::rotate(glm::vec3 axis, float angle)
-{
-    m_model = glm::rotate(m_model, angle, axis);
-}
-
-void Drawable::translate(glm::vec3 translation)
-{
-    m_model = glm::translate(m_model, translation);
-}
-
-void Drawable::homothetie(glm::vec3 homoth)
-{
-    m_model = glm::scale(m_model, homoth);
 }
 
 void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices)

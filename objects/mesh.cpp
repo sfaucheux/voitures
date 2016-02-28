@@ -68,8 +68,9 @@ Mesh::Mesh(string filename)
                 }
             }
         }
-        m_gObj.load(m_vertices, m_faces);
-        m_pObj = new PMesh();
+        m_gObj = new Drawable(&m_coord);
+        m_gObj->load(m_vertices, m_faces);
+        m_pObj = new PMesh(m_coord);
         cout << "Loading successful" << endl;
     }
     else
@@ -79,6 +80,7 @@ Mesh::Mesh(string filename)
 Mesh::~Mesh()
 {
     delete m_pObj;
+    delete m_gObj;
 }
 
 Object::ObjectType Mesh::getType()

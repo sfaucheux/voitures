@@ -19,10 +19,10 @@ using namespace std ;
 
 void drawObjectWithEdges(Object& obj, Shader* shdr1, Shader* shdr2, Renderer& renderer)
 {
-    obj.setShader(shdr2);
-    renderer.draw(obj); 
-    obj.setShader(shdr1);
-    renderer.draw(obj, GL_LINE); 
+    obj.getDrawable()->setShader(shdr2);
+    renderer.draw(*obj.getDrawable()); 
+    obj.getDrawable()->setShader(shdr1);
+    renderer.draw(*obj.getDrawable(), GL_LINE); 
 }
 
 int main(int argc, char** argv)
@@ -48,8 +48,8 @@ int main(int argc, char** argv)
     Sphere sphere(20);
     //world.addObject(obj.getPObject());
 
-    box.translate(glm::vec3(0, 45, 0));
-    box.rotate(glm::vec3(2.8, 0.5, 1.3));
+//    box.getCoordinates().translate(glm::vec3(0, 45, 0));
+//    box.getCoordinates().rotate(glm::vec3(2.8, 0.5, 1.3));
 
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");
@@ -72,31 +72,31 @@ int main(int argc, char** argv)
         context.show();
 
         if (context.keyIsPressed(GLFW_KEY_W))
-            sphere.translate(glm::vec3(-1, 0, 0));
+            sphere.getCoordinates().translate(glm::vec3(-1, 0, 0));
         if (context.keyIsPressed(GLFW_KEY_S))
-            sphere.translate(glm::vec3(1, 0, 0));
+            sphere.getCoordinates().translate(glm::vec3(1, 0, 0));
         if (context.keyIsPressed(GLFW_KEY_A))
-            sphere.translate(glm::vec3(0, 1, 0));
+            sphere.getCoordinates().translate(glm::vec3(0, 1, 0));
         if (context.keyIsPressed(GLFW_KEY_D))
-            sphere.translate(glm::vec3(0, -1, 0));
+            sphere.getCoordinates().translate(glm::vec3(0, -1, 0));
         if (context.keyIsPressed(GLFW_KEY_R))
-            sphere.translate(glm::vec3(0, 0, -1));
+            sphere.getCoordinates().translate(glm::vec3(0, 0, -1));
         if (context.keyIsPressed(GLFW_KEY_F))
-            sphere.translate(glm::vec3(0, 0, 1));
+            sphere.getCoordinates().translate(glm::vec3(0, 0, 1));
         if (context.keyIsPressed(GLFW_KEY_V))
-            box.rotate(glm::vec3(0.01, 0, 0));
+            box.getCoordinates().rotate(glm::vec3(0.01, 0, 0));
         if (context.keyIsPressed(GLFW_KEY_B))
-            box.rotate(glm::vec3(0, 0.01, 0));
+            box.getCoordinates().rotate(glm::vec3(0, 0.01, 0));
         if (context.keyIsPressed(GLFW_KEY_N))
-            box.rotate(glm::vec3(0, 0, 0.01));
+            box.getCoordinates().rotate(glm::vec3(0, 0, 0.01));
         if (context.keyIsPressed(GLFW_KEY_G))
-            box.rotate(glm::vec3(-0.01, 0, 0));
+            box.getCoordinates().rotate(glm::vec3(-0.01, 0, 0));
         if (context.keyIsPressed(GLFW_KEY_H))
-            box.rotate(glm::vec3(0, -0.01, 0));
+            box.getCoordinates().rotate(glm::vec3(0, -0.01, 0));
         if (context.keyIsPressed(GLFW_KEY_J))
-            box.rotate(glm::vec3(0, 0, -0.01));
+            box.getCoordinates().rotate(glm::vec3(0, 0, -0.01));
 
-        cout << box.getPObject()->getRotation().x << ", " << box.getPObject()->getRotation().y << ", " << box.getPObject()->getRotation().z << "\x1B[F" << endl;
+        cout << box.getCoordinates().getRotation().x << ", " << box.getCoordinates().getRotation().y << ", " << box.getCoordinates().getRotation().z << "\x1B[F" << endl;
 
         usleep(50000);
     }

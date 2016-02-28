@@ -34,13 +34,15 @@ Sphere::Sphere(float radius)
     }
     vertices.push_back(glm::vec3(0, 0, radius));
 
-    m_gObj.load(vertices, indices);
-    m_pObj = new PSphere(radius);
+    m_gObj = new Drawable(&m_coord);
+    m_gObj->load(vertices, indices);
+    m_pObj = new PSphere(radius, m_coord);
 }
 
 Sphere::~Sphere()
 {
     delete m_pObj;
+    delete m_gObj;
 }
 
 Object::ObjectType Sphere::getType()

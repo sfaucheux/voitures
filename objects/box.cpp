@@ -32,13 +32,15 @@ Box::Box(float w, float h, float d)
     indices.push_back(uvec3(4, 0, 3));
     indices.push_back(uvec3(4, 3, 7));
 
-    m_gObj.load(vertices, indices);
-    m_pObj = new PBox(w, h, d);
+    m_gObj = new Drawable(&m_coord);
+    m_gObj->load(vertices, indices);
+    m_pObj = new PBox(w, h, d, m_coord);
 }
 
 Box::~Box()
 {
     delete m_pObj;
+    delete m_gObj;
 }
 
 Object::ObjectType Box::getType()
