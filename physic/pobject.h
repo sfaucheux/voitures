@@ -6,6 +6,7 @@
 #include <vector>
 #include <tuple>
 
+#include "../geometry/geometry.h"
 #include "../glm/glm.hpp"
 
 class PBox;
@@ -15,26 +16,9 @@ class PSphere;
 class PObject
 {
     public:
-        PObject();
+        PObject(Geometry& geo);
         virtual ~PObject();
 
-        /*Collisions*/
-        //Fonctions de collision précises, le type de retour int n'est que temporaire,
-        //le plus adapté serait une structure ou un objet avec (point, normale, distance d'interpénétration).
-
-        //fonction qui renvoit la collision d'un pobject quelconque avec soit même.
-        virtual bool collide(PObject* obj) = 0;
-
-        //collision avec tous les autres pobjects.
-        virtual bool collideWithBox(PBox* obj) = 0;
-        virtual bool collideWithMesh(PMesh* obj) = 0;
-        virtual bool collideWithSphere(PSphere* obj) = 0;
-
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(PObject* obj) = 0;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithBox(PBox* obj) = 0;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(PMesh* obj) = 0;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(PSphere* obj) = 0;
-        
         /*Accesseurs*/
         const glm::vec3& getPosition() const ;
         const glm::vec3& getVelocity() const ;
@@ -47,6 +31,8 @@ class PObject
         const glm::mat3& getInertia() const ;
         const glm::mat3& getInertiaInv() const ;
         const glm::mat4& getModel() const ;
+        const Geometry& getGeometry() const ;
+
         glm::vec3 getLocalPoint(const glm::vec3& point) const ;
         glm::vec3 getPointVelocity(const glm::vec3& point) const ;
         glm::vec3 getPointForce(const glm::vec3& point) const ;
@@ -92,6 +78,8 @@ class PObject
         glm::vec3 m_forces;
         glm::vec3 m_torques;
 
+        Geometry& m_geometry ;
+        
         std::list<std::tuple<PObject*, glm::vec3, glm::vec3>> m_contacts;
 
         //Masqué aussi pour les classes filles

@@ -7,11 +7,7 @@
 
 #include "graphics/context.h"
 #include "graphics/renderer.h"
-#include "objects/mesh.h"
-#include "objects/box.h"
-#include "objects/sphere.h"
 #include "physic/pworld.h"
-#include "physic/pbox.h"
 
 #define width 1024
 #define height 768
@@ -97,7 +93,7 @@ int main(int argc, char** argv)
         //cout << "norme : " << l2Norm(sphere4.getPObject()->getAngularVelocity()) << endl ;
     }
 
-    return 0;*/
+    return 0;
     string filename = "suzanne.obj";
 
     if (argc > 1)
@@ -170,7 +166,7 @@ int main(int argc, char** argv)
         cout << box.getPObject()->getRotation().x << ", " << box.getPObject()->getRotation().y << ", " << box.getPObject()->getRotation().z << "\x1B[F" << endl;
 
         usleep(50000);
-    }
+    }*/
 
     return 0;
 

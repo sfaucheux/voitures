@@ -7,7 +7,7 @@
 using namespace glm;
 using namespace std;
 
-PObject::PObject() : m_position(0), m_angle(0), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
+PObject::PObject(Geometry& geo) : m_geometry(geo), m_position(0), m_angle(0), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
 {
     updateMatrices();
     m_mass = 1;
@@ -145,6 +145,10 @@ float PObject::getLinearDamping() const
 float PObject::getAngularDamping() const
 {
     return m_angularDamping ;
+}
+const Geometry& PObject::getGeometry() const
+{
+    return m_geometry ;
 }
 const vec3& PObject::getPosition() const
 {

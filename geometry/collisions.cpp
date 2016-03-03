@@ -9,13 +9,14 @@ float square(float f)
 {
     return f * f;
 }
-
-bool collideSphereWithSphere(PSphere* obj1, PSphere* obj2)
+namespace Collision
+{
+bool collide(const Sphere* obj1, const Sphere* obj2)
 {
     return distance2(obj1->getPosition(), obj2->getPosition()) <= (obj1->getRadius() + obj2->getRadius()) * (obj1->getRadius() + obj2->getRadius()) ;
 }
 
-vector<tuple<vec3,vec3>> collisionPointsSphereWithSphere(PSphere* obj1, PSphere* obj2)
+vector<tuple<vec3,vec3>> collisionPoints(const Sphere* obj1, const Sphere* obj2)
 {
     //On retourne la moyenne des centres ponderees par les rayons.
     //La normale est définie comme le vecteur formé par les deux centres.
@@ -25,7 +26,7 @@ vector<tuple<vec3,vec3>> collisionPointsSphereWithSphere(PSphere* obj1, PSphere*
     return vector<tuple<vec3,vec3>>({make_tuple(point, normal)});
 }
 
-bool collideSphereWithBox(PSphere* s, PBox* b)
+bool collide(const Sphere* s,const Box* b)
 {
     // calculating s's position relative to this
     glm::vec3 sphPos = b->getLocalPoint(s->getPosition());
@@ -67,48 +68,48 @@ bool collideSphereWithBox(PSphere* s, PBox* b)
         return false;
 }
 
-vector<tuple<vec3,vec3>> collisionPointsSphereWithBox(PSphere* obj1, PBox* obj2)
+vector<tuple<vec3,vec3>> collisionPoints(const Sphere* obj1, const Box* obj2)
 {
     return vector<tuple<vec3,vec3>>();
 }
 
-bool collideSphereWithMesh(PSphere* obj1, PMesh* obj2)
+bool collide(const Sphere* obj1, const Mesh* obj2)
 {
     return false;
 }
 
-vector<tuple<vec3,vec3>> collisionPointsSphereWithMesh(PSphere* obj1, PMesh* obj2)
+vector<tuple<vec3,vec3>> collisionPoints(const Sphere* obj1, const Mesh* obj2)
 {
     return vector<tuple<vec3,vec3>>();
 }
 
-bool collideBoxWithBox(PBox* obj1, PBox* obj2)
+bool collideBoxWithBox(const Box* obj1, const Box* obj2)
 {
     return false;
 }
 
-vector<tuple<vec3,vec3>> collisionPointsBoxWithBox(PBox* obj1, PBox* obj2)
+vector<tuple<vec3,vec3>> collisionPoints(const Box* obj1, const Box* obj2)
 {
     return vector<tuple<vec3,vec3>>();
 }
 
-bool collideBoxWithMesh(PBox* obj1, PMesh* obj2)
+bool collideBoxWithMesh(const Box* obj1, const Mesh* obj2)
 {
     return false;
 }
 
-vector<tuple<vec3,vec3>> collisionPointsBoxWithMesh(PBox* obj1, PMesh* obj2)
+vector<tuple<vec3,vec3>> collisionPoints(const Box* obj1, const Mesh* obj2)
 {
     return vector<tuple<vec3,vec3>>();
 }
 
-bool collideMeshWithMesh(PMesh* obj1, PMesh* obj2)
+bool collide(const Mesh* obj1, const Mesh* obj2)
 {
     return false;
 }
 
-vector<tuple<vec3,vec3>> collisionPointsMeshWithMesh(PMesh* obj1, PMesh* obj2)
+vector<tuple<vec3,vec3>> collisionPoints(const Mesh* obj1, const Mesh* obj2)
 {
     return vector<tuple<vec3,vec3>>();
 }
-
+}

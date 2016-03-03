@@ -9,21 +9,20 @@
 #include "../graphics/drawable.h"
 #include "../physic/pobject.h"
 
+#include "../geometry/sphere.h"
+#include "../geometry/box.h"
+#include "../geometry/mesh.h"
+
 class Object
 {
     public:
-        enum ObjectType {
-            Box,
-            Sphere,
-            Mesh
-        };
-
-        Object();
+        Object(Sphere s);
+        Object(Box b);
+        Object(Mesh m);
         virtual ~Object();
 
         void setShader(Shader* shader);
 
-        virtual ObjectType getType() = 0;
         PObject* getPObject();
         Drawable const& getDrawable() const;
         const Shader* getShader() const;

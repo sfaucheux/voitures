@@ -27,6 +27,19 @@ void PWorld::removeObject(PObject* object)
 
 void PWorld::update(float step)
 {
+
+    PObject* obj ;
+    for (auto it = m_objects.begin(); it != m_objects.end(); it++)
+    {
+        obj = *it ;
+
+        //On ajoute la gravité.
+        obj->addForce(m_gravity*obj->getMass());
+        
+        //On ajoute les forces de frottement.
+        obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
+        obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
+    }
     //Determination des objets potentiellements en contact.
     broadPhase();
     //Determiantion des points et normales de contacts (s'il y en a).
@@ -44,7 +57,8 @@ void PWorld::broadPhase()
     {
         for (auto jt = m_objects.begin(); jt != it; jt++)
         {
-            if ((*it)->collide(*jt))
+            const Geometry *g1 = &(*it)->getGeometry(), *g2 = &(*jt)->getGeometry() ;
+            if (g1->collide(g2))
                 m_potentialCollisions.push_back({*it, *jt});
         }
     }
@@ -58,7 +72,7 @@ void PWorld::narrowPhase()
     {
         obj1 = (*it)[0];
         obj2 = (*it)[1];
-        vector<tuple<vec3,vec3>> points = obj1->collisionPoints(obj2);
+        vector<tuple<vec3,vec3>> points = obj1->getGeometry().collisionPoints(&(obj2->getGeometry()));
         if (points.size())
         {
             m_contacts.push_back(make_tuple(obj1, obj2, points));
@@ -94,8 +108,9 @@ void PWorld::collisionResponse()
                 tie(point, normal) = points[j] ;
                 vec3 v12 = obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
                 float dV = dot(normal, v12);
+                cout << dV << endl ;
                 if(dV > 0)
-                {
+                {   
                     normal = normalize(normal);
                     vec3 impulse = computeImpulse(obj1, obj2, point, normal);
                     obj1->setLinearImpulse(impulse);
@@ -115,13 +130,14 @@ void PWorld::collisionResponse()
             break;
         }
         i++;
-        //break;
+        break;
+
     }
     m_contacts.clear();
 }
 vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
 {
-    //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
+   //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
     float e = 1;
 
     //masse des deux objet.
@@ -129,6 +145,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
 
     //On calcule la vitesse relative.
     vec3 v12 =  obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
+
     vec3 impulse = normal ; //Support de l'impulsion.
 
     float r1 = 0, r2 = 0 ; //Distance centre d'inertie/point de contact au carré ou s'appliquerait l'impulsion si elle était orthgonale.
@@ -141,7 +158,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         
         //Coefficient de frottement dynamique.
         //Pour le statique c'est plus compliqué à simuler.
-        float f =  0.5;
+        float f =  0.8;
 
         float tangentVelocity = dot(v12, tan) ;
         float normalVelocity = dot(v12, normal) ;
@@ -165,11 +182,13 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         r1 = length2(cross(point - obj1->getPosition(), impulse));
         r2 = length2(cross(point - obj2->getPosition(), impulse));
     }
+
     //Si les objets sont statiques, leur masse est infinie.
     //On utilise alors 0 ou 1 en fateur des expression ou l'on divise par une masse.
     float static1 =(obj1->isStatic()) ? 0 : 1 ;
     float static2 =(obj2->isStatic()) ? 0 : 1 ;
-    return  (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
+
+    return (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
 }
 void PWorld::integrate(float step)
 {
@@ -178,24 +197,20 @@ void PWorld::integrate(float step)
     {
         obj = *it ;
 
-        //On ajoute la gravité.
-        obj->addForce(m_gravity*obj->getMass());
-        
-        //On ajoute les forces de frottement.
-        obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
-        obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
-
+        //On calcule les forces à partir des accélérations.
         obj->setAcceleration(obj->getForces()/obj->getMass());
         obj->setAngularAcceleration(obj->getInertiaInv()*obj->getTorques());
+        
+        //On integre les accelerations.
         obj->setVelocity(obj->getVelocity() + obj->getAcceleration() * step);
         obj->setAngularVelocity(obj->getAngularVelocity() + obj->getAngularAcceleration() * step);
 
+        //On integre les vitesses.
         obj->translate(obj->getVelocity() * step);
         obj->rotate(obj->getAngularVelocity() * step);
 
         //On réinitialise les forces et couples.
         obj->resetActions();
-
     }
 }
 
