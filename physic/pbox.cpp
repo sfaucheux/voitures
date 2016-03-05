@@ -20,6 +20,15 @@ float square(float f)
     return f * f;
 }
 
+float sgn(float f)
+{
+    if (f < 0)
+        return -1;
+    else if (f > 0)
+        return 1;
+    return 0;
+}
+
 bool PBox::collide(PObject* obj)
 {
     return obj->collideWithBox(this);
@@ -96,13 +105,15 @@ vector<tuple<vec3,vec3>> PBox::collisionPointsWithMesh(PMesh* obj)
     return vector<tuple<vec3,vec3>>();
 }
 
-vector<tuple<vec3,vec3>> PBox::collisionPointsWithSphere(PSphere* obj) 
+vector<tuple<vec3,vec3>> PBox::collisionPointsWithSphere(PSphere* s) 
 {
-/*    // calculating s's position relative to this
-    glm::vec3 sphPos = s->getPosition() - m_position;
-    sphPos = glm::vec3(glm::rotate(-m_angle.x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-m_angle.y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
-    sphPos = glm::vec3(glm::rotate(-m_angle.z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
+    glm::vec3 collisionPoint;
+    // calculating s's position relative to this
+    // TODO : this is false
+    glm::vec3 sphPos = s->getCoordinates().getPosition() - m_coord.getPosition();
+    sphPos = glm::vec3(glm::rotate(-m_coord.getRotation().x, glm::vec3(1, 0, 0)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-m_coord.getRotation().y, glm::vec3(0, 1, 0)) * glm::vec4(sphPos, 1));
+    sphPos = glm::vec3(glm::rotate(-m_coord.getRotation().z, glm::vec3(0, 0, 1)) * glm::vec4(sphPos, 1));
 
     float xc = fabsf(sphPos.x);
     float yc = fabsf(sphPos.y);
@@ -144,6 +155,7 @@ vector<tuple<vec3,vec3>> PBox::collisionPointsWithSphere(PSphere* obj)
     else if ((xc <= m_width / 2.0 + r) && (yc <= m_height / 2.0 + r) && (zc <= m_depth / 2.0 + r))
         if (square(xc - (m_width / 2.0)) + square(yc - (m_height / 2.0)) + square(zc - (m_depth / 2.0)) <= square(r))
             collisionPoint = glm::vec3(sgn(sphPos.x) * m_width / 2.0, sgn(sphPos.y) * m_height / 2.0, sgn(sphPos.z) * m_depth / 2.0);
-    else*/
+    else
         return vector<tuple<vec3,vec3>>();
+    return vector<tuple<vec3,vec3>>({make_tuple(collisionPoint, sphPos - collisionPoint)});
 }
