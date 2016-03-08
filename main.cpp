@@ -48,18 +48,18 @@ int main(int argc, char** argv)
     Object sphere1(Sphere(10));
     Object sphere2(Sphere(10));
     Object sphere3(Sphere(10));
-    Object sphere4(Box(10, 10, 10));
-    sphere1.getPObject()->setVelocity(glm::vec3(0,20,8));
-    sphere4.getPObject()->setVelocity(glm::vec3(0,10,5));
-    sphere2.getPObject()->setVelocity(glm::vec3(1,0,8));
-    sphere3.getPObject()->setVelocity(glm::vec3(0,3,8));
+    Object sphere4(Box(60, 60, 10));
+    //sphere1.getPObject()->setVelocity(glm::vec3(0,20,8));
+    //sphere4.getPObject()->setVelocity(glm::vec3(0,10,5));
+    //sphere2.getPObject()->setVelocity(glm::vec3(1,0,8));
+    //sphere3.getPObject()->setVelocity(glm::vec3(0,3,8));
 
-    sphere1.getPObject()->setAngularVelocity(glm::vec3(-2,10,0));
-    sphere4.getPObject()->setAngularVelocity(glm::vec3(1,0,10));
-    sphere3.getPObject()->setAngularVelocity(glm::vec3(8,0,2));
-    sphere2.getPObject()->setAngularVelocity(glm::vec3(1,0,0));
+    //sphere1.getPObject()->setAngularVelocity(glm::vec3(-2,10,0));
+    //sphere4.getPObject()->setAngularVelocity(glm::vec3(1,0,10));
+    //sphere3.getPObject()->setAngularVelocity(glm::vec3(8,0,2));
+    //sphere2.getPObject()->setAngularVelocity(glm::vec3(1,0,0));
 
-    sphere3.getPObject()->setStatic(false);
+    sphere4.getPObject()->setStatic(true);
     //sphere4.getPObject()->setStatic(true);
     //sphere1.getPObject()->setStatic(true);
     world.addObject(sphere4.getPObject());
@@ -67,10 +67,11 @@ int main(int argc, char** argv)
     world.addObject(sphere1.getPObject());
     world.addObject(sphere2.getPObject());
 
-    sphere1.translate(glm::vec3(1, -40, 0));
-    sphere2.translate(glm::vec3(6, 15, 30));
-    sphere3.translate(glm::vec3(2, 0, 0));
-    sphere4.translate(glm::vec3(3, -20, 35));
+    sphere1.translate(glm::vec3(1, -40, 30));
+    sphere2.translate(glm::vec3(0, 35, 20));
+    sphere3.translate(glm::vec3(2, 60, 20));
+    sphere4.translate(glm::vec3(3, 0, -40));
+    sphere4.rotate(glm::vec3(-0.01,0,0));
 
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");

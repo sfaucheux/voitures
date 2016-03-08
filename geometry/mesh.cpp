@@ -74,9 +74,7 @@ Mesh::Mesh(string filename)
     else
         cout << "Error while loading model, no file found" << endl;
 }
-Mesh::~Mesh()
-{
-}
+
 std::vector<vec3> Mesh::getVertices()
 {
     return m_vertices;
@@ -89,40 +87,40 @@ std::vector<uvec3> Mesh::getIndices()
 
 bool Mesh::collide(const Geometry* obj) const
 {
-    return obj->collideWithMesh(this);
+    return obj->collide(this);
 }
 
-bool Mesh::collideWithSphere(const Sphere *s) const
+bool Mesh::collide(const Sphere *s) const
 {
     return Collisions::collide(this, s);
 }
 
-bool Mesh::collideWithBox(const Box* b) const
+bool Mesh::collide(const Box* b) const
 {
     return Collisions::collide(this, b);
 }
 
-bool Mesh::collideWithMesh(const Mesh* m) const
+bool Mesh::collide(const Mesh* m) const
 {
     return Collisions::collide(this, m);
 }
 
 vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Geometry* obj) const
 {
-    return obj->collisionPointsWithMesh(this);
+    return obj->collisionPoints(this);
 }
 
-vector<tuple<vec3,vec3>> Mesh::collisionPointsWithSphere(const Sphere* s) const
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Sphere* s) const
 {
     return Collisions::collisionPoints(this, s);
 }
 
-vector<tuple<vec3,vec3>> Mesh::collisionPointsWithBox(const Box* b) const
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Box* b) const
 {
     return Collisions::collisionPoints(this, b);
 }
 
-vector<tuple<vec3,vec3>> Mesh::collisionPointsWithMesh(const Mesh* m) const
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Mesh* m) const
 {
     return Collisions::collisionPoints(this, m);
 }

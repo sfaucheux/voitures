@@ -12,22 +12,20 @@ class Mesh : public Geometry
 {
     public:
         Mesh(std::string filename);
-        virtual ~Mesh();
         
         std::vector<glm::vec3> getVertices();
         std::vector<glm::uvec3> getIndices();
 
-
         virtual bool collide(const Geometry* obj) const;
-        virtual bool collideWithSphere(const Sphere* obj) const;
-        virtual bool collideWithBox(const Box* obj) const;
-        virtual bool collideWithMesh(const Mesh* obj) const;
+        bool collide(const Sphere *s) const;
+        bool collide(const Box* b) const;
+        bool collide(const Mesh* m) const;
 
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Geometry* obj) const;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(const Sphere* obj) const;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithBox(const Box* obj) const;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(const Mesh* obj) const;
-       
+        std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Sphere* s) const;
+        std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Box* b) const;
+        std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Mesh* m) const;
+
 
     private:
         std::vector<glm::vec3> m_vertices;

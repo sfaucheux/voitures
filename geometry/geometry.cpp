@@ -29,12 +29,18 @@ mat4 const& Geometry::getModel() const
     return m_model;
 }
 
+mat4 Geometry::getRotationMatrix(mat4 m) const
+{
+    float norm = l2Norm(m_rot);
+    if (norm != 0)
+        return glm::rotate(m, norm, m_rot);
+    return m;
+}
+
 void Geometry::updateModel()
 {
     m_model = glm::translate(mat4(1), m_pos);
-    float norm = l2Norm(m_rot);
-    if (norm != 0)
-        m_model = glm::rotate(m_model, norm, m_rot);
+    m_model = getRotationMatrix(m_model);
     m_modelInv = glm::inverse(m_model);
     //m_modelInv = glm::rotate(mat4(1), -norm, m_rot);
     //m_modelInv = glm::translate(m_modelInv, -m_pos);
@@ -55,4 +61,9 @@ void Geometry::rotate(vec3 rotation)
 vec3 Geometry::getLocalPoint(const vec3& point) const
 {
    return vec3(m_modelInv*vec4(point,1));
+}
+
+vec3 Geometry::getWorldPoint(const vec3& point) const
+{
+   return vec3(m_model*vec4(point,1));
 }

@@ -108,7 +108,6 @@ void PWorld::collisionResponse()
                 tie(point, normal) = points[j] ;
                 vec3 v12 = obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
                 float dV = dot(normal, v12);
-                cout << dV << endl ;
                 if(dV > 0)
                 {   
                     normal = normalize(normal);
@@ -126,7 +125,7 @@ void PWorld::collisionResponse()
         {
             cout << "ATTENTION : PAS DE SOLUTION DU SYSTEME QUI REDUISE L'INTERPENETRATION !!!" << endl
                  << m_contacts.size() << " CONTACTS, " << i << " ITERATIONS."
-                 << "BOUCLE STOPEE !!!" << endl ;
+                 << "BOUCLE STOPPEE !!!" << endl ;
             break;
         }
         i++;
@@ -158,7 +157,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         
         //Coefficient de frottement dynamique.
         //Pour le statique c'est plus compliqué à simuler.
-        float f =  0.8;
+        float f =  1;
 
         float tangentVelocity = dot(v12, tan) ;
         float normalVelocity = dot(v12, normal) ;

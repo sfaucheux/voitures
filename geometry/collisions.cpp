@@ -1,6 +1,7 @@
 #include "collisions.h"
 #include "../glm/gtx/norm.hpp"
 #include "../glm/gtx/transform.hpp"
+#include <iostream>
 
 using namespace glm ;
 using namespace std ;
@@ -101,7 +102,10 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
                 collisionPoint = sphPos - sgn(sphPos.y) * glm::vec3(0, r, 0);
         else if (yc <= b->getHeight() / 2.0 + r)
             if (square(yc - (b->getHeight() / 2.0)) + square(zc - (b->getDepth() / 2.0)) <= square(r))
+            {
+                cout << "zboub";
                 collisionPoint = glm::vec3(sphPos.x, sgn(sphPos.y) * b->getHeight() / 2.0, sgn(sphPos.z) * b->getDepth() / 2.0);
+            }
         else
             return vector<tuple<vec3,vec3>>();
     }
@@ -129,7 +133,9 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
             collisionPoint = glm::vec3(sgn(sphPos.x) * b->getWidth() / 2.0, sgn(sphPos.y) * b->getHeight() / 2.0, sgn(sphPos.z) * b->getDepth() / 2.0);
     else
         return vector<tuple<vec3,vec3>>();
-    return vector<tuple<vec3,vec3>>({make_tuple(collisionPoint, sphPos - collisionPoint)});
+    vec3 n = /*mat3(b->getRotationMatrix()) * */(collisionPoint - sphPos);
+    cout << n.x << ";" << n.y << ";" << n.z << endl;
+    return vector<tuple<vec3,vec3>>({make_tuple(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos))});
 }
 
 vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* b, const Sphere* s)
