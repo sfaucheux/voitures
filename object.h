@@ -9,7 +9,6 @@
 #include "graphics/drawable.h"
 #include "physic/pobject.h"
 
-#include "geometry/geometry.h"
 #include "geometry/sphere.h"
 #include "geometry/box.h"
 #include "geometry/mesh.h"

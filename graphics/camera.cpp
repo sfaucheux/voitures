@@ -31,6 +31,7 @@ void Camera::setPosition(glm::vec3 pos)
 {
 	m_position = pos;
 	m_target = m_position + m_orientation;
+	update();
 }
 
 void Camera::setUp(glm::vec3 up)
