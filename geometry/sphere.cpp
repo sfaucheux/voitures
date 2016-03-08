@@ -11,6 +11,10 @@ Sphere::Sphere(float radius)
     m_radius = radius;
 }
 
+Sphere::~Sphere()
+{
+}
+
 float Sphere::getRadius() const
 {
     return m_radius;

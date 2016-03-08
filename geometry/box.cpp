@@ -16,6 +16,10 @@ Box::Box(float width, float height, float depth)
     m_depth = depth;
 }
 
+Box::~Box()
+{
+}
+
 float Box::getHeight() const
 {
     return m_height;

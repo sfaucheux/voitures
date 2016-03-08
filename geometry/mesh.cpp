@@ -75,6 +75,10 @@ Mesh::Mesh(string filename)
         cout << "Error while loading model, no file found" << endl;
 }
 
+Mesh::~Mesh()
+{
+}
+
 std::vector<vec3> Mesh::getVertices()
 {
     return m_vertices;

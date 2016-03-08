@@ -10,6 +10,7 @@ class Sphere : public Geometry
 {
     public:
         Sphere(float radius);
+        virtual ~Sphere();
 
         float getRadius() const;
 

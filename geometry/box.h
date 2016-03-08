@@ -10,6 +10,7 @@ class Box : public Geometry
 {
     public:
         Box(float width, float height, float depth);
+        virtual ~Box();
 
         float getHeight() const;
         float getWidth() const;
