@@ -24,14 +24,14 @@ class Object
 
         PObject* getPObject() const;
         Drawable* getDrawable() const;
-        const Geometry& getGeometry() const;
+        const Geometry* getGeometry() const;
 
         void translate(glm::vec3 t);
         void rotate(glm::vec3 r);
 
 
     protected:
-        Geometry& m_geom;
+        Geometry* m_geom;
 		Drawable* m_gObj;
 		PObject* m_pObj;
 

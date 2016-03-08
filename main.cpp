@@ -43,14 +43,14 @@ int main(int argc, char** argv)
     PWorld world(glm::vec3(0,0,-10)) ;
 
     // Main A
-    /*
+
     //Mesh obj(filename);
     Object sphere1(Sphere(10));
     Object sphere2(Sphere(10));
     Object sphere3(Sphere(10));
-    Object sphere4(Sphere(10));
+    Object sphere4(Box(10, 10, 10));
     sphere1.getPObject()->setVelocity(glm::vec3(0,20,8));
-    sphere4.getPObject()->setVelocity(glm::vec3(0,1,5));
+    sphere4.getPObject()->setVelocity(glm::vec3(0,10,5));
     sphere2.getPObject()->setVelocity(glm::vec3(1,0,8));
     sphere3.getPObject()->setVelocity(glm::vec3(0,3,8));
 
@@ -91,11 +91,10 @@ int main(int argc, char** argv)
         //cout << sphere4.getPObject()->getAngularVelocity().x << ", " << sphere4.getPObject()->getAngularVelocity().y << ", " << sphere4.getPObject()->getAngularVelocity().z << "\x1B[F" << endl;
         //cout << "norme : " << l2Norm(sphere4.getPObject()->getAngularVelocity()) << endl ;
     }
-    */
 
     // Main B
-
-    //Mesh obj(filename);
+/*
+    Object mesh(Mesh(filename));
     Object box(Box(20, 50, 30));
     Object sphere(Sphere(20));
     //world.addObject(obj.getPObject());
@@ -111,7 +110,7 @@ int main(int argc, char** argv)
     {
         //world.update(0.05);
         context.clean();
-        if (box.getGeometry().collide(&(sphere.getGeometry())))
+        if ((box.getGeometry())->collide((sphere.getGeometry())))
         {
             drawObjectWithEdges(box, &redShdr, &grayShdr, renderer);
             drawObjectWithEdges(sphere, &redShdr, &grayShdr, renderer);
@@ -151,7 +150,7 @@ int main(int argc, char** argv)
         //cout << box.getRotation().x << ", " << box.getRotation().y << ", " << box.getRotation().z << "\x1B[F" << endl;
 
         usleep(50000);
-    }
+    }*/
 
     return 0;
 

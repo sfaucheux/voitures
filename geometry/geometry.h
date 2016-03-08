@@ -5,11 +5,15 @@
 #include "vector"
 #include "tuple"
 
+class Box;
+class Sphere;
+class Mesh;
+
 class Geometry
 {
     public:
         Geometry();
-        ~Geometry();
+        virtual ~Geometry();
 
         glm::vec3 getPosition() const;
         glm::vec3 getRotation() const;
@@ -20,7 +24,14 @@ class Geometry
         glm::vec3 getLocalPoint(const glm::vec3& point) const;
 
         virtual bool collide(const Geometry* obj) const = 0 ;
+        virtual bool collideWithSphere(const Sphere* obj) const = 0 ;
+        virtual bool collideWithBox(const Box* obj) const = 0 ;
+        virtual bool collideWithMesh(const Mesh* obj) const = 0 ;
+
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Geometry* obj) const = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(const Sphere* obj) const = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithBox(const Box* obj) const = 0 ;
+        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(const Mesh* obj) const = 0 ;
 
 
     private:
@@ -30,7 +41,6 @@ class Geometry
         glm::mat4 m_modelInv;
         glm::vec3 m_pos;
         glm::vec3 m_rot;
-        glm::vec3 m_homoth;
 };
 
 #endif

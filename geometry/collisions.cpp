@@ -134,8 +134,12 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
 
 vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* b, const Sphere* s)
 {
-    //TODO : normal = -1*normal;
-    return collisionPoints(b, s);
+    vector<tuple<vec3,vec3>> r = collisionPoints(s,b);
+    for(auto it = r.begin() ; it != r.end() ; it++)
+    {
+        get<1>(*it) = -get<1>(*it) ;
+    }
+    return r;
 }
 
 bool Collisions::collide(const Sphere* s, const Mesh* m)
