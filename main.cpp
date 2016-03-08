@@ -42,9 +42,7 @@ int main(int argc, char** argv)
 
     PWorld world(glm::vec3(0,0,-10)) ;
 
-    // Main A
-
-    //Mesh obj(filename);
+    Object obj(Mesh(filename.c_str()));
     Object sphere1(Sphere(10));
     Object sphere2(Sphere(10));
     Object sphere3(Sphere(10));
@@ -79,79 +77,22 @@ int main(int argc, char** argv)
 
     while (context.eventLoop())
     {
-        //usleep(1000);
+        usleep(50000);
         world.update(context.getFrametime());
         context.clean();
         drawObjectWithEdges(sphere4, &greenShdr, &grayShdr, renderer);
         drawObjectWithEdges(sphere1, &greenShdr, &grayShdr, renderer);
         drawObjectWithEdges(sphere2, &greenShdr, &grayShdr, renderer);
         drawObjectWithEdges(sphere3, &greenShdr, &grayShdr, renderer);
+
+        drawObjectWithEdges(obj, &greenShdr, &grayShdr, renderer);
+        
         context.show();
 
         //cout << 1/context.getFrametime() << "\x1B[F"  << endl ;;
         //cout << sphere4.getPObject()->getAngularVelocity().x << ", " << sphere4.getPObject()->getAngularVelocity().y << ", " << sphere4.getPObject()->getAngularVelocity().z << "\x1B[F" << endl;
         //cout << "norme : " << l2Norm(sphere4.getPObject()->getAngularVelocity()) << endl ;
     }
-
-    // Main B
-/*
-    Object mesh(Mesh(filename));
-    Object box(Box(20, 50, 30));
-    Object sphere(Sphere(20));
-    //world.addObject(obj.getPObject());
-
-//    box.translate(glm::vec3(0, 45, 0));
-//    box.rotate(glm::vec3(2.8, 0.5, 1.3));
-
-    Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
-    Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");
-    Shader grayShdr("shaders/gris.vert", "shaders/couleur3D.frag");
-
-    while (context.eventLoop())
-    {
-        //world.update(0.05);
-        context.clean();
-        if ((box.getGeometry())->collide((sphere.getGeometry())))
-        {
-            drawObjectWithEdges(box, &redShdr, &grayShdr, renderer);
-            drawObjectWithEdges(sphere, &redShdr, &grayShdr, renderer);
-        }
-        else
-        {
-            drawObjectWithEdges(box, &greenShdr, &grayShdr, renderer);
-            drawObjectWithEdges(sphere, &greenShdr, &grayShdr, renderer);
-        }
-        context.show();
-
-        if (context.keyIsPressed(GLFW_KEY_W))
-            sphere.translate(glm::vec3(-1, 0, 0));
-        if (context.keyIsPressed(GLFW_KEY_S))
-            sphere.translate(glm::vec3(1, 0, 0));
-        if (context.keyIsPressed(GLFW_KEY_A))
-            sphere.translate(glm::vec3(0, 1, 0));
-        if (context.keyIsPressed(GLFW_KEY_D))
-            sphere.translate(glm::vec3(0, -1, 0));
-        if (context.keyIsPressed(GLFW_KEY_R))
-            sphere.translate(glm::vec3(0, 0, -1));
-        if (context.keyIsPressed(GLFW_KEY_F))
-            sphere.translate(glm::vec3(0, 0, 1));
-        if (context.keyIsPressed(GLFW_KEY_V))
-            box.rotate(glm::vec3(0.01, 0, 0));
-        if (context.keyIsPressed(GLFW_KEY_B))
-            box.rotate(glm::vec3(0, 0.01, 0));
-        if (context.keyIsPressed(GLFW_KEY_N))
-            box.rotate(glm::vec3(0, 0, 0.01));
-        if (context.keyIsPressed(GLFW_KEY_G))
-            box.rotate(glm::vec3(-0.01, 0, 0));
-        if (context.keyIsPressed(GLFW_KEY_H))
-            box.rotate(glm::vec3(0, -0.01, 0));
-        if (context.keyIsPressed(GLFW_KEY_J))
-            box.rotate(glm::vec3(0, 0, -0.01));
-
-        //cout << box.getRotation().x << ", " << box.getRotation().y << ", " << box.getRotation().z << "\x1B[F" << endl;
-
-        usleep(50000);
-    }*/
 
     return 0;
 

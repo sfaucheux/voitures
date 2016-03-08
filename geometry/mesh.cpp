@@ -9,10 +9,10 @@
 using namespace std;
 using namespace glm;
 
-Mesh::Mesh(string filename)
+Mesh::Mesh(const char* filename)
 {
     cout << "Loading " << filename << endl;
-    ifstream inFile ("models/" + filename);
+    ifstream inFile ("models/" + string(filename));
     string line;
 
     if (inFile.is_open())
@@ -94,7 +94,7 @@ bool Mesh::collide(const Geometry* obj) const
     return obj->collide(this);
 }
 
-bool Mesh::collide(const Sphere *s) const
+bool Mesh::collide(const Sphere* s) const
 {
     return Collisions::collide(this, s);
 }

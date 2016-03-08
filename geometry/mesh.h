@@ -11,14 +11,14 @@ class Sphere;
 class Mesh : public Geometry 
 {
     public:
-        Mesh(std::string filename);
+        Mesh(const char* filename);
         virtual ~Mesh();
         
         std::vector<glm::vec3> getVertices();
         std::vector<glm::uvec3> getIndices();
 
         virtual bool collide(const Geometry* obj) const;
-        bool collide(const Sphere *s) const;
+        bool collide(const Sphere* s) const;
         bool collide(const Box* b) const;
         bool collide(const Mesh* m) const;
 
