@@ -8,15 +8,18 @@
 
 using namespace std;
 
-Drawable::Drawable() : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_shader(nullptr), m_model(1.0)
+Drawable::Drawable(Geometry& geom) : m_idVAO(0), m_idVBO(0), m_idIBO(0), m_shader(nullptr), m_geometry(geom)
 {
 }
 
 Drawable::~Drawable()
 {
-    glDeleteBuffers(1, &m_idVBO);
-    glDeleteVertexArrays(1, &m_idVAO);
-    glDeleteBuffers(1, &m_idIBO);
+    if (glIsBuffer(m_idVBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idVBO);
+    if (glIsVertexArray(m_idVAO) == GL_TRUE)
+        glDeleteVertexArrays(1, &m_idVAO);
+    if (glIsBuffer(m_idIBO) == GL_TRUE)
+        glDeleteBuffers(1, &m_idIBO);
 }
 
 void Drawable::setShader(Shader* shader)
@@ -24,19 +27,9 @@ void Drawable::setShader(Shader* shader)
     m_shader = shader;
 }
 
-void Drawable::setModel(glm::mat4 model)
-{
-    m_model = model;
-}
-
 const Shader* Drawable::getShader() const
 {
     return m_shader;
-}
-
-const glm::mat4& Drawable::getModel() const
-{
-    return m_model;
 }
 
 GLuint Drawable::getIdVAO() const
@@ -64,19 +57,9 @@ int Drawable::getIndicesNumber() const
     return m_indicesNumber;
 }
 
-void Drawable::rotate(glm::vec3 axis, float angle)
+const Geometry& Drawable::getGeometry() const
 {
-    m_model = glm::rotate(m_model, angle, axis);
-}
-
-void Drawable::translate(glm::vec3 translation)
-{
-    m_model = glm::translate(m_model, translation);
-}
-
-void Drawable::homothetie(glm::vec3 homoth)
-{
-    m_model = glm::scale(m_model, homoth);
+    return m_geometry;
 }
 
 void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices)
@@ -113,22 +96,4 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<glm::uve
     m_indicesNumber = indices.size() * 3 ;
     m_verticesNumber = vertices.size() * 3 ;
 
-}
-
-void Drawable::update(const std::vector<float> &data, int offset)
-{
-    glBindBuffer(GL_ARRAY_BUFFER, m_idVBO);
-        void* VBOAddress = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
-        if (VBOAddress == NULL)
-        {
-            std::cerr << "Erreur au niveau de la récupération du VBO" << std::endl;
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            return;
-        }
-        memcpy(GET_ADDRESS(VBOAddress, offset), &data[0], data.size() * sizeof(float));
-
-        glUnmapBuffer(GL_ARRAY_BUFFER);
-        VBOAddress = NULL;
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

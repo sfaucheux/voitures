@@ -20,10 +20,12 @@ float Box::getHeight() const
 {
     return m_height;
 }
+
 float Box::getWidth() const
 {
     return m_width;
 }
+
 float Box::getDepth() const
 {
     return m_depth;
@@ -34,37 +36,37 @@ bool Box::collide(const Geometry* obj) const
     return obj->collide(this);
 }
 
-bool Box::collide(const Box* b) const
-{
-    return false;
-}
-
-bool Box::collide(const Mesh* b) const
-{
-    return false;
-}
-
 bool Box::collide(const Sphere *s) const
 {
-    return Collision::collide(s, this);
+    return Collisions::collide(this, s);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Geometry* obj) const 
+bool Box::collide(const Box* b) const
+{
+    return Collisions::collide(this, b);
+}
+
+bool Box::collide(const Mesh* m) const
+{
+    return Collisions::collide(this, m);
+}
+
+vector<tuple<vec3,vec3>> Box::collisionPoints(const Geometry* obj) const
 {
     return obj->collisionPoints(this);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Box* obj) const
+vector<tuple<vec3,vec3>> Box::collisionPoints(const Sphere* s) const
 {
-    return vector<tuple<vec3,vec3>>();
+    return Collisions::collisionPoints(this, s);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Mesh* obj) const
+vector<tuple<vec3,vec3>> Box::collisionPoints(const Box* b) const
 {
-    return vector<tuple<vec3,vec3>>();
+    return Collisions::collisionPoints(this, b);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Sphere* obj) const
+vector<tuple<vec3,vec3>> Box::collisionPoints(const Mesh* m) const
 {
-    return vector<tuple<vec3,vec3>>();
+    return Collisions::collisionPoints(this, m);
 }

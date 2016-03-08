@@ -57,7 +57,7 @@ void PWorld::broadPhase()
     {
         for (auto jt = m_objects.begin(); jt != it; jt++)
         {
-            const Geometry *g1 = &(*it)->getGeometry(), *g2 = &(*jt)->getGeometry() ;
+            const Geometry *g1 = &(*it)->getGeometry(), *g2 = &(*jt)->getGeometry();
             if (g1->collide(g2))
                 m_potentialCollisions.push_back({*it, *jt});
         }

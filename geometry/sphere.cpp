@@ -11,6 +11,11 @@ Sphere::Sphere(float radius)
     m_radius = radius;
 }
 
+float Sphere::getRadius() const
+{
+    return m_radius;
+}
+
 bool Sphere::collide(const Geometry* obj) const
 {
     return obj->collide(this);
@@ -18,17 +23,17 @@ bool Sphere::collide(const Geometry* obj) const
 
 bool Sphere::collide(const Sphere *s) const
 {
-    return Collision::collide(this, s);
+    return Collisions::collide(this, s);
 }
 
 bool Sphere::collide(const Box* b) const
 {
-    return b->collide(this);
+    return Collisions::collide(this, b);
 }
 
-bool Sphere::collide(const Mesh* b) const
+bool Sphere::collide(const Mesh* m) const
 {
-    return false;
+    return Collisions::collide(this, m);
 }
 
 vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Geometry* obj) const
@@ -36,22 +41,17 @@ vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Geometry* obj) const
     return obj->collisionPoints(this);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Box* obj) const
+vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Sphere* s) const
 {
-    return vector<tuple<vec3,vec3>>();
+    return Collisions::collisionPoints(this, s);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Mesh* obj) const
+vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Box* b) const
 {
-    return vector<tuple<vec3,vec3>>();
+    return Collisions::collisionPoints(this, b);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Sphere* obj) const
+vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Mesh* m) const
 {
-    return Collision::collisionPoints(this, obj);
-}
-
-float Sphere::getRadius() const
-{
-    return m_radius;
+    return Collisions::collisionPoints(this, m);
 }

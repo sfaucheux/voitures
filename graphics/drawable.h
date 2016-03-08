@@ -6,32 +6,26 @@
 
 #include "../glm/glm.hpp"
 
+#include "../geometry/geometry.h"
 #include "shader.h"
 
 class Drawable
 {
     public:
-        Drawable() ;
+        Drawable(Geometry& geom);
         virtual ~Drawable();
 
         void setShader(Shader* shader);
-        void setModel(glm::mat4 model) ;
 
         const Shader* getShader() const;
-        const glm::mat4& getModel() const;
         GLuint getIdVAO() const;
         GLuint getIdVBO() const;
         GLuint getIdIBO() const;
         int getIndicesNumber() const;
         int getVerticesNumber() const;
-
-        void rotate(glm::vec3 axis, float angle);
-        void translate(glm::vec3 translation);
-        void homothetie(glm::vec3 homoth) ;
+        const Geometry& getGeometry() const;
 
         void load(std::vector<glm::vec3> const &vertices, std::vector<glm::uvec3> const &indices);
-        void update(const std::vector<float> &data, int offset);
-
 
     protected:
 
@@ -40,10 +34,11 @@ class Drawable
         GLuint m_idIBO;
 
         Shader* m_shader;
+
         int m_indicesNumber;
         int m_verticesNumber;
-        glm::mat4 m_model;
 
+        Geometry& m_geometry;
 };
 
 #endif
