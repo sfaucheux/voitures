@@ -157,7 +157,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         
         //Coefficient de frottement dynamique.
         //Pour le statique c'est plus compliqué à simuler.
-        float f =  1;
+        float f =  0.1;
 
         float tangentVelocity = dot(v12, tan) ;
         float normalVelocity = dot(v12, normal) ;
