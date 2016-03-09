@@ -1,7 +1,7 @@
 BUILD := build
 LIBS := GL GLEW glfw stdc++ png
 PREFIX := $(HOME)/dev
-DIRS := . graphics physic objects
+DIRS := . graphics physic geometry
 
 SOURCES := $(foreach DIR,$(DIRS),$(wildcard $(DIR)/*.cpp))
 OBJECTS := $(addprefix $(BUILD)/,$(notdir $(SOURCES:.cpp=.o)))

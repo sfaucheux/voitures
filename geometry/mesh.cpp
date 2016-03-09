@@ -1,68 +1,68 @@
+#include <map>
 #include <iostream>
 #include <fstream>
 #include <sstream>
-#include <map>
 
 #include "mesh.h"
-#include "../physic/pmesh.h"
+
+#include "collisions.h"
 
 using namespace std;
 using namespace glm;
 
-
-Mesh::Mesh(string filename)
+Mesh::Mesh(const char* filename)
 {
 	cout << "Loading " << filename << endl;
 
-	ifstream inFile ("models/" + filename);
+	ifstream inFile ("models/" + string(filename));
 
 	if (inFile.is_open())
 	{
-        vector<vec3> vraw, v ;
-        vector<vec2> traw, t ;
-        vector<unsigned int> viraw, tiraw, id ;
+        vector<vec2> traw;
+        vector<unsigned int> tiraw;
 		std::map<glm::uvec2,unsigned int, comp> knowns ; //,comp> knowns;
 
 		//Charge les données brutes dans des vecteurs temporaires
-		loadRawData(&inFile, vraw, viraw, traw, tiraw);
+		loadRawData(&inFile, m_vraw, m_viraw, traw, tiraw);
 
-		if (tiraw.size() == viraw.size()) //On traite les données pour être texture-compatibles s'il y a lieu
+		if (tiraw.size() == m_viraw.size()) //On traite les données pour être texture-compatibles s'il y a lieu
 		{
 			cout << "loading with textures" << endl;
             cout << "processing UV data..." << endl;
-            for (int i = 0; i < viraw.size(); i++)
+            for (int i = 0; i < m_viraw.size(); i++)
             {
                 map<uvec2,unsigned int>::iterator it;
 
                 //Has the couple (vert,uv) already been seen ?
-                it = knowns.find(uvec2(viraw[i], tiraw[i]));
+                it = knowns.find(uvec2(m_viraw[i], tiraw[i]));
 
                 if (it != knowns.end())
                 {
                     //cout << "couple known" << endl;
                     //If yes, all we have to do is add the index we stored in the indices array
-                    id.push_back(it->second);
+                    m_id.push_back(it->second);
                 }
                 else
                 {
                     //If no, we add a new couple of (vertex,uv) to the definitive array, a new index
                     //pointing to this couple and we declare the couple in the "knowns" map.
 
-                    //cout << v.size() << " " << t.size() << endl;
-                    id.push_back(v.size());
-                    knowns[uvec2(viraw[i],tiraw[i])] = v.size();
+                    //cout << m_v.size() << " " << m_t.size() << endl;
+                    m_id.push_back(m_v.size());
+                    knowns[uvec2(m_viraw[i], tiraw[i])] = m_v.size();
 
-                    v.push_back(vraw.at(viraw[i]));
-                    t.push_back(traw.at(tiraw[i]));
+                    m_v.push_back(m_vraw.at(m_viraw[i]));
+                    m_t.push_back(traw.at(tiraw[i]));
                 }
 
             }
             cout << "done" << endl;
-			m_gObj.load(v, id, t);
+            m_hasTextures = true;
 		}
 		else
-		m_gObj.load(vraw, viraw); //Les donées brutes suffisent s'il n'y a pas de textures
-		m_pObj = new PMesh();
+        {
+            m_hasTextures = false;
+        }
 		cout << "Loading successful" << endl;
 	}
 	else
@@ -186,10 +186,65 @@ void Mesh::loadRawData(std::ifstream* filename, std::vector<glm::vec3> &v,std::v
 
 Mesh::~Mesh()
 {
-	delete m_pObj;
 }
 
-Object::ObjectType Mesh::getType()
+std::vector<vec3> Mesh::getVertices()
 {
-	return Object::Mesh;
+    if (m_hasTextures)
+        return m_v;
+    return m_vraw;
+}
+
+std::vector<unsigned int> Mesh::getIndices()
+{
+    if (m_hasTextures)
+        return m_id;
+    return m_viraw;
+}
+
+std::vector<vec2>* Mesh::getTextures()
+{
+    if (m_hasTextures)
+        return &m_t;
+    return nullptr;
+}
+
+bool Mesh::collide(const Geometry* obj) const
+{
+    return obj->collide(this);
+}
+
+bool Mesh::collide(const Sphere* s) const
+{
+    return Collisions::collide(this, s);
+}
+
+bool Mesh::collide(const Box* b) const
+{
+    return Collisions::collide(this, b);
+}
+
+bool Mesh::collide(const Mesh* m) const
+{
+    return Collisions::collide(this, m);
+}
+
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Geometry* obj) const
+{
+    return obj->collisionPoints(this);
+}
+
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Sphere* s) const
+{
+    return Collisions::collisionPoints(this, s);
+}
+
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Box* b) const
+{
+    return Collisions::collisionPoints(this, b);
+}
+
+vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Mesh* m) const
+{
+    return Collisions::collisionPoints(this, m);
 }

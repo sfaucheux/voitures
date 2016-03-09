@@ -56,7 +56,6 @@ bool Context::init(int width, int height, std::string title, int MSAA)
 
     glewExperimental=true;
 	GLenum err = glewInit();
-    glGetError(); //reinitialise le flag d'erreur.
 	if (GLEW_OK != err)
 	{
         glfwTerminate();
@@ -88,7 +87,7 @@ void Context::cursor(double xpos, double ypos)
 	m_yCursor = ypos;
 	if (glfwGetMouseButton(m_window, GLFW_MOUSE_BUTTON_1) == GLFW_PRESS)
 	{
-		m_renderer.getCamera().setOrientation(-dx, -dy);
+		m_renderer.getCamera().setOrientation(dx, dy);
 	}
 
 }

@@ -1,24 +1,24 @@
-#include <cmath>
-
+#include <vector>
 #include "../glm/glm.hpp"
-
-#include "sphere.h"
-#include "../physic/psphere.h"
+#include "gsphere.h"
 
 #define GET_INDEX(i, j) ((i) * (nbPoints / 2) + (j))
 
-Sphere::Sphere(float radius)
+gSphere::gSphere(Sphere& s) : Drawable(s)
 {
+    float radius = s.getRadius();
     std::vector<glm::vec3> vertices;
     std::vector<glm::uvec3> indices;
 
-    static const int nbPointsUnitSphere = 20;
+    static const int nbPointsUnitSphere = 3;
     int nbPoints = radius * nbPointsUnitSphere;
     float dAngle = 2.0 * M_PI / (float)nbPoints;
     int topVertexIndex = nbPoints * (nbPoints / 2);
 
-    for (int i = 0; i < nbPoints; i++) {
-        for (int j = 0; j < nbPoints / 2; j++) {
+    for (int i = 0; i < nbPoints; i++) 
+    {
+        for (int j = 0; j < nbPoints / 2; j++)
+        {
             float theta = i * dAngle;
             float phi = j * dAngle - (M_PI / 2.0);
             vertices.push_back(glm::vec3(radius * cos(theta) * cos(phi), radius * sin(theta) * cos(phi), radius * sin(phi)));
@@ -34,16 +34,9 @@ Sphere::Sphere(float radius)
     }
     vertices.push_back(glm::vec3(0, 0, radius));
 
-    m_gObj.load(vertices, *((std::vector<unsigned int>*) &indices));
-    m_pObj = new PSphere(radius);
+    load(vertices, indices);
 }
 
-Sphere::~Sphere()
+gSphere::~gSphere()
 {
-    delete m_pObj;
-}
-
-Object::ObjectType Sphere::getType()
-{
-    return Object::Sphere;
 }

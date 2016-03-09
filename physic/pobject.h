@@ -6,6 +6,7 @@
 #include <vector>
 #include <tuple>
 
+#include "../geometry/geometry.h"
 #include "../glm/glm.hpp"
 
 class PBox;
@@ -14,54 +15,45 @@ class PSphere;
 
 class PObject
 {
-    enum type {Dynamic, Kinematic, Static} ;
     public:
-        PObject();
+        PObject(Geometry& geo);
         virtual ~PObject();
 
-        //Fonctions de collision précises, le type de retour int n'est que temporaire,
-        //le plus adapté serait une structure ou un objet avec (point, normale, distance d'interpénétration).
+        /*Accesseurs*/
+        const glm::vec3 getPosition() const;
+        const glm::vec3& getVelocity() const;
+        const glm::vec3& getAcceleration() const;
+        const glm::vec3 getRotation() const;
+        const glm::vec3& getAngularVelocity() const;
+        const glm::vec3& getAngularAcceleration() const;
+        const glm::vec3& getForces() const;
+        const glm::vec3& getTorques() const;
+        const glm::mat3& getInertia() const;
+        const glm::mat3& getInertiaInv() const;
+        const Geometry& getGeometry() const;
 
-        //fonction qui renvoit la collision d'un pobject quelconque avec soit même.
-        virtual bool collide(PObject* obj) = 0 ;
+        glm::vec3 getPointVelocity(const glm::vec3& point) const;
+        glm::vec3 getPointForce(const glm::vec3& point) const;
+        bool isStatic() const;
+        float getMass() const;
+        float getInertiaMomentum(const glm::vec3& axis) const;
+        float getLinearDamping() const;
+        float getAngularDamping() const;
 
-        //collision avec tous les autres pobjects.
-        virtual bool collideWithBox(PBox* obj) = 0 ;
-        virtual bool collideWithMesh(PMesh* obj) = 0 ;
-        virtual bool collideWithSphere(PSphere* obj) = 0 ;
-
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(PObject* obj) = 0 ;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithBox(PBox* obj) = 0 ;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithMesh(PMesh* obj) = 0 ;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPointsWithSphere(PSphere* obj) = 0 ;
-
-        void doContactsResponse();
-
+        /*Modificateurs*/
         void setMass(float m);
         void setVelocity(glm::vec3 s);
         void setAcceleration(glm::vec3 a);
         void setAngularVelocity(glm::vec3 s);
         void setAngularAcceleration(glm::vec3 a);
         void setStatic(bool s);
+        void setLinearImpulse(glm::vec3);
+        void setAngularImpulse(glm::vec3);
+        void setInertia(glm::mat3);
 
-        glm::vec3 getPosition();
-        glm::vec3 getVelocity();
-        glm::vec3 getAcceleration();
-        glm::vec3 getRotation();
-        glm::vec3 getAngularVelocity();
-        glm::vec3 getAngularAcceleration();
-        glm::vec3 getForces();
-        glm::vec3 getTorques();
-        float getMass();
-        glm::mat3 getInertia();
-        float getLinearDamping();
-        float getAngularDamping();
-        bool isStatic();
-
-        float getVolume();
-
-        void rotate(glm::vec3 angle);
         void translate(glm::vec3 t);
+        void rotate(glm::vec3 angle);
+
         void addForce(glm::vec3 f);
         void addTorque(glm::vec3 t);
         void addContact(std::tuple<PObject*, glm::vec3, glm::vec3> contact);
@@ -69,35 +61,30 @@ class PObject
 
 
     protected:
-
-        type m_type ;
-        glm::vec3 m_position;
-        glm::vec3 m_angle;
-        glm::mat3 m_inertia;
-        glm::vec3 m_centroid;
-
         glm::vec3 m_velocity;
         glm::vec3 m_acceleration;
 
         glm::vec3 m_angularVelocity;
         glm::vec3 m_angularAcceleration;
 
-        float m_linearDamping ;
-        float m_angularDamping ;
+        float m_linearDamping;
+        float m_angularDamping;
 
-        float m_mass;
-        float m_volume;
-        bool m_static;
-        bool m_awake ;
+        bool m_awake;
 
-        glm::vec3 m_forces ;
-        glm::vec3 m_torques ;
+        glm::vec3 m_forces;
+        glm::vec3 m_torques;
 
+        Geometry& m_geometry;
+        
         std::list<std::tuple<PObject*, glm::vec3, glm::vec3>> m_contacts;
-/*
-        std::list<Fixture> m_fixtures ;
-        std::list<Joint> m_joints ;
-        */
+
+        //Masqué aussi pour les classes filles
+    private:
+        glm::mat3 m_inertia;
+        glm::mat3 m_inertiaInv;
+        float m_mass;
+        bool m_static;
 
 };
 

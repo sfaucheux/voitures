@@ -4,7 +4,6 @@
 #include "../glm/glm.hpp"
 
 #include "camera.h"
-#include "../objects/object.h"
 #include "drawable.h"
 
 class Renderer
@@ -16,7 +15,6 @@ class Renderer
         Camera& getCamera();
         void setProjection(glm::mat4& projection);
         void setPerspective(float fov, float ratio, float near, float far);
-        void draw(Object const& object, GLenum mode = GL_FILL);
         void draw(Drawable const& drawable, GLenum mode = GL_FILL);
 
 
