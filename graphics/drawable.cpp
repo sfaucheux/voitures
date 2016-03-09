@@ -115,7 +115,7 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned
     glBindVertexArray(0);
 
 
-    m_indicesNumber = indices.size() * 3 ;
+    m_indicesNumber = indices.size() ;
     m_verticesNumber = vertices.size() * 3 ;
 
 }
@@ -140,7 +140,7 @@ void Drawable::load(std::vector<glm::vec3> const &vertices, std::vector<unsigned
     glBindVertexArray(0);
 
 
-    m_indicesNumber = indices.size() * 3 ;
+    m_indicesNumber = indices.size() ;
     m_verticesNumber = vertices.size() * 3 ;
 
 }

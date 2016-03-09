@@ -39,7 +39,7 @@ void Renderer::draw(Drawable const& drawable, GLenum mode)
                 {
                     glBindTexture(GL_TEXTURE_2D, drawable.getTexture()->getId());
                 }
-                glDrawElements(GL_TRIANGLES,drawable.getIndicesNumber()*3, GL_UNSIGNED_INT, NULL);
+                glDrawElements(GL_TRIANGLES,drawable.getIndicesNumber(), GL_UNSIGNED_INT, NULL);
                 glBindTexture(GL_TEXTURE_2D, 0);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
