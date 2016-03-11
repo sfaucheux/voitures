@@ -72,10 +72,13 @@ void PWorld::narrowPhase()
     {
         obj1 = (*it)[0];
         obj2 = (*it)[1];
-        vector<tuple<vec3,vec3>> points = obj1->getGeometry().collisionPoints(&(obj2->getGeometry()));
-        if (points.size())
+        if(obj1->getGeometry().collide(&(obj2->getGeometry())))
         {
-            m_contacts.push_back(make_tuple(obj1, obj2, points));
+            vector<tuple<vec3,vec3>> points = obj1->getGeometry().collisionPoints(&(obj2->getGeometry()));
+            if (points.size())
+            {
+                m_contacts.push_back(make_tuple(obj1, obj2, points));
+            }
         }
     }
     m_potentialCollisions.clear();

@@ -175,8 +175,8 @@ void PObject::setInertia(mat3 inertia)
 void PObject::translate(glm::vec3 t)
 {
     m_geometry.translate(t);
-    m_AABB.setPosition(m_AABB.getPosition()+t);
-    m_boundingSphere.setPosition(m_boundingSphere.getPosition()+t);
+    m_AABB.setPosition(m_geometry.getPosition());
+    m_boundingSphere.setPosition(m_geometry.getPosition());
 }
 
 void PObject::rotate(glm::vec3 angle)
