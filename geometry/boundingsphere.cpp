@@ -1,11 +1,17 @@
 #include "boundingsphere.h"
+#include "../glm/gtx/transform.hpp"
+#include "../glm/gtx/norm.hpp"
 
 using namespace glm;
 
 BoundingSphere::BoundingSphere(float radius, vec3 position)
-{
+{ 
     m_radius = radius ;
     m_position = position ;
+}
+bool BoundingSphere::collide(BoundingSphere *s) const
+{
+    return distance2(getPosition(), s->getPosition()) <= (getRadius() + s->getRadius())*(getRadius() + s->getRadius());
 }
 float BoundingSphere::getRadius() const
 {

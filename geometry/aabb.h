@@ -5,6 +5,8 @@
 
 class AABB
 {
+    enum RESULT {INSIDE = 1, OUTSIDE = 2, INTERSECT = 3};
+
     public:
         AABB(glm::vec3 size, glm::vec3 position = glm::vec3(0));
         glm::vec3 getPosition() const;
@@ -15,6 +17,8 @@ class AABB
         float getRightPosition() const;
         float getFrontPosition() const;
         float getBackPosition() const;
+
+        RESULT relativePosition(AABB *b) const;
 
     private:
         glm::vec3 m_size;

@@ -10,6 +10,8 @@ class BoundingSphere
         float getRadius() const ;
         glm::vec3 getPosition() const ;
 
+        bool collide(BoundingSphere *s) const;
+
     private:
         float m_radius ;
         glm::vec3 m_position ;
