@@ -248,3 +248,15 @@ vector<tuple<vec3,vec3>> Mesh::collisionPoints(const Mesh* m) const
 {
     return Collisions::collisionPoints(this, m);
 }
+AABB Mesh::getAABB() const
+{
+    //TODO
+    cerr << "Mesh : AABB non implémentée." << endl ;
+    return AABB(vec3(1));
+}
+BoundingSphere Mesh::getBoundingSphere() const
+{
+    //TODO
+    cerr << "Mesh : Bounding Sphere non implémentée." << endl ;
+    return BoundingSphere(1);
+}

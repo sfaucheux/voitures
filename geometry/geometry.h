@@ -4,6 +4,8 @@
 #include "../glm/glm.hpp"
 #include "vector"
 #include "tuple"
+#include "boundingsphere.h"
+#include "aabb.h"
 
 class Box;
 class Sphere;
@@ -35,6 +37,8 @@ class Geometry
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Box* obj) const = 0 ;
         virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Mesh* obj) const = 0 ;
 
+        virtual AABB getAABB() const = 0;
+        virtual BoundingSphere getBoundingSphere() const = 0;
 
     private:
         void updateModel();

@@ -7,33 +7,33 @@ AABB::AABB(glm::vec3 size, glm::vec3 position)
     m_size = size;
     m_position = position;
 }
-AABB::RESULT AABB::relativePosition(AABB *b) const
+AABB::RESULT AABB::relativePosition(const AABB &b) const
 {
 
-    if(b->getBottomPosition() > getTopPosition())
+    if(b.getBottomPosition() > getTopPosition())
        return OUTSIDE;
-    if(b->getTopPosition() < getBottomPosition())
+    if(b.getTopPosition() < getBottomPosition())
         return OUTSIDE;
-    if(b->getRightPosition() < getLeftPosition()) 
+    if(b.getRightPosition() < getLeftPosition()) 
         return OUTSIDE;
-    if(b->getLeftPosition() > getRightPosition())
+    if(b.getLeftPosition() > getRightPosition())
         return OUTSIDE;
-    if(b->getFrontPosition() < getBackPosition())
+    if(b.getFrontPosition() < getBackPosition())
        return OUTSIDE;
-    if(b->getBackPosition() > getFrontPosition())
+    if(b.getBackPosition() > getFrontPosition())
         return OUTSIDE;
 
-    if(b->getBottomPosition() < getBottomPosition())
+    if(b.getBottomPosition() < getBottomPosition())
        return INTERSECT;
-    if(b->getTopPosition() > getTopPosition())
+    if(b.getTopPosition() > getTopPosition())
         return INTERSECT;
-    if(b->getRightPosition() > getRightPosition()) 
+    if(b.getRightPosition() > getRightPosition()) 
         return INTERSECT;
-    if(b->getLeftPosition() < getLeftPosition())
+    if(b.getLeftPosition() < getLeftPosition())
         return INTERSECT;
-    if(b->getFrontPosition() > getFrontPosition())
+    if(b.getFrontPosition() > getFrontPosition())
        return INTERSECT;
-    if(b->getBackPosition() < getBackPosition())
+    if(b.getBackPosition() < getBackPosition())
         return INTERSECT;
 
     return INSIDE;
@@ -69,5 +69,9 @@ float AABB::getFrontPosition() const
 float AABB::getBackPosition() const
 {
     return m_position.z - m_size.z/2;
+}
+void AABB::setPosition(glm::vec3 pos)
+{
+    m_position = pos;
 }
 

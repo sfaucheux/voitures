@@ -18,7 +18,9 @@ class AABB
         float getFrontPosition() const;
         float getBackPosition() const;
 
-        RESULT relativePosition(AABB *b) const;
+        RESULT relativePosition(const AABB &b) const;
+
+        void setPosition(glm::vec3 pos) ;
 
     private:
         glm::vec3 m_size;

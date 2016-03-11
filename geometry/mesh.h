@@ -28,6 +28,8 @@ class Mesh : public Geometry
         std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Box* b) const;
         std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Mesh* m) const;
 
+        virtual AABB getAABB() const;
+        virtual BoundingSphere getBoundingSphere() const;
 
     private:
 		void loadRawData(std::ifstream* filename, std::vector<glm::vec3>& v,std::vector<unsigned int>& vi, std::vector<glm::vec2>& t,std::vector<unsigned int>& ti );

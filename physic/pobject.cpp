@@ -7,7 +7,7 @@
 using namespace glm;
 using namespace std;
 
-PObject::PObject(Geometry& geo) : m_geometry(geo), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
+PObject::PObject(Geometry& geo) : m_geometry(geo), m_AABB(geo.getAABB()), m_boundingSphere(geo.getBoundingSphere()), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
 {
     m_mass = 1;
     m_static = false;
@@ -175,6 +175,8 @@ void PObject::setInertia(mat3 inertia)
 void PObject::translate(glm::vec3 t)
 {
     m_geometry.translate(t);
+    m_AABB.setPosition(m_AABB.getPosition()+t);
+    m_boundingSphere.setPosition(m_boundingSphere.getPosition()+t);
 }
 
 void PObject::rotate(glm::vec3 angle)

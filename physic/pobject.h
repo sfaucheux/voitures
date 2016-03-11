@@ -7,6 +7,9 @@
 #include <tuple>
 
 #include "../geometry/geometry.h"
+#include "../geometry/boundingsphere.h"
+#include "../geometry/aabb.h"
+
 #include "../glm/glm.hpp"
 
 class PBox;
@@ -31,6 +34,9 @@ class PObject
         const glm::mat3& getInertia() const;
         const glm::mat3& getInertiaInv() const;
         const Geometry& getGeometry() const;
+
+        const AABB& getAABB() const;
+        const BoundingSphere& getBoundingSphere() const;
 
         glm::vec3 getPointVelocity(const glm::vec3& point) const;
         glm::vec3 getPointForce(const glm::vec3& point) const;
@@ -60,7 +66,7 @@ class PObject
         void resetActions();
 
 
-    protected:
+    private:
         glm::vec3 m_velocity;
         glm::vec3 m_acceleration;
 
@@ -76,11 +82,11 @@ class PObject
         glm::vec3 m_torques;
 
         Geometry& m_geometry;
-        
+        BoundingSphere m_boundingSphere ;
+        AABB m_AABB ;
+
         std::list<std::tuple<PObject*, glm::vec3, glm::vec3>> m_contacts;
 
-        //Masqué aussi pour les classes filles
-    private:
         glm::mat3 m_inertia;
         glm::mat3 m_inertiaInv;
         float m_mass;

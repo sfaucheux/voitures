@@ -27,6 +27,8 @@ class Box : public Geometry
         std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Mesh* m) const;
 
 
+        virtual AABB getAABB() const;
+        virtual BoundingSphere getBoundingSphere() const;
     private:
         float m_width;
         float m_height;

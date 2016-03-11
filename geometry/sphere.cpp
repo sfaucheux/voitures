@@ -59,3 +59,11 @@ vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Mesh* m) const
 {
     return Collisions::collisionPoints(this, m);
 }
+AABB Sphere::getAABB() const
+{
+    return AABB(vec3(2*m_radius));
+}
+BoundingSphere Sphere::getBoundingSphere() const
+{
+    return BoundingSphere(m_radius);
+}
