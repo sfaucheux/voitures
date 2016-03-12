@@ -99,7 +99,7 @@ float PObject::getMass() const
 float PObject::getInertiaMomentum(const glm::vec3& axis) const
 {
     if (l1Norm(axis) == 0)
-        return 1;
+        return 10000;
     vec3 a = normalize(axis);
     return dot(m_inertia*a, a);
 }
@@ -114,6 +114,10 @@ float PObject::getAngularDamping() const
     return m_angularDamping;
 }
 
+const AABB& PObject::getAABB() const
+{
+    return m_AABB ;
+}
 /*Modificateurs*/
 void PObject::setMass(float m)
 {

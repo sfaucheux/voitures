@@ -3,10 +3,9 @@
 
 #include "../glm/glm.hpp"
 
+enum RESULT {INSIDE = 1, OUTSIDE = 2, INTERSECT = 3};
 class AABB
 {
-    enum RESULT {INSIDE = 1, OUTSIDE = 2, INTERSECT = 3};
-
     public:
         AABB(glm::vec3 size, glm::vec3 position = glm::vec3(0));
         glm::vec3 getPosition() const;
