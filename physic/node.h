@@ -1,5 +1,5 @@
-#ifndef OCTREE_H
-#define OCTREE_H
+#ifndef NODE_H
+#define NODE_H
 
 #include <array>
 #include <list>
@@ -7,7 +7,7 @@
 #include "pobject.h"
 #include "../geometry/aabb.h"
 
-class Octree {
+class Node {
     public:
         enum X_POS {LEFT = 0, RIGHT = 1};
         enum Y_POS {BOTTOM = 0, TOP = 2};
@@ -15,17 +15,17 @@ class Octree {
 
         static const unsigned int MAX_OBJECTS = 16;
         static const unsigned int MIN_OBJECTS = 0 ;
-        Octree(glm::vec3 pos, float size, Octree* parent = nullptr);
-        ~Octree();
+        Node(glm::vec3 pos, float size, Node* parent = nullptr);
+        ~Node();
 
         glm::vec3 getPosition() const ;
         float getSize() const ;
-        Octree* getParent() const ;
+        Node* getParent() const ;
         bool hasChildren() const;
-        std::array<Octree*, 8> getChildren() const;
+        std::array<Node*, 8> getChildren() const;
         AABB getAABB() const ;
 
-        void setParent(Octree* parent);
+        void setParent(Node* parent);
 
         void addObject(PObject*) ;
         void addObjectInNode(PObject*);
@@ -37,8 +37,8 @@ class Octree {
 
         glm::vec3 m_position ;
         float m_size ;
-        Octree* m_parent ;
-        std::array<Octree*, 8> m_children ;
+        Node* m_parent ;
+        std::array<Node*, 8> m_children ;
         std::list<PObject*> m_objects ;
         unsigned int m_objectCount ;
 };
