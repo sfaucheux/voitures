@@ -84,7 +84,7 @@ void Camera::move(vec3 mvt, float time)
 {
 	if (mvt != vec3(0, 0, 0))
 	{
-		mvt = normalize(mvt) * time * 10.f;
+		mvt = normalize(mvt) * time * 100.f;
 		setPosition(m_position + m_orientation * mvt.x + m_left * mvt.y + normalize(cross(m_orientation, m_left)) * mvt.z);
 		update();
 	}

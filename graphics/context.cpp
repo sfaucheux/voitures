@@ -39,7 +39,7 @@ bool Context::init(int width, int height, std::string title, int MSAA)
         }
     }
 
-    m_renderer.setPerspective(70.0, ((float)(width)) / height, 0.01, 1000);
+    m_renderer.setPerspective(70.0, ((float)(width)) / height, 0.01, 10000);
 
 	glfwMakeContextCurrent(m_window);
 	glfwSetWindowUserPointer(m_window, this);
@@ -151,7 +151,7 @@ void Context::windowSizeCallback(GLFWwindow *window, int width, int height)
 void Context::windowSize(int width, int height)
 {
     glViewport(0, 0, width, height);
-    m_renderer.setPerspective(100.0, ((float)(width)) / height, 0.01, 1000);
+    m_renderer.setPerspective(100.0, ((float)(width)) / height, 0.01, 10000);
 }
 
 void Context::cursorCallback(GLFWwindow* window, double xpos, double ypos)

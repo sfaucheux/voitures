@@ -4,16 +4,19 @@
 #include "../glm/gtx/norm.hpp"
 #include "../glm/gtx/euler_angles.hpp"
 
+#include "node.h"
+
 using namespace glm;
 using namespace std;
 
-PObject::PObject(Geometry& geo) : m_geometry(geo), m_AABB(geo.getAABB()), m_boundingSphere(geo.getBoundingSphere()), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
+PObject::PObject(Geometry& geo) : m_position(0), m_rotation(0), m_geometry(geo), m_AABB(geo.getAABB()), m_boundingSphere(geo.getBoundingSphere()), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
 {
     m_mass = 1;
     m_static = false;
     m_awake = true ;
     m_linearDamping = 0.1;
     m_angularDamping = 0.1;
+    m_node = nullptr ;
 }
 
 PObject::~PObject()
@@ -23,7 +26,7 @@ PObject::~PObject()
 /*Accesseurs*/
 const vec3 PObject::getPosition() const
 {
-    return m_geometry.getPosition();
+    return m_position;
 }
 
 const vec3& PObject::getVelocity() const
@@ -38,7 +41,7 @@ const vec3& PObject::getAcceleration() const
 
 const vec3 PObject::getRotation() const
 {
-    return m_geometry.getRotation();
+    return m_rotation;
 }
 
 const vec3& PObject::getAngularVelocity() const
@@ -113,6 +116,10 @@ float PObject::getAngularDamping() const
 {
     return m_angularDamping;
 }
+Node* PObject::getNode() const
+{
+    return m_node;
+}
 
 const AABB& PObject::getAABB() const
 {
@@ -178,13 +185,15 @@ void PObject::setInertia(mat3 inertia)
 
 void PObject::translate(glm::vec3 t)
 {
+    m_position += t;
     m_geometry.translate(t);
-    m_AABB.setPosition(m_geometry.getPosition());
-    m_boundingSphere.setPosition(m_geometry.getPosition());
+    m_AABB.setPosition(m_position);
+    m_boundingSphere.setPosition(m_position);
 }
 
 void PObject::rotate(glm::vec3 angle)
 {
+    m_rotation += angle;
     m_geometry.rotate(angle);
 }
 
@@ -209,4 +218,9 @@ void PObject::resetActions()
 {
     m_forces = vec3(0);
     m_torques = vec3(0);
+}
+
+void PObject::setNode(Node* node)
+{
+    m_node = node ;
 }

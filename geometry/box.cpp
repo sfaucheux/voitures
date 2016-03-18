@@ -76,9 +76,11 @@ vector<tuple<vec3,vec3>> Box::collisionPoints(const Mesh* m) const
 }
 AABB Box::getAABB() const
 {
-    return AABB(vec3(m_width, m_height, m_depth));
+    float r = sqrt(m_width*m_width+m_height*m_height+m_depth*m_depth);
+    return AABB(vec3(r));
 }
 BoundingSphere Box::getBoundingSphere() const
 {
-    return BoundingSphere(std::max(m_width, std::max(m_depth, m_height))/2);
+    float r = sqrt(m_width*m_width+m_height*m_height+m_depth*m_depth);
+    return BoundingSphere(r);
 }

@@ -13,7 +13,7 @@ Object::Object(Sphere s)
     float radius = s.getRadius();
     m_gObj = new gSphere(*(Sphere*)m_geom);
     m_pObj = new PObject(*(Sphere*)m_geom);
-    m_pObj->setInertia(mat3(2*m_pObj->getMass()*radius*radius/5.));
+    m_pObj->setInertia(mat3(2.*m_pObj->getMass()*radius*radius/5.));
 }
 
 Object::Object(Box b)
@@ -59,12 +59,7 @@ const Geometry* Object::getGeometry() const
     return m_geom;
 }
 
-void Object::translate(glm::vec3 t)
-{
-    m_geom->translate(t);
-}
-
 void Object::rotate(glm::vec3 r)
 {
-    m_geom->rotate(r);
+    m_pObj->rotate(r);
 }

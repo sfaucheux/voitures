@@ -8,6 +8,7 @@
 #include "graphics/shader.h"
 #include "graphics/drawable.h"
 #include "physic/pobject.h"
+#include "physic/pworld.h"
 
 #include "geometry/sphere.h"
 #include "geometry/box.h"
@@ -25,7 +26,7 @@ class Object
         Drawable* getDrawable() const;
         const Geometry* getGeometry() const;
 
-        void translate(glm::vec3 t);
+        void translate(glm::vec3 t, PWorld* pworld = nullptr);
         void rotate(glm::vec3 r);
 
 

@@ -5,10 +5,12 @@
 #include <array>
 #include <set>
 #include <tuple>
+#include <stack>
 
 #include "../glm/glm.hpp"
 
 #include "pobject.h"
+#include "octree.h"
 
 class PWorld 
 {
@@ -17,7 +19,11 @@ class PWorld
         void setGravity(glm::vec3 gravity);
         void update(float step);
         void addObject(PObject*);
+        void updateObject(PObject*);
+        void translateObject(PObject* obj, glm::vec3 t);
         void removeObject(PObject*);
+
+        const Octree& getOctree() const;
 
 
     private:
@@ -27,7 +33,7 @@ class PWorld
         void collisionResponse();
         glm::vec3 computeImpulse(PObject* obj1, PObject* obj2, glm::vec3 point, glm::vec3 normal);
 
-        std::list<PObject*> m_objects;
+        Octree m_octree;
         glm::vec3 m_gravity;
         std::list<std::array<PObject*,2>> m_potentialCollisions;
         std::list<std::tuple<PObject*, PObject*, std::vector<std::tuple<glm::vec3, glm::vec3>>>> m_contacts ;

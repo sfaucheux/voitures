@@ -10,16 +10,17 @@ class Octree {
 
         Node* getRoot() const;
 
-        Node* addObject(PObject* obj);
-        Node* addObject(Node* node, PObject* obj);
-        Node* updateObject(Node* node, PObject* obj);
+        void addObject(PObject* obj);
+        void addObject(Node* node, PObject* obj);
+        void updateObject(PObject* obj);
         void removeObject(Node* node, PObject* obj);
 
         void setRoot(Node* root) ;
+        void afficher(Node* node) const;
 
     private:
         Node* m_root ;
-        Node* addObjectToChildren(Node* node, PObject* obj);
+        void addObjectToChildren(Node* node, PObject* obj);
         void addObjectOutsideWorld(PObject* obj);
 
 };

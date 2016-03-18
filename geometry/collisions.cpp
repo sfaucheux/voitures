@@ -142,8 +142,6 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
     {
         return vector<tuple<vec3,vec3>>();
     }
-    vec3 n = mat3(b->getRotationMatrix()) * (collisionPoint - sphPos);
-    cout << n.x << ";" << n.y << ";" << n.z << endl;
     return vector<tuple<vec3,vec3>>({make_tuple(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos))});
 }
 

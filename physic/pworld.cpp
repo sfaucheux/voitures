@@ -17,28 +17,48 @@ void PWorld::setGravity(vec3 g)
 
 void PWorld::addObject(PObject* object)
 {
-    m_objects.push_back(object);
+    m_octree.addObject(object);
 }
 
+void PWorld::updateObject(PObject* object)
+{
+    m_octree.updateObject(object);
+}
 void PWorld::removeObject(PObject* object)
 {
-    m_objects.remove(object);
+    m_octree.removeObject(object->getNode(), object);
 }
 
 void PWorld::update(float step)
 {
-
     PObject* obj ;
-    for (auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        obj = *it ;
+    stack<Node*> s;
 
-        //On ajoute la gravité.
-        obj->addForce(m_gravity*obj->getMass());
-        
-        //On ajoute les forces de frottement.
-        obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
-        obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
+    if(m_octree.getRoot() != nullptr)
+        s.push(m_octree.getRoot());
+
+    while(!s.empty())
+    {
+        Node* node = s.top() ;
+        s.pop() ;
+        for(int i = 0 ; i < 8 ; i++)
+        {
+            if(node->getChildren()[i] != nullptr)
+            {
+                s.push(node->getChildren()[i]);
+            }
+        }
+        for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
+        {
+            obj = *it ;
+
+            //On ajoute la gravité.
+            obj->addForce(m_gravity*obj->getMass());
+
+            //On ajoute les forces de frottement.
+            obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
+            obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
+        }
     }
     //Determination des objets potentiellements en contact.
     broadPhase();
@@ -52,16 +72,59 @@ void PWorld::update(float step)
 
 void PWorld::broadPhase()
 {
-    //Pour chaque couple i,j (j < i), on cherche une collision potentielle.
-    for (auto it = m_objects.begin(); it != m_objects.end(); it++)
+    stack<pair<Node*, list<PObject*>>> s;
+    if(m_octree.getRoot() != nullptr)
+        s.push(make_pair(m_octree.getRoot(), list<PObject*>()));
+
+    while(!s.empty())
     {
-        for (auto jt = m_objects.begin(); jt != it; jt++)
+        Node* node;
+        list<PObject*> parentObjects;
+        tie(node, parentObjects) = s.top();
+        s.pop();
+
+        //Pour chaque objet, on cherche une collision potentielle.
+        for (auto it = node->getObjects().begin(); it != node->getObjects().end(); it++)
         {
-            const Geometry *g1 = &(*it)->getGeometry(), *g2 = &(*jt)->getGeometry();
-            if (g1->getBoundingSphere().collide(g2->getBoundingSphere()))
-                m_potentialCollisions.push_back({*it, *jt});
+            //Avec les objets du noeud.
+            for (auto jt = node->getObjects().begin(); jt != it; jt++)
+            {
+                const Geometry *g1 = &(*it)->getGeometry(), *g2 = &(*jt)->getGeometry();
+                if (g1->getBoundingSphere().collide(g2->getBoundingSphere()))
+                    m_potentialCollisions.push_back({*it, *jt});
+            }
+            //Avec les objets passé par le parent.
+            for (auto kt = parentObjects.begin(); kt != parentObjects.end() ; kt++)
+            {
+                const Geometry *g1 = &(*it)->getGeometry(), *g2 = &(*kt)->getGeometry();
+                if (g1->getBoundingSphere().collide(g2->getBoundingSphere()))
+                    m_potentialCollisions.push_back({*it, *kt});
+            }
+            
         }
-    }
+
+        for(int i = 0 ; i < 8 ; i++)
+        {
+            if(node->getChildren()[i] != nullptr)
+            {
+                //On détermine les objets a passer.
+                list<PObject*> objects ;
+                for(auto it = parentObjects.begin() ; it != parentObjects.end() ; it++)
+                {
+                    if(node->getChildren()[i]->getAABB().relativePosition((*it)->getAABB()) != OUTSIDE)
+                        objects.push_back(*it);
+                }
+                for(auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
+                {
+                    if(node->getChildren()[i]->getAABB().relativePosition((*it)->getAABB()) != OUTSIDE)
+                        objects.push_back(*it);
+                }
+
+                s.push({node->getChildren()[i], objects});
+            }
+        }
+
+    } 
 }
 
 void PWorld::narrowPhase()
@@ -140,7 +203,7 @@ void PWorld::collisionResponse()
 vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
 {
    //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
-    float e = 1;
+    float e = 0.5;
 
     //masse des deux objet.
     float m1 = obj1->getMass(), m2 = obj2->getMass() ;
@@ -194,25 +257,58 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
 }
 void PWorld::integrate(float step)
 {
-    PObject* obj ;
-    for (auto it = m_objects.begin(); it != m_objects.end(); it++)
-    {
-        obj = *it ;
+    vector<PObject*> objVector ;
+    objVector.resize(m_octree.getRoot()->getObjects().size() + m_octree.getRoot()->getObjectCount());
 
+    PObject* obj ;
+    stack<Node*> s;
+    if(m_octree.getRoot() != nullptr)
+        s.push(m_octree.getRoot());
+
+    int i = 0 ;
+    while(!s.empty())
+    {
+        Node* node = s.top();
+        s.pop();
+        for(int i = 0 ; i < 8 ; i++)
+        {
+            if(node->getChildren()[i] != nullptr)
+            {
+                s.push(node->getChildren()[i]);
+            }
+        }
+        for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
+        {
+            objVector[i] = (*it) ;
+            ++i;
+        }
+    }
+    for(int j = 0 ; j < i ; j++)
+    {
+        obj = objVector[j];
         //On calcule les forces à partir des accélérations.
         obj->setAcceleration(obj->getForces()/obj->getMass());
         obj->setAngularAcceleration(obj->getInertiaInv()*obj->getTorques());
-        
+
         //On integre les accelerations.
         obj->setVelocity(obj->getVelocity() + obj->getAcceleration() * step);
         obj->setAngularVelocity(obj->getAngularVelocity() + obj->getAngularAcceleration() * step);
 
         //On integre les vitesses.
-        obj->translate(obj->getVelocity() * step);
+        translateObject(obj, obj->getVelocity() * step);
         obj->rotate(obj->getAngularVelocity() * step);
 
         //On réinitialise les forces et couples.
         obj->resetActions();
+
     }
 }
-
+void PWorld::translateObject(PObject* obj, vec3 t)
+{
+    obj->translate(t);
+    updateObject(obj);
+}
+const Octree& PWorld::getOctree() const
+{
+    return m_octree ;
+}

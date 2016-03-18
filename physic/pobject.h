@@ -12,6 +12,8 @@
 
 #include "../glm/glm.hpp"
 
+class Node;
+
 class PBox;
 class PMesh;
 class PSphere;
@@ -45,6 +47,7 @@ class PObject
         float getInertiaMomentum(const glm::vec3& axis) const;
         float getLinearDamping() const;
         float getAngularDamping() const;
+        Node* getNode() const;
 
         /*Modificateurs*/
         void setMass(float m);
@@ -56,6 +59,7 @@ class PObject
         void setLinearImpulse(glm::vec3);
         void setAngularImpulse(glm::vec3);
         void setInertia(glm::mat3);
+        void setNode(Node* node);
 
         void translate(glm::vec3 t);
         void rotate(glm::vec3 angle);
@@ -67,6 +71,9 @@ class PObject
 
 
     private:
+
+        glm::vec3 m_position;
+        glm::vec3 m_rotation;
         glm::vec3 m_velocity;
         glm::vec3 m_acceleration;
 
@@ -91,6 +98,7 @@ class PObject
         glm::mat3 m_inertiaInv;
         float m_mass;
         bool m_static;
+        Node* m_node;
 
 };
 
