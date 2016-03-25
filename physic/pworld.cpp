@@ -258,7 +258,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
 void PWorld::integrate(float step)
 {
     vector<PObject*> objVector ;
-    objVector.resize(m_octree.getRoot()->getObjects().size() + m_octree.getRoot()->getObjectCount());
+    objVector.resize(m_octree.getObjectCount());
 
     PObject* obj ;
     stack<Node*> s;

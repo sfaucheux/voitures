@@ -8,6 +8,7 @@ using namespace glm;
 Octree::Octree()
 {
     m_root = nullptr;
+    m_objectCount = 0;
 }
 Octree::~Octree()
 {
@@ -96,6 +97,8 @@ void Octree::addObjectToChildren(Node* node, PObject* obj)
     }
     //Si on est sur une feuille
     node->addObject(obj);
+    updateNodeSubdivision(node);
+    ++m_objectCount;
     //cout << "nombre d'éléments de " << node << " après insertion : " << node->getObjects().size() << endl ;
 }
 
@@ -109,7 +112,8 @@ void Octree::updateObject(PObject* obj)
         return ;
 
    //Sinon, on supprime l'objet du noeud et on l'insère dans un noeud proche.
-   obj->getNode()->removeObject(obj);
+   removeObject(obj->getNode(), obj);
+   updateNodeMerge(obj->getNode());
    addObject(obj->getNode(), obj);
 }
 
@@ -142,12 +146,15 @@ void Octree::addObjectOutsideWorld(PObject* obj)
     m_root = node ;
 
     addObject(m_root, obj);
-    //node->setObjectCount(node->getObjectCount() + 1);
+    updateNodeMerge(m_root);
+    updateNodeSubdivision(m_root);
 }
 
 void Octree::removeObject(Node* node, PObject* obj)
 {
     node->removeObject(obj);
+    --m_objectCount;
+    updateNodeMerge(node);
 }
 
 void Octree::setRoot(Node* root)
@@ -177,7 +184,7 @@ void Octree::afficher(Node* node) const
             }
         }
         get<1>(q.back()) = true ;
-        cout << node << "(objets:" << node->getObjects().size() << " total:" << node->getObjects().size() + node->getObjectCount() << " , " ;
+        cout << node << "(objets:" << node->getObjects().size() << " , " ;
         if(!node->hasChildren())
             cout << "not " ;
         cout << "divided) ; " ;
@@ -185,4 +192,109 @@ void Octree::afficher(Node* node) const
             cout << endl ;
     }
     cout << endl ;
+}
+
+unsigned int Octree::getObjectCount() const
+{
+    return m_objectCount;
+}
+
+void Octree::updateNodeMerge(Node* node)
+{
+    /**** HYPOTHESE POUR LA FUSION : LES ENFANTS SONT A JOUR *****/
+    Node* current = node ;
+    while(current != nullptr)
+    {
+        if(!current->hasChildren() && current->getObjectCount() == 0)
+        {
+            current->getParent()->setChild(current, nullptr) ;
+        }
+        else if(current->hasChildren())
+        {
+            int objCount =  current->getObjectCount() ;
+            for(int i = 0 ; i < 8 ; i++)
+            {
+                if(current->getChildren()[i] != nullptr)
+                    objCount += current->getChildren()[i]->getObjectCount();
+            }
+
+            if(objCount >= MIN_OBJECTS)
+                break;
+
+            cout << "fusion" << endl ;
+            //On fusionne.
+            for(int i = 0 ; i < 8 ; i++)
+            {
+                if(current->getChildren()[i] != nullptr)
+                {
+                    for(auto it = current->getChildren()[i]->getObjects().begin() ; it != current->getChildren()[i]->getObjects().end() ; it++)
+                    {
+                        current->addObject(*it);
+                    }
+                    current->setChild(i, nullptr);
+                }
+            }
+        }
+        current = current->getParent();
+    }
+}
+
+void Octree::updateNodeSubdivision(Node* node)
+{
+    queue<Node*> q ;
+    q.push(node);
+    array<bool, 8> editedNode = {false}; 
+
+    while(!q.empty())
+    {
+        Node* current = q.front();
+        q.pop();
+        if(current->getObjectCount() > MAX_OBJECTS && !current->hasChildren())
+        {
+            editedNode = {false} ;
+            cout << "subdivision de " << this << endl ;
+            for(auto it = current->getObjects().begin() ; it != current->getObjects().end() ; it++)
+            {
+                //On calcule la position relative du noeud courant et de l'objet.
+                int relPos = 0;
+
+                //On regarde si l'object est dans la partie haute.
+                relPos += ((*it)->getAABB().getBottomPosition() > current->getPosition().y + current->getSize()/2.f) ? TOP : BOTTOM ;
+                //S'il n'y est pas, on regarde s'il est aussi dans la partie basse
+                if(!(relPos&TOP) && !((*it)->getAABB().getTopPosition() < (current->getPosition().y + current->getSize()/2.f)))
+                    continue;
+
+                //On regarde si l'object est dans la partie droite.
+                relPos += ((*it)->getAABB().getLeftPosition() > current->getPosition().x + current->getSize()/2.f) ? RIGHT : LEFT ;
+                //S'il n'y est pas, on regarde s'il est aussi dans la partie gauche.
+                if(!(relPos&RIGHT) && !((*it)->getAABB().getRightPosition() < (current->getPosition().x + current->getSize()/2.f)))
+                    continue;
+
+                //On regarde si l'object est dans la partie devant.
+                relPos += ((*it)->getAABB().getBackPosition() > current->getPosition().z + current->getSize()/2.f) ? FRONT : BACK ;
+                //S'il n'y est pas, on regarde s'il est aussi dans la partie derriere.
+                if(!(relPos&LEFT) && !((*it)->getAABB().getFrontPosition() < (current->getPosition().z + current->getSize()/2.f)))
+                    continue;
+
+                //Si il peut être contenu dans un des enfant.
+                cout << "il est possible de stocker dans un enfant : "<< relPos << endl ;
+                //On alloue l'enfant s'il n'existe pas.
+                current->allocateChild(relPos);            
+
+                //On l'ajoute.
+                PObject* obj = *it ;
+                it++;
+                //On l'enleve du noeud.
+                current->removeObject(obj);
+                current->getChildren()[relPos]->addObject(obj);
+                editedNode[relPos] = true ;
+            }
+            for(int i = 0 ; i < 8 ; i++)
+            {
+                if(editedNode[i])
+                    q.push(current->getChildren()[i]);
+            }
+        }
+    }
+
 }

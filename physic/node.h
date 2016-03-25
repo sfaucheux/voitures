@@ -13,17 +13,13 @@
 
 class Node {
     public:
-        //MAX > MIN
-        static const unsigned int MAX_OBJECTS = 50;
-        static const unsigned int MIN_OBJECTS = 3;
-
         Node(glm::vec3 pos, float size, Node* parent = nullptr);
         ~Node();
 
         float getSize() const;
         glm::vec3 getPosition() const;
         Node* getParent() const;
-        std::array<Node*, 8> getChildren() const;
+        const std::array<Node*, 8>& getChildren() const;
         const std::list<PObject*>& getObjects() const;
         unsigned int getObjectCount() const;
 
@@ -31,24 +27,21 @@ class Node {
         AABB getAABB() const ;
 
         void setParent(Node* parent);
-        void setObjectCount(unsigned int c);
 
         void addObject(PObject*) ;
         void removeObject(PObject*) ;
 
         void setChild(unsigned int ch, Node* node);
+        void setChild(Node* oldNode, Node* newNode);
 
         void allocateChild(unsigned int pos);
 
     private:
-        void update();
-
         glm::vec3 m_position ;
         float m_size ;
         Node* m_parent ;
         std::array<Node*, 8> m_children ;
         std::list<PObject*> m_objects ;
-        unsigned int m_objectCount ;
         unsigned int m_childrenCount ;
 
 };
