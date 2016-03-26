@@ -49,7 +49,6 @@ void Node::addObject(PObject* obj)
 }
 void Node::setParent(Node* parent)
 {
-    Node* node = m_parent ;
     m_parent = parent ;
 }
 bool Node::hasChildren() const
@@ -100,7 +99,7 @@ void Node::setChild(unsigned int ch, Node* node)
 
 void Node::setChild(Node* oldNode, Node* newNode)
 {
-    for(int i = 0 ; i < 7 ; i++)
+    for(int i = 0 ; i < 8 ; i++)
     {
         if(m_children[i] == oldNode)
         {

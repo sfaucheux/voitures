@@ -7,9 +7,9 @@
 
 class Octree {
     public:
-        //MAX > MIN
+        //MAX >= MIN
         static const unsigned int MAX_OBJECTS = 1;
-        static const unsigned int MIN_OBJECTS = 0;
+        static const unsigned int MIN_OBJECTS = 1;
 
         Octree();
         ~Octree();
