@@ -45,8 +45,8 @@ int main(int argc, char** argv)
     Object obj(Mesh(filename.c_str()));
     Object sphere1(Sphere(15));
     Object sphere2(Sphere(8));
-    Object sphere3(Box(10, 60, 10));
-    Object sphere4(Box(80, 60, 10));
+    Object sphere3(Box(10, 80, 10));
+    Object sphere4(Box(80, 80, 20));
     //sphere1.getPObject()->setVelocity(glm::vec3(0,20,8));
     //sphere4.getPObject()->setVelocity(glm::vec3(0,10,5));
     //sphere2.getPObject()->setVelocity(glm::vec3(1,0,8));
@@ -54,33 +54,32 @@ int main(int argc, char** argv)
 
     //sphere1.getPObject()->setAngularVelocity(glm::vec3(-2,10,0));
     //sphere4.getPObject()->setAngularVelocity(glm::vec3(1,0,10));
-    sphere3.getPObject()->setAngularVelocity(glm::vec3(2,0,3));
+    sphere3.getPObject()->setAngularVelocity(glm::vec3(2,1,8));
     //sphere2.getPObject()->setAngularVelocity(glm::vec3(1,0,0));
 
     //sphere4.getPObject()->setStatic(true);
     //sphere4.getPObject()->setStatic(true);
     //sphere1.getPObject()->setStatic(true);
    
-
-    world.translateObject(sphere1, glm::vec3(20, -20, 60));
-    world.translateObject(sphere2, glm::vec3(0, 0, -20));
-    world.translateObject(sphere3, glm::vec3(2, 40, 25));
-    world.translateObject(sphere4, glm::vec3(3, 10, -40));
-    world.rotateObject(sphere4, glm::vec3(-0.2,0,0));
-    //obj.translate(glm::vec3(50, 0, 0));
-    //
     cout << "Ajout du sol." << endl ;
     world.addObject(sphere4);
-    world.getPWorld().getOctree().afficher(world.getPWorld().getOctree().getRoot());
+    world.getPWorld().getOctree().print(world.getPWorld().getOctree().getRoot());
     cout << "Ajout de la boite." << endl ;
     world.addObject(sphere3);
-    world.getPWorld().getOctree().afficher(world.getPWorld().getOctree().getRoot());
+    world.getPWorld().getOctree().print(world.getPWorld().getOctree().getRoot());
     cout << "Ajout de la grande sphere." << endl;
     world.addObject(sphere1);
-    world.getPWorld().getOctree().afficher(world.getPWorld().getOctree().getRoot());
+    world.getPWorld().getOctree().print(world.getPWorld().getOctree().getRoot());
     cout << "Ajout de la petite sphere." << endl ;
     world.addObject(sphere2);
-    world.getPWorld().getOctree().afficher(world.getPWorld().getOctree().getRoot());
+    world.getPWorld().getOctree().print(world.getPWorld().getOctree().getRoot());
+
+    world.translateObject(sphere1, glm::vec3(10, -80, 60));
+    world.translateObject(sphere2, glm::vec3(5, 20, -0));
+    world.translateObject(sphere3, glm::vec3(10, 60, 65));
+    world.translateObject(sphere4, glm::vec3(3, 20, -40));
+    world.rotateObject(sphere4, glm::vec3(-0.2,0,0));
+    //obj.translate(glm::vec3(50, 0, 0));
 
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");

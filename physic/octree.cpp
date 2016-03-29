@@ -99,7 +99,7 @@ void Octree::updateObject(PObject* obj)
        //Sinon, on supprime l'objet du noeud et on l'insère dans un noeud proche.
        removeObject(obj->getNode(), obj);
        addObject(m_root, obj);
-       //afficher(m_root);
+       //print(m_root);
 }
 
 void Octree::addObjectOutsideWorld(PObject* obj)
@@ -135,6 +135,7 @@ void Octree::removeObject(Node* node, PObject* obj)
 {
     node->removeObject(obj);
     updateNodeMerge(node);
+    updateRoot();
     --m_objectCount;
 }
 
@@ -147,7 +148,7 @@ Node* Octree::getRoot() const
 {
     return m_root ;
 }
-void Octree::afficher(Node* node) const
+void Octree::print(Node* node) const
 {
     cout << endl ;
     queue<pair<Node*, bool>> q ;
@@ -190,8 +191,10 @@ void Octree::updateNodeMerge(Node* node)
         if(!current->hasChildren() && current->getObjectCount() == 0)
         {
             Node* n = current ;
+            //parent existe ? (crash si supression du dernier object de la racine)
             current = current->getParent() ;
             current->setChild(n, nullptr) ;
+            continue;
         }
         else if(current->hasChildren())
         {
@@ -200,7 +203,6 @@ void Octree::updateNodeMerge(Node* node)
             {
                 if(current->getChildren()[i] != nullptr)
                 {
-                    //OPTIMIZE ME : verifier uniquement premiere iteration du while
                     if(current->getChildren()[i]->hasChildren())
                         return;
 
@@ -285,4 +287,23 @@ void Octree::updateNodeSubdivision(Node* node)
         }
     }
 
+}
+void Octree::updateRoot()
+{
+    Node* temp ;
+    while(m_root->m_childrenCount == 1 && m_root->getObjectCount() == 0)
+    {
+        for(int i = 0 ; i < 8 ; i++)
+        {
+            if(m_root->getChildren()[i] != nullptr)
+            {
+                temp = m_root->getChildren()[i] ;
+                m_root->m_children[i] = nullptr ;
+                delete m_root ;
+                m_root = temp ;
+                m_root->setParent(nullptr);
+                break;
+            }
+        }
+    }
 }

@@ -8,8 +8,8 @@
 class Octree {
     public:
         //MAX >= MIN
-        static const unsigned int MAX_OBJECTS = 1;
-        static const unsigned int MIN_OBJECTS = 1;
+        static const unsigned int MAX_OBJECTS = 3;
+        static const unsigned int MIN_OBJECTS = 0;
 
         Octree();
         ~Octree();
@@ -24,9 +24,10 @@ class Octree {
         
         void updateNodeMerge(Node* node);
         void updateNodeSubdivision(Node* node);
+        void updateRoot();
 
         void setRoot(Node* root) ;
-        void afficher(Node* node) const;
+        void print(Node* node) const;
 
     private:
         Node* m_root ;
