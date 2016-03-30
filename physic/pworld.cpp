@@ -149,23 +149,12 @@ void PWorld::narrowPhase()
 
 void PWorld::collisionResponse()
 {
-    /* ATTENTION : La terminaison n'est pas certaine !
-     * On boucle sur tous les objets en contact jusqu'à ce qu'ils s'éloignent tous !
-     * On calcule la reponse a une collision et on met a jour les vitesses.
-     * Cela revient à traiter les collision d'objet 2 à 2 (aucune collision en même temps)
-     * mais avec un pas de temps nul.
-     */
-    bool computeAgain = m_contacts.size() > 0;
     PObject *obj1, *obj2;
     vec3 normal, point ;
-    int i = 0;
-    while(computeAgain)
+    for (int i = 0 ; i < 10 ; i++) 
     {
-        computeAgain = false ;
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {
-            //Ne marche peut etre pas pour plusieurs points de contacts.
-            //Si bug, il faudrait traiter les objets un par un et stocker tous les vecteurs puis les appliquer ensuite.
             obj1 = get<0>(*it);
             obj2 = get<1>(*it);
             vector<tuple<vec3,vec3>> points = get<2>((*it));
@@ -182,28 +171,16 @@ void PWorld::collisionResponse()
                     obj2->setLinearImpulse(-impulse);
                     obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
                     obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
-                    computeAgain = true ;
                 }
             }
         }
-        int z = m_contacts.size()+1;
-        if(i > z*z*z)
-        {
-            cout << "ATTENTION : PAS DE SOLUTION DU SYSTEME QUI REDUISE L'INTERPENETRATION !!!" << endl
-                 << m_contacts.size() << " CONTACTS, " << i << " ITERATIONS."
-                 << "BOUCLE STOPPEE !!!" << endl ;
-            break;
-        }
-        i++;
-        break;
-
     }
     m_contacts.clear();
 }
 vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
 {
    //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
-    float e = 0.5;
+    float e = 5;
 
     //masse des deux objet.
     float m1 = obj1->getMass(), m2 = obj2->getMass() ;
@@ -223,7 +200,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
         
         //Coefficient de frottement dynamique.
         //Pour le statique c'est plus compliqué à simuler.
-        float f =  0.1;
+        float f =  0.4;
 
         float tangentVelocity = dot(v12, tan) ;
         float normalVelocity = dot(v12, normal) ;
@@ -277,7 +254,7 @@ void PWorld::integrate(float step)
                 s.push(node->getChildren()[i]);
             }
         }
-        for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
+        for(auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
         {
             objVector[i] = (*it) ;
             ++i;

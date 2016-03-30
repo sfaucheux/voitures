@@ -15,12 +15,14 @@ class Renderer
         Camera& getCamera();
         void setProjection(glm::mat4& projection);
         void setPerspective(float fov, float ratio, float near, float far);
-        void draw(Drawable const& drawable, GLenum mode = GL_FILL);
+        void setDefaultShader(Shader* shader);
+        void draw(Drawable const& drawable, GLenum mode = GL_FILL) const;
 
 
     private:
         glm::mat4 m_projection ;
         Camera m_camera ;
+        Shader* m_defaultShader;
 
 };
 

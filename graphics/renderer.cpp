@@ -7,7 +7,7 @@ using namespace std;
 
 #include "renderer.h"
 
-Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(10000, 0, 0), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1))
+Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(5000, 0, 5000), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1))
 {
 }
 
@@ -25,9 +25,18 @@ void Renderer::setPerspective(float angle, float ratio, float near, float far)
     m_projection = glm::perspective(angle, ratio, near, far);
 }
 
-void Renderer::draw(Drawable const& drawable, GLenum mode)
+void Renderer::setDefaultShader(Shader* shader)
 {
-    GLuint shader = drawable.getShader()->getProgramID() ;
+    m_defaultShader = shader ;
+}
+void Renderer::draw(Drawable const& drawable, GLenum mode) const
+{
+    GLuint shader = 0;
+    if(m_defaultShader != nullptr)
+        shader = m_defaultShader->getProgramID() ;
+    if(drawable.getShader() != nullptr)
+        shader = drawable.getShader()->getProgramID() ;
+
     glPolygonMode(GL_FRONT_AND_BACK, mode);
     glUseProgram(shader);
         glBindVertexArray(drawable.getIdVAO());
