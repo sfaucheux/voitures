@@ -17,14 +17,14 @@ Camera::~Camera()
 void Camera::updateMatrix()
 {
 	m_passage = mat3(m_forward, m_left, m_up);
-	m_passageInverse = inverse(m_passage);
+	m_passageInverse = transpose(m_passage);
 }
 
 void Camera::updateAngles()
 {
-	vec3 m_vect = m_passageInverse * m_orientation;
-	m_phi = asin(m_vect.z);
-	m_theta = asin(m_vect.y / cos(m_phi));
+	vec3 vect = m_passageInverse * m_orientation ;
+	m_phi = acos(vect.x);
+	m_theta = 0 ; 
 }
 
 void Camera::setPosition(glm::vec3 pos)
@@ -47,7 +47,8 @@ void Camera::setUp(glm::vec3 up)
 
 void Camera::setTarget(glm::vec3 tar)
 {
-	m_orientation = normalize(tar - m_position);
+    m_target = tar;
+	m_orientation = normalize(m_target - m_position);
 	m_left = normalize(cross(m_up, m_orientation));
 	m_forward = normalize(cross(m_left, m_up));
 
@@ -66,13 +67,13 @@ void Camera::setOrientation(double x, double y)
 	else if (m_phi < - limite)
 		m_phi = -limite;
 
-	vec3 m_vect = m_passage * m_orientation;
+	vec3 vect = m_passageInverse * m_orientation;
 
-	m_vect.x = cos(m_phi) * cos(m_theta);
-	m_vect.y = cos(m_phi) * sin(m_theta);
-	m_vect.z = sin(m_phi);
+	vect.x = cos(m_phi) * cos(m_theta);
+	vect.y = cos(m_phi) * sin(m_theta);
+	vect.z = sin(m_phi);
 
-	m_orientation = m_passageInverse * m_vect;
+	m_orientation = normalize(m_passage * vect);
 	m_left = normalize(cross(m_up, m_orientation));
 
 	m_target = m_position + m_orientation;
