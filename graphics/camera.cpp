@@ -22,9 +22,10 @@ void Camera::updateMatrix()
 
 void Camera::updateAngles()
 {
-	vec3 vect = m_passageInverse * m_orientation ;
-	m_phi = acos(vect.x);
+    vec3 vect = m_passageInverse * m_orientation ;
+	m_phi = asin(vect.z);
 	m_theta = 0 ; 
+    
 }
 
 void Camera::setPosition(glm::vec3 pos)
@@ -67,7 +68,7 @@ void Camera::setOrientation(double x, double y)
 	else if (m_phi < - limite)
 		m_phi = -limite;
 
-	vec3 vect = m_passageInverse * m_orientation;
+	vec3 vect ;
 
 	vect.x = cos(m_phi) * cos(m_theta);
 	vect.y = cos(m_phi) * sin(m_theta);
