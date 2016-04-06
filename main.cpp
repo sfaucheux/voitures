@@ -1,6 +1,7 @@
 #include <string>
 #include <iostream>
 #include <unistd.h>
+#include <chrono>
 
 #include "glm/glm.hpp"
 #include "glm/gtx/norm.hpp"
@@ -116,32 +117,37 @@ int main(int argc, char** argv)
     world.translateObject(sphere3, glm::vec3(10, 60, 65));
     world.translateObject(sphere4, glm::vec3(3, 20, -40));
     world.rotateObject(sphere4, glm::vec3(-0.2,0,0));
-    //obj.translate(glm::vec3(50, 0, 0));
-*/
+    //obj.translate(glm::vec3(50, 0, 0));*/
 
-    Object b1(Box(3000, 3000, 20));
+
+    Object b1(Box(50, 60, 40));
     world.addObject(b1);
-    Object b2(Box(3000, 3000, 20));
+    Object b2(Box(30, 35, 40));
     world.addObject(b2);
 
-    b1.getPObject()->setStatic(true);
-    b2.getPObject()->setStatic(true);
+    //b1.getPObject()->setStatic(true);
+    //b2.getPObject()->setStatic(true);
 
-    world.translateObject(b1, vec3(0, -1300, 0)); 
-    world.rotateObject(b1, vec3(-0.4, 0.2, 0)); 
-    world.translateObject(b2, vec3(0 ,1300, 0)); 
-    world.rotateObject(b2, vec3(0.4 , 0.2, 0)); 
+    world.translateObject(b1, vec3(0, -20, 0)); 
+    //world.rotateObject(b1, vec3(0.6, 0.5, 0)); 
+    world.translateObject(b2, vec3(0 ,30, 0)); 
+    //world.rotateObject(b2, vec3(0.6 , 0.5, 0)); 
 
-    for (int i = 0 ; i < 25 ; i++)
+    /*for (int i = 0 ; i < 25 ; i++)
     {
         for(int j = 0 ; j < 25 ; j++)
         {
             Object* s = new Object(Sphere(20));
-            s->getPObject()->setVelocity(vec3(rand()%200 -200,rand()%200 -200,rand()%200 -200));
+            s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
             world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));
+
+            s = new Object(Box(20, 20, 20));
+            s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
+            world.addObject(*s);
+            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));
         }
-    }
+    }*/
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");
     Shader grayShdr("shaders/gris.vert", "shaders/texture.frag");
@@ -150,22 +156,76 @@ int main(int argc, char** argv)
     Texture tex;
     tex.load("textures/mushroom.png");
     //obj.getDrawable()->setTexture(&tex);
-
     while (context.eventLoop())
     {
+        chrono::time_point<chrono::system_clock> begin, ph, aff, cl;
+        begin = chrono::system_clock::now();
+
         world.getPWorld().update(context.getFrametime());
+
+        ph = chrono::system_clock::now();
+
         context.clean();
+
+        cl = chrono::system_clock::now();
 
         renderer.setDefaultShader(&grayShdr);
         world.getGWorld().draw(renderer);
         renderer.setDefaultShader(&greenShdr);
         world.getGWorld().draw(renderer, GL_LINE);
-        
         //drawOctree(renderer, world);
-        
+        if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
+        {
+            vector<tuple<vec3,vec3>> z = b1.getPObject()->getGeometry().collisionPoints(&b2.getPObject()->getGeometry());
+            for(int i = 0 ; i < z.size() ; i++)
+            {
+                vec3 p = get<0>(z[i]);
+                Object s(Sphere(2));
+                s.getDrawable()->setShader(&redShdr);
+                world.translateObject(s, p);
+                renderer.draw(*s.getDrawable());
+            }
+        }
         context.show();
+        if (context.keyIsPressed(GLFW_KEY_W))
+            world.translateObject(b1,glm::vec3(-1, 0, 0));
+        if (context.keyIsPressed(GLFW_KEY_S))
+            world.translateObject(b1,glm::vec3(1, 0, 0));
+        if (context.keyIsPressed(GLFW_KEY_A))
+            world.translateObject(b1,glm::vec3(0, 1, 0));
+        if (context.keyIsPressed(GLFW_KEY_D))
+            world.translateObject(b1,glm::vec3(0, -1, 0));
+        if (context.keyIsPressed(GLFW_KEY_R))
+            world.translateObject(b1,glm::vec3(0, 0, -1));
+        if (context.keyIsPressed(GLFW_KEY_F))
+            world.translateObject(b1,glm::vec3(0, 0, 1));
+        if (context.keyIsPressed(GLFW_KEY_V))
+            world.rotateObject(b1,glm::vec3(0.01, 0, 0));
+        if (context.keyIsPressed(GLFW_KEY_B))
+            world.rotateObject(b1,glm::vec3(0, 0.01, 0));
+        if (context.keyIsPressed(GLFW_KEY_N))
+            world.rotateObject(b1,glm::vec3(0, 0, 0.01));
+        if (context.keyIsPressed(GLFW_KEY_G))
+            world.rotateObject(b1,glm::vec3(-0.01, 0, 0));
+        if (context.keyIsPressed(GLFW_KEY_H))
+            world.rotateObject(b1,glm::vec3(0, -0.01, 0));
+        if (context.keyIsPressed(GLFW_KEY_J))
+            world.rotateObject(b1,glm::vec3(0, 0, -0.01));
+/*
+        if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
+            cout << "collision" << endl ;
+        else
+            cout << "pas collision" << endl ;
+      
+        aff = chrono::system_clock::now();
 
-        cout << "FPS : " <<  1/context.getFrametime() << "\x1B[F"  << endl ;;
+        cout << "physique : " << 
+            chrono::duration_cast<chrono::milliseconds>(ph-begin).count() << "ms" << endl;
+        cout << "affichage : " << 
+            chrono::duration_cast<chrono::milliseconds>(aff-cl).count() << "ms" << endl;
+        cout << "clear : " << 
+            chrono::duration_cast<chrono::milliseconds>(cl-ph).count() << "ms" << endl;
+        cout << "FPS : " <<  1/context.getFrametime() << endl ; // "\x1B[F"  << endl ;;*/
     }
 
     return 0;

@@ -16,7 +16,7 @@ class GWorld
         void draw(const Renderer& rdr, GLenum mode = GL_FILL);
 
     private:
-        std::list<Drawable*> m_objects ;
+        std::vector<Drawable*> m_objects ;
 };
 
 #endif

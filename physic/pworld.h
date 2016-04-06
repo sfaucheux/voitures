@@ -35,8 +35,8 @@ class PWorld
 
         Octree m_octree;
         glm::vec3 m_gravity;
-        std::list<std::array<PObject*,2>> m_potentialCollisions;
-        std::list<std::tuple<PObject*, PObject*, std::vector<std::tuple<glm::vec3, glm::vec3>>>> m_contacts ;
+        std::vector<std::array<PObject*,2>> m_potentialCollisions;
+        std::vector<std::tuple<PObject*, PObject*, std::vector<std::tuple<glm::vec3, glm::vec3>>>> m_contacts ;
 };
 
 #endif

@@ -2,6 +2,7 @@
 
 #include <cmath>
 #include "../glm/gtx/transform.hpp"
+#include "../glm/gtx/norm.hpp"
 #include "collisions.h"
 
 
@@ -9,32 +10,47 @@
 using namespace std;
 using namespace glm;
 
-Box::Box(float width, float height, float depth)
+Box::Box(float width, float height, float depth) : m_size(width, height, width)
 {
-    m_width = width;
-    m_height = height;   
-    m_depth = depth;
+}
+
+Box::Box(vec3 size) : m_size(size)
+{
 }
 
 Box::~Box()
 {
 }
-
+array<glm::vec3,8> Box::getVertices() const
+{
+    return {getWorldPoint(vec3( m_size[0] / 2, -m_size[1] / 2, -m_size[2] / 2)),
+        getWorldPoint(vec3( m_size[0] / 2, -m_size[1] / 2, m_size[2] / 2)),
+        getWorldPoint(vec3(-m_size[0] / 2, -m_size[1] / 2, -m_size[2] / 2)),
+        getWorldPoint(vec3(-m_size[0] / 2, -m_size[1] / 2, m_size[2] / 2)),
+        getWorldPoint(vec3( m_size[0] / 2, m_size[1] / 2, -m_size[2] / 2)),
+        getWorldPoint(vec3( m_size[0] / 2, m_size[1] / 2, m_size[2] / 2)),
+        getWorldPoint(vec3(-m_size[0] / 2, m_size[1] / 2, m_size[2] / 2)),
+        getWorldPoint(vec3(-m_size[0] / 2, m_size[1] / 2, -m_size[2] / 2))};
+}
 float Box::getHeight() const
 {
-    return m_height;
+    return m_size[1];
 }
 
 float Box::getWidth() const
 {
-    return m_width;
+    return m_size[0];
 }
 
 float Box::getDepth() const
 {
-    return m_depth;
+    return m_size[2];
 }
 
+vec3 Box::getSize() const
+{
+    return m_size;
+}
 bool Box::collide(const Geometry* obj) const
 {
     return obj->collide(this);
@@ -76,11 +92,11 @@ vector<tuple<vec3,vec3>> Box::collisionPoints(const Mesh* m) const
 }
 AABB Box::getAABB() const
 {
-    float r = sqrt(m_width*m_width+m_height*m_height+m_depth*m_depth);
+    float r = l2Norm(m_size);
     return AABB(vec3(r));
 }
 BoundingSphere Box::getBoundingSphere() const
 {
-    float r = sqrt(m_width*m_width+m_height*m_height+m_depth*m_depth);
+    float r = l2Norm(m_size);
     return BoundingSphere(r);
 }

@@ -11,6 +11,7 @@
 
 namespace Collisions
 {
+    enum ContactType{PLANE, EDGE, POINT};
     bool collide(const Sphere* obj1, const Sphere* obj2);
     std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Sphere* obj1, const Sphere* obj2);
     bool collide(const Sphere* s, const Box* b);

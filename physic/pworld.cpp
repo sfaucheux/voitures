@@ -1,6 +1,7 @@
 #include "pworld.h"
 #include "../glm/gtx/norm.hpp"
 #include <iostream>
+#include <chrono>
 
 using namespace glm;
 using namespace std;
@@ -31,6 +32,11 @@ void PWorld::removeObject(PObject* object)
 
 void PWorld::update(float step)
 {
+
+    chrono::time_point<chrono::system_clock> begin, par, broad, narrow, col, end;
+    begin = chrono::system_clock::now();
+
+ 
     PObject* obj ;
     stack<Node*> s;
 
@@ -60,28 +66,43 @@ void PWorld::update(float step)
             obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
         }
     }
+    par = chrono::system_clock::now();
     //Determination des objets potentiellements en contact.
     broadPhase();
+    broad = chrono::system_clock::now();
     //Determiantion des points et normales de contacts (s'il y en a).
     narrowPhase();
+    narrow = chrono::system_clock::now();
     //Reponse aux collisions.
     collisionResponse();
+    col = chrono::system_clock::now();
     //Integration des grandeurs.
     integrate(step);
+    end = chrono::system_clock::now();
+    /*
+    cout << "parcourt : " << 
+        chrono::duration_cast<chrono::microseconds>(par-begin).count() << "µs" << endl;
+    cout << "broadPhase : " << 
+        chrono::duration_cast<chrono::microseconds>(broad - par).count() << "µs" << endl ;
+    cout << "narrowPhase : " << 
+        chrono::duration_cast<chrono::microseconds>(narrow - broad).count() << "µs" << endl ;
+    cout << "calcul reponses : " << 
+        chrono::duration_cast<chrono::microseconds>(col - narrow).count() << "µs" << endl ;
+    cout << "integration : " << 
+        chrono::duration_cast<chrono::microseconds>(end - col).count() << "µs" << endl << endl ;*/
 }
 
 void PWorld::broadPhase()
 {
-    stack<pair<Node*, list<PObject*>>> s;
+    queue<pair<Node*, list<PObject*>&>> s;
     if(m_octree.getRoot() != nullptr)
-        s.push(make_pair(m_octree.getRoot(), list<PObject*>()));
+        s.push({m_octree.getRoot(), *new list<PObject*>()});
 
     while(!s.empty())
     {
-        Node* node;
-        list<PObject*> parentObjects;
-        tie(node, parentObjects) = s.top();
-        s.pop();
+        Node* node = s.front().first;
+        list<PObject*>& parentObjects = s.front().second;
+        //tie(node, parentObjects) = s.top();
 
         //Pour chaque objet, on cherche une collision potentielle.
         for (auto it = node->getObjects().begin(); it != node->getObjects().end(); it++)
@@ -108,7 +129,7 @@ void PWorld::broadPhase()
             if(node->getChildren()[i] != nullptr)
             {
                 //On détermine les objets a passer.
-                list<PObject*> objects ;
+                list<PObject*>& objects = *new list<PObject*>();
                 for(auto it = parentObjects.begin() ; it != parentObjects.end() ; it++)
                 {
                     if(node->getChildren()[i]->getAABB().relativePosition((*it)->getAABB()) != OUTSIDE)
@@ -123,7 +144,8 @@ void PWorld::broadPhase()
                 s.push({node->getChildren()[i], objects});
             }
         }
-
+        delete &s.front().second;
+        s.pop();
     } 
 }
 
@@ -151,7 +173,7 @@ void PWorld::collisionResponse()
 {
     PObject *obj1, *obj2;
     vec3 normal, point ;
-    for (int i = 0 ; i < 10 ; i++) 
+    for (int i = 0 ; i < 50 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {
@@ -180,7 +202,7 @@ void PWorld::collisionResponse()
 vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
 {
    //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
-    float e = 5;
+    float e = 0.8;
 
     //masse des deux objet.
     float m1 = obj1->getMass(), m2 = obj2->getMass() ;

@@ -1,7 +1,9 @@
 #include "collisions.h"
 #include "../glm/gtx/norm.hpp"
 #include "../glm/gtx/transform.hpp"
+#include "../glm/gtc/matrix_access.hpp"
 #include <iostream>
+#include <iomanip>
 
 using namespace glm ;
 using namespace std ;
@@ -174,15 +176,319 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Mesh* m, const Sphere
 {
     return vector<tuple<vec3,vec3>>();
 }
+inline bool overlap(const Box* b1, const Box* b2, vec3 n)
+{
+    mat3 r1 = mat3(b1->getRotationMatrix());
+    mat3 r2 = mat3(b2->getRotationMatrix());
+
+    float c = dot(b1->getPosition(), n);
+    float s = fabs(b1->getWidth() * dot(n, column(r1,0))) 
+        + fabs(b1->getHeight() * dot(n, column(r1,1))) 
+        + fabs(b1->getDepth() * dot(n, column(r1,2))) ;
+
+    float min1 = c - s/2;
+    float max1 = c + s/2;
+
+    c = dot(b2->getPosition(), n);
+    s = fabs(b2->getWidth() * dot(n, column(r2,0))) 
+        + fabs(b2->getHeight() * dot(n, column(r2,1))) 
+        + fabs(b2->getDepth() * dot(n, column(r2,2))) ;
+
+    float min2 = c - s/2;
+    float max2 = c + s/2;
+    
+    //Attention a bien garder l'inegalité sticte
+    //Pour le cas ou n est le vecteur nul 
+    return (max1 < min2 || min1 > max2);
+}
+inline float overlapDepth(const Box* b1, const Box* b2, vec3 n, bool& obj1Min)
+{
+    mat3 r1 = mat3(b1->getRotationMatrix());
+    mat3 r2 = mat3(b2->getRotationMatrix());
+
+    float c = dot(b1->getPosition(), n);
+    float s = fabs(b1->getWidth() * dot(n, column(r1,0))) 
+        + fabs(b1->getHeight() * dot(n, column(r1,1))) 
+        + fabs(b1->getDepth() * dot(n, column(r1,2))) ;
+
+    float min1 = c - s/2;
+    float max1 = c + s/2;
+
+    c = dot(b2->getPosition(), n);
+    s = fabs(b2->getWidth() * dot(n, column(r2,0))) 
+        + fabs(b2->getHeight() * dot(n, column(r2,1))) 
+        + fabs(b2->getDepth() * dot(n, column(r2,2))) ;
+
+    float min2 = c - s/2;
+    float max2 = c + s/2;
+   
+    float min = (min1 > min2) ? min1 : min2 ;
+    float max = (max1 < max2) ? max1 : max2 ;
+    obj1Min = (min1 < min2);
+    return fabs(max - min)/l2Norm(n);
+}
 
 bool Collisions::collide(const Box* obj1, const Box* obj2)
 {
-    return false;
+    mat3 r1 = mat3(obj1->getRotationMatrix());
+    mat3 r2 = mat3(obj2->getRotationMatrix()); 
+
+    //Normales de test (3 axes + 3 axes + produit vectoriel des axes 2 à 2)
+    if(overlap(obj1,obj2,column(r1,0)))
+        return false;
+    if(overlap(obj1,obj2,column(r1,1)))
+        return false;
+    if(overlap(obj1,obj2,column(r1,2)))
+        return false;
+    if(overlap(obj1,obj2,column(r2,0)))
+        return false;
+    if(overlap(obj1,obj2,column(r2,1)))
+        return false;
+    if(overlap(obj1,obj2,column(r2,2)))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,0),column(r2,0))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,0),column(r2,1))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,0),column(r2,2))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,1),column(r2,0))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,1),column(r2,1))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,1),column(r2,2))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,2),column(r2,0))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,2),column(r2,1))))
+        return false;
+    if(overlap(obj1,obj2,cross(column(r1,2),column(r2,2))))
+        return false;
+
+    return true;
+}
+vector<tuple<vec3,vec3>> collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isMin, vec3 n)
+{
+    vec3 s1 = b1->getSize();
+    vec3 s2 = b2->getSize();
+    mat3 r1 = mat3(b1->getRotationMatrix());
+    mat3 r2 = mat3(b2->getRotationMatrix());
+
+    int x = i, y = (i+1)%3, z = (i+2)%3 ;
+    vec3 vx(0), vy(0), vz(0);
+    vx[x] = vy[y] = vz[z] = 1;
+    vec3 p1, p2, p3, p4;
+    if(obj1isMin == dot(n, column(r1, y)) > 0)
+    {
+        if(obj1isMin == dot(n, column(r1, z)) > 0)
+        {
+            p1 = b1->getWorldPoint(-s1[x]/2*vx + s1[y]/2*vy + s1[z]/2*vz);
+            p2 = b1->getWorldPoint(s1[x]/2*vx + s1[y]/2*vy + s1[z]/2*vz);
+        }
+        else
+        {
+            p1 = b1->getWorldPoint(-s1[x]/2*vx + s1[y]/2*vy - s1[z]/2*vz);
+            p2 = b1->getWorldPoint(s1[x]/2*vx + s1[y]/2*vy - s1[z]/2*vz);
+        }
+    }
+    else
+    {
+        if(obj1isMin == dot(n, column(r1, z)) > 0)
+        {
+            p1 = b1->getWorldPoint(-s1[x]/2*vx - s1[y]/2*vy + s1[z]/2*vz);
+            p2 = b1->getWorldPoint(s1[x]/2*vx - s1[y]/2*vy + s1[z]/2*vz);
+        }
+        else
+        {
+            p1 = b1->getWorldPoint(-s1[x]/2*vx - s1[y]/2*vy - s1[z]/2*vz);
+            p2 = b1->getWorldPoint(s1[x]/2*vx - s1[y]/2*vy - s1[z]/2*vz);
+        }
+    }
+
+    x = j;
+    y = (j+1)%3;
+    z = (j+2)%3 ;
+    vx = vy = vz = vec3(0) ;
+    vx[x] = vy[y] = vz[z] = 1;
+
+    if(obj1isMin != dot(n, column(r2, y)) > 0)
+    {
+        if(obj1isMin != dot(n, column(r2, z)) > 0)
+        {
+            p3 = b2->getWorldPoint(-s2[x]/2*vx + s2[y]/2*vy + s2[z]/2*vz);
+            p4 = b2->getWorldPoint(s2[x]/2*vx + s2[y]/2*vy + s2[z]/2*vz);
+        }
+        else
+        {
+            p3 = b2->getWorldPoint(-s2[x]/2*vx + s2[y]/2*vy - s2[z]/2*vz);
+            p4 = b2->getWorldPoint(s2[x]/2*vx + s2[y]/2*vy - s2[z]/2*vz);
+        }
+    }
+    else
+    {
+        if(obj1isMin != dot(n, column(r2, z)) > 0)
+        {
+            p3 = b2->getWorldPoint(-s2[x]/2*vx - s2[y]/2*vy + s2[z]/2*vz);
+            p4 = b2->getWorldPoint(s2[x]/2*vx - s2[y]/2*vy + s2[z]/2*vz);
+        }
+        else
+        {
+            p3 = b2->getWorldPoint(-s2[x]/2*vx - s2[y]/2*vy - s2[z]/2*vz);
+            p4 = b2->getWorldPoint(s2[x]/2*vx - s2[y]/2*vy - s2[z]/2*vz);
+        }
+    }
+
+    
+    vec3 A1 = p2 - p1;
+    vec3 A2 = p4 - p3;
+    vec2 C1(-dot(A1, A1), -dot(A1, A2));
+    vec2 C2(dot(A1, A2), dot(A2, A2));
+    vec2 B(dot((p1 - p3), A1), dot((p1 - p3), A2));
+    float d = determinant(mat2(C1, C2));
+    float t1 = determinant(mat2(B, C2)) / d;
+    float t2 = determinant(mat2(C1, B)) / d;
+    vec3 c = 0.5f * ((p1 + t1 * A1) + (p3 + t2 * A2));
+
+    if(dot(n, b1->getPosition() - c) < 0)
+        n = -n;
+
+    vector<tuple<vec3,vec3>> p;
+    p.push_back({make_tuple(c,n)});
+    return p;
 }
 
+vector<tuple<vec3,vec3>> collisionPlane(const Box* b1, const Box* b2, int i, bool obj1isMin, vec3 n)
+{
+    vec3 s1 = b1->getSize();
+    vec3 s2 = b2->getSize();
+    mat3 r1 = mat3(b1->getRotationMatrix());
+    mat3 r2 = mat3(b2->getRotationMatrix());
+
+    int f = (obj1isMin == dot(n, column(r1, i)) > 0) ? 1 : -1 ;
+
+    int x = i, y = (i+1)%3, z = (i+2)%3 ;
+    vec3 vx(0), vy(0), vz(0);
+    vx[x] = f ;
+    vy[y] = vz[z] = 1;
+
+    vec3 p1 = b1->getWorldPoint(s1[x]/2*vx + s1[y]/2*vy + s1[z]/2*vz);
+    vec3 p2 = b1->getWorldPoint(s1[x]/2*vx - s1[y]/2*vy + s1[z]/2*vz);
+    vec3 p3 = b1->getWorldPoint(s1[x]/2*vx + s1[y]/2*vy - s1[z]/2*vz);
+    vec3 p4 = b1->getWorldPoint(s1[x]/2*vx - s1[y]/2*vy - s1[z]/2*vz);
+
+    array<vec3,8> vertices = b2->getVertices() ;
+    float extrem = dot(vertices[0], n);
+    array<int,8> q = {0};
+    int count = 1 ;
+    for(int j = 1 ; j < 8 ; j++)
+    {
+        float d = dot(vertices[j], n) ;
+        //Encore une fois pour les erreurs de projection.
+        if(fabs(d - extrem) < 0.0001)
+        {
+            cout << fixed << setprecision(20) << d << endl ;
+            q[count] = j ;
+            count++;
+        }
+        else if((d < extrem) == obj1isMin)
+        {
+            cout << d << endl ;
+            count = 1 ;
+            extrem = d ;
+            q[0] = j ;
+        }
+    }
+
+    vector<tuple<vec3,vec3>> p;
+    if(count == 1)
+    {
+        cout << "plan/point" << endl;
+        vec3 po = vertices[q[0]] - 0.5f*(extrem-dot(p1,n))*n; ;
+        p.push_back({make_tuple(po,n)});
+
+    }
+
+    else if(count == 2)
+    {
+        cout << "plan/arrete" << endl ;
+    }
+    else if(count == 4)
+    {
+        cout << "plan/plan" << endl ;
+    }
+    else
+    {
+        cout << "cout : " << count << " impossible..." << endl ; 
+    }
+    p.push_back({make_tuple(p1,n)});
+    p.push_back({make_tuple(p2,n)});
+    p.push_back({make_tuple(p3,n)});
+    p.push_back({make_tuple(p4,n)});
+    for(int i = 0 ; i < count ; i++)
+    {
+        p.push_back({make_tuple(vertices[q[i]],n)});
+    }
+    return p;
+}
 vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* obj1, const Box* obj2)
 {
-    return vector<tuple<vec3,vec3>>();
+    mat3 r1 = mat3(obj1->getRotationMatrix());
+    mat3 r2 = mat3(obj2->getRotationMatrix()); 
+
+    //Normales de test (3 axes + 3 axes + produit vectoriel des axes 2 à 2)
+    array<vec3,15> n ({column(r1,0),
+            column(r1,1),
+            column(r1,2),
+            column(r2,0),
+            column(r2,1),
+            column(r2,2),
+            cross(column(r1,0),column(r2,0)),
+            cross(column(r1,0),column(r2,1)),
+            cross(column(r1,0),column(r2,2)),
+            cross(column(r1,1),column(r2,0)),
+            cross(column(r1,1),column(r2,1)),
+            cross(column(r1,1),column(r2,2)),
+            cross(column(r1,2),column(r2,0)),
+            cross(column(r1,2),column(r2,1)),
+            cross(column(r1,2),column(r2,2))});
+
+    bool obj1IsMin ;
+
+    bool temp;
+    int minIndex = 0;
+    float minDepth = overlapDepth(obj1, obj2, n[0], obj1IsMin);
+
+    for(int i = 1 ; i < 15 ; i++)
+    {
+        if(l1Norm(n[i]) != 0)
+        {
+            float depth = overlapDepth(obj1, obj2, n[i], temp) ;
+            //Permet de compenser les erreurs avec les produits vectoriels.
+            //Sinon la collision arrete/arrete est privilégiée lorsque les boite sont alignées.
+            if(depth < minDepth - 0.001f)
+            {
+                minDepth = depth;
+                minIndex = i;
+                obj1IsMin = temp;
+            }
+        }
+
+    }
+
+
+    vec3 point ;
+    if(minIndex < 3)
+    {
+        return collisionPlane(obj1, obj2, minIndex, obj1IsMin, n[minIndex]);
+    }
+    else if(minIndex < 6)
+    {
+        return collisionPlane(obj2, obj1, minIndex - 3, !obj1IsMin, n[minIndex]);
+    }
+    else
+    {
+        return collisionEdges(obj1, obj2, (minIndex-6)/3, (minIndex-6)%3, obj1IsMin, n[minIndex]);
+    }
 }
 
 bool Collisions::collide(const Box* b, const Mesh* m)
