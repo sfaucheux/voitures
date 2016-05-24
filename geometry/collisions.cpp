@@ -347,13 +347,13 @@ Contact* collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isM
     float t2 = determinant(mat2(C1, B)) / d;
     vec3 c = 0.5f * ((p1 + t1 * A1) + (p3 + t2 * A2));
 
-    if(dot(n, b1->getPosition() - c) < 0)
+    if(dot(n, b1->getPosition() - c) > 0)
         n = -n;
 
     return new PointContact(c,n);
 }
 
-Contact* collisionPlane(const Box* b1, const Box* b2, int i, bool obj1isMin, vec3 n)
+Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, bool obj1isMin, vec3 n)
 {
     vec3 s1 = b1->getSize();
     vec3 s2 = b2->getSize();
@@ -394,12 +394,13 @@ Contact* collisionPlane(const Box* b1, const Box* b2, int i, bool obj1isMin, vec
         }
     }
 
-    Contact* p = NULL;
+    Contact* c = NULL;
     if(count == 1)
     {
         vec3 po = vertices[q[0]] - 0.5f*(extrem-dot(p1,n))*n; ;
+        if(dot(first->getPosition() - po, n) > 0)
+            n = -n;
         return new PointContact(po,n);
-
     }
 
     else if(count == 2)
@@ -428,7 +429,7 @@ Contact* collisionPlane(const Box* b1, const Box* b2, int i, bool obj1isMin, vec
     {
         p.push_back({make_tuple(vertices[q[i]],n)});
     }*/
-    return p;
+    return c;
 }
 Contact* Collisions::collisionPoints(const Box* obj1, const Box* obj2)
 {
@@ -475,22 +476,16 @@ Contact* Collisions::collisionPoints(const Box* obj1, const Box* obj2)
 
     }
 
-
-    vec3 point ;
     if(minIndex < 3)
     {
-        return collisionPlane(obj1, obj2, minIndex, obj1IsMin, n[minIndex]);
+        return collisionPlane(obj1, obj2, obj1, minIndex, obj1IsMin, n[minIndex]);
     }
     else if(minIndex < 6)
     {
-        if(obj1IsMin)
-            n[minIndex] = -n[minIndex] ;
-        return collisionPlane(obj2, obj1, minIndex - 3, !obj1IsMin, n[minIndex]);
+        return collisionPlane(obj2, obj1, obj1, minIndex - 3, !obj1IsMin, n[minIndex]);
     }
     else
     {
-        if(obj1IsMin)
-            n[minIndex] = -n[minIndex] ;
         return collisionEdges(obj1, obj2, (minIndex-6)/3, (minIndex-6)%3, obj1IsMin, n[minIndex]);
     }
 }

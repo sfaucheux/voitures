@@ -186,21 +186,14 @@ void PWorld::collisionResponse()
             obj1 = get<1>(*it);
             obj2 = get<2>(*it);
             Contact* c = get<0>((*it));
-            vec3 impulse = c->solveImpulse(obj1, obj2);
-            obj1->setLinearImpulse(impulse);
-            obj2->setLinearImpulse(-impulse);
-            obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
-            obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
+                vec3 impulse = c->solveImpulse(obj1, obj2);
+
+       
         }
     }
     for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
     {
-        Contact* c = get<0>((*it));
-        vec3 impulse = c->solveImpulse(obj1, obj2);
-        obj1->setLinearImpulse(impulse);
-        obj2->setLinearImpulse(-impulse);
-        obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
-        obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
+        delete get<0>(*it);
     }
 
     m_contacts.clear();

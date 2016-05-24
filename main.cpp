@@ -137,15 +137,15 @@ int main(int argc, char** argv)
     {
         for(int j = 0 ; j < 10 ; j++)
         {
-            Object* s = new Object(Sphere(20));
+            /*Object* s = new Object(Sphere(20));
             s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));
+            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));*/
 
-            /*s = new Object(Box(20, 20, 20));
+            Object* s = new Object(Box(20, 20, 20));
             s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));*/
+            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));
         }
     }
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
@@ -173,7 +173,7 @@ int main(int argc, char** argv)
         world.getGWorld().draw(renderer);
         renderer.setDefaultShader(&greenShdr);
         world.getGWorld().draw(renderer, GL_LINE);
-        drawOctree(renderer, world);
+        //drawOctree(renderer, world);
         /*if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
         {
             vector<tuple<vec3,vec3>> z = b1.getPObject()->getGeometry().collisionPoints(&b2.getPObject()->getGeometry());

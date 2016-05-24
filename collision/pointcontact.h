@@ -13,7 +13,7 @@ class PointContact : public Contact
         virtual glm::vec3 solvePosition(PObject* p1, PObject* p2) ;
         virtual void inverse();
 
-    private:
+    //private:
         glm::vec3 m_point;
         glm::vec3 m_normal;
 };

@@ -68,11 +68,11 @@ vec3 PointContact::solveImpulse(PObject* obj1, PObject* obj2)
         float static1 =(obj1->isStatic()) ? 0 : 1 ;
         float static2 =(obj2->isStatic()) ? 0 : 1 ;
 
-        return (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
-    }
-    else
-    {
-        return vec3(0);
+        impulse = (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
+        obj1->setLinearImpulse(impulse);
+        obj2->setLinearImpulse(-impulse);
+        obj1->setAngularImpulse(cross(m_point - obj1->getPosition(), impulse));
+        obj2->setAngularImpulse(-cross(m_point - obj2->getPosition(), impulse));
     }
 
 }
