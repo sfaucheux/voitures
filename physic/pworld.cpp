@@ -159,10 +159,10 @@ void PWorld::narrowPhase()
         obj2 = (*it)[1];
         if(obj1->getGeometry().collide(&(obj2->getGeometry())))
         {
-            vector<tuple<vec3,vec3>> points = obj1->getGeometry().collisionPoints(&(obj2->getGeometry()));
-            if (points.size())
+            Contact* c = obj1->getGeometry().collisionPoints(&(obj2->getGeometry()));
+            if (c)
             {
-                m_contacts.push_back(make_tuple(obj1, obj2, points));
+                m_contacts.push_back({c,obj1, obj2});
             }
         }
     }
@@ -171,38 +171,46 @@ void PWorld::narrowPhase()
 
 void PWorld::collisionResponse()
 {
+    vector<vec3> impulses;
+    impulses.resize(m_octree.getObjectCount());
+    vector<vec3> positions;
+    positions.resize(m_octree.getObjectCount());
+
+
     PObject *obj1, *obj2;
     vec3 normal, point ;
     for (int i = 0 ; i < 50 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {
-            obj1 = get<0>(*it);
-            obj2 = get<1>(*it);
-            vector<tuple<vec3,vec3>> points = get<2>((*it));
-            for (int j = 0; j < points.size(); j++)
-            {
-                tie(point, normal) = points[j] ;
-                vec3 v12 = obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
-                float dV = dot(normal, v12);
-                if(dV > 0)
-                {   
-                    normal = normalize(normal);
-                    vec3 impulse = computeImpulse(obj1, obj2, point, normal);
-                    obj1->setLinearImpulse(impulse);
-                    obj2->setLinearImpulse(-impulse);
-                    obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
-                    obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
-                }
-            }
+            obj1 = get<1>(*it);
+            obj2 = get<2>(*it);
+            Contact* c = get<0>((*it));
+            vec3 impulse = c->solveImpulse(obj1, obj2);
+            obj1->setLinearImpulse(impulse);
+            obj2->setLinearImpulse(-impulse);
+            obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
+            obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
         }
     }
+    for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
+    {
+        Contact* c = get<0>((*it));
+        vec3 impulse = c->solveImpulse(obj1, obj2);
+        obj1->setLinearImpulse(impulse);
+        obj2->setLinearImpulse(-impulse);
+        obj1->setAngularImpulse(cross(point - obj1->getPosition(), impulse));
+        obj2->setAngularImpulse(-cross(point - obj2->getPosition(), impulse));
+    }
+
     m_contacts.clear();
+
 }
+/*
 vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
 {
    //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
-    float e = 0.8;
+    float e = 1;
 
     //masse des deux objet.
     float m1 = obj1->getMass(), m2 = obj2->getMass() ;
@@ -253,7 +261,7 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
     float static2 =(obj2->isStatic()) ? 0 : 1 ;
 
     return (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
-}
+}*/
 void PWorld::integrate(float step)
 {
     vector<PObject*> objVector ;

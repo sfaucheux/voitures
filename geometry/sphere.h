@@ -19,10 +19,10 @@ class Sphere : public Geometry
         bool collide(const Box* b) const;
         bool collide(const Mesh* m) const;
 
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Geometry* obj) const;
-        std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Sphere* s) const;
-        std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Box* b) const;
-        std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Mesh* m) const;
+        virtual Contact* collisionPoints(const Geometry* obj) const;
+        Contact* collisionPoints(const Sphere* s) const;
+        Contact* collisionPoints(const Box* b) const;
+        Contact* collisionPoints(const Mesh* m) const;
 
         virtual AABB getAABB() const;
         virtual BoundingSphere getBoundingSphere() const;

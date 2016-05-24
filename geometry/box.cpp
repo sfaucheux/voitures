@@ -10,7 +10,7 @@
 using namespace std;
 using namespace glm;
 
-Box::Box(float width, float height, float depth) : m_size(width, height, width)
+Box::Box(float width, float height, float depth) : m_size(width, height, depth)
 {
 }
 
@@ -71,22 +71,22 @@ bool Box::collide(const Mesh* m) const
     return Collisions::collide(this, m);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Geometry* obj) const
+Contact* Box::collisionPoints(const Geometry* obj) const
 {
     return obj->collisionPoints(this);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Sphere* s) const
+Contact* Box::collisionPoints(const Sphere* s) const
 {
     return Collisions::collisionPoints(this, s);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Box* b) const
+Contact* Box::collisionPoints(const Box* b) const
 {
     return Collisions::collisionPoints(this, b);
 }
 
-vector<tuple<vec3,vec3>> Box::collisionPoints(const Mesh* m) const
+Contact* Box::collisionPoints(const Mesh* m) const
 {
     return Collisions::collisionPoints(this, m);
 }

@@ -7,6 +7,7 @@
 #include "boundingsphere.h"
 #include "aabb.h"
 
+class Contact;
 class Box;
 class Sphere;
 class Mesh;
@@ -32,10 +33,10 @@ class Geometry
         virtual bool collide(const Box* obj) const = 0 ;
         virtual bool collide(const Mesh* obj) const = 0 ;
 
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Geometry* obj) const = 0 ;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Sphere* obj) const = 0 ;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Box* obj) const = 0 ;
-        virtual std::vector<std::tuple<glm::vec3,glm::vec3>> collisionPoints(const Mesh* obj) const = 0 ;
+        virtual Contact* collisionPoints(const Geometry* obj) const = 0 ;
+        virtual Contact* collisionPoints(const Sphere* obj) const = 0 ;
+        virtual Contact* collisionPoints(const Box* obj) const = 0 ;
+        virtual Contact* collisionPoints(const Mesh* obj) const = 0 ;
 
         virtual AABB getAABB() const = 0;
         virtual BoundingSphere getBoundingSphere() const = 0;

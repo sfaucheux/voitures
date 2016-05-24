@@ -10,8 +10,8 @@ gSphere::gSphere(Sphere& s) : Drawable(s)
     std::vector<glm::vec3> vertices;
     std::vector<glm::uvec3> indices;
 
-    static const int nbPointsUnitSphere = 3;
-    int nbPoints = radius * nbPointsUnitSphere;
+    static const int nbPointsUnitSphere = 20;
+    int nbPoints = nbPointsUnitSphere;
     float dAngle = 2.0 * M_PI / (float)nbPoints;
     int topVertexIndex = nbPoints * (nbPoints / 2);
 

@@ -40,22 +40,22 @@ bool Sphere::collide(const Mesh* m) const
     return Collisions::collide(this, m);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Geometry* obj) const
+Contact* Sphere::collisionPoints(const Geometry* obj) const
 {
     return obj->collisionPoints(this);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Sphere* s) const
+Contact* Sphere::collisionPoints(const Sphere* s) const
 {
     return Collisions::collisionPoints(this, s);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Box* b) const
+Contact* Sphere::collisionPoints(const Box* b) const
 {
     return Collisions::collisionPoints(this, b);
 }
 
-vector<tuple<vec3,vec3>> Sphere::collisionPoints(const Mesh* m) const
+Contact* Sphere::collisionPoints(const Mesh* m) const
 {
     return Collisions::collisionPoints(this, m);
 }

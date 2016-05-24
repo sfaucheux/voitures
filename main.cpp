@@ -120,34 +120,34 @@ int main(int argc, char** argv)
     //obj.translate(glm::vec3(50, 0, 0));*/
 
 
-    Object b1(Box(50, 60, 40));
+    Object b1(Box(1200, 1200, 20));
     world.addObject(b1);
-    Object b2(Box(30, 35, 40));
+    Object b2(Box(1200, 1200, 20));
     world.addObject(b2);
 
-    //b1.getPObject()->setStatic(true);
-    //b2.getPObject()->setStatic(true);
+    b1.getPObject()->setStatic(true);
+    b2.getPObject()->setStatic(true);
 
-    world.translateObject(b1, vec3(0, -20, 0)); 
-    //world.rotateObject(b1, vec3(0.6, 0.5, 0)); 
-    world.translateObject(b2, vec3(0 ,30, 0)); 
-    //world.rotateObject(b2, vec3(0.6 , 0.5, 0)); 
+    world.translateObject(b1, vec3(-600, -500, 0)); 
+    world.rotateObject(b1, vec3(-0.25, 0.2, 0)); 
+    world.translateObject(b2, vec3(-600 ,500, 0)); 
+    world.rotateObject(b2, vec3(0.25 , 0.2, 0)); 
 
-    /*for (int i = 0 ; i < 25 ; i++)
+    for (int i = 0 ; i < 10 ; i++)
     {
-        for(int j = 0 ; j < 25 ; j++)
+        for(int j = 0 ; j < 10 ; j++)
         {
             Object* s = new Object(Sphere(20));
             s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
             world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));
 
-            s = new Object(Box(20, 20, 20));
+            /*s = new Object(Box(20, 20, 20));
             s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));
+            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));*/
         }
-    }*/
+    }
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");
     Shader grayShdr("shaders/gris.vert", "shaders/texture.frag");
@@ -173,8 +173,8 @@ int main(int argc, char** argv)
         world.getGWorld().draw(renderer);
         renderer.setDefaultShader(&greenShdr);
         world.getGWorld().draw(renderer, GL_LINE);
-        //drawOctree(renderer, world);
-        if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
+        drawOctree(renderer, world);
+        /*if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
         {
             vector<tuple<vec3,vec3>> z = b1.getPObject()->getGeometry().collisionPoints(&b2.getPObject()->getGeometry());
             for(int i = 0 ; i < z.size() ; i++)
@@ -185,8 +185,8 @@ int main(int argc, char** argv)
                 world.translateObject(s, p);
                 renderer.draw(*s.getDrawable());
             }
-        }
-        context.show();
+        }*/
+        context.show();/*
         if (context.keyIsPressed(GLFW_KEY_W))
             world.translateObject(b1,glm::vec3(-1, 0, 0));
         if (context.keyIsPressed(GLFW_KEY_S))
@@ -210,7 +210,7 @@ int main(int argc, char** argv)
         if (context.keyIsPressed(GLFW_KEY_H))
             world.rotateObject(b1,glm::vec3(0, -0.01, 0));
         if (context.keyIsPressed(GLFW_KEY_J))
-            world.rotateObject(b1,glm::vec3(0, 0, -0.01));
+            world.rotateObject(b1,glm::vec3(0, 0, -0.01));*/
 /*
         if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
             cout << "collision" << endl ;

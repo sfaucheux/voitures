@@ -21,7 +21,7 @@ class Octree {
         void addObject(Node* node, PObject* obj);
         void updateObject(PObject* obj);
         void removeObject(Node* node, PObject* obj);
-        
+
         void updateNodeMerge(Node* node);
         void updateNodeSubdivision(Node* node);
         void updateRoot();

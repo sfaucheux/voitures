@@ -7,7 +7,7 @@ using namespace std;
 
 #include "renderer.h"
 
-Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(5000, 0, 5000), glm::vec3(0, 0, 0), glm::vec3(0, 0, 1))
+Renderer::Renderer() : m_projection(1.0), m_camera(glm::vec3(1500, 1500, 500), glm::vec3(0, 0, 10), glm::vec3(0, 0, -1))
 {
 }
 

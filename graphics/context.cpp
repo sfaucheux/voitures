@@ -39,7 +39,7 @@ bool Context::init(int width, int height, std::string title, int MSAA)
         }
     }
 
-    m_renderer.setPerspective(70.0, ((float)(width)) / height, 0.01, 10000);
+    m_renderer.setPerspective(100.0, ((float)(width)) / height, 0.01, 10000);
 
 	glfwMakeContextCurrent(m_window);
 	glfwSetWindowUserPointer(m_window, this);

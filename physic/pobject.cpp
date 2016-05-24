@@ -14,8 +14,8 @@ PObject::PObject(Geometry& geo) : m_position(0), m_rotation(0), m_geometry(geo),
     m_mass = 1;
     m_static = false;
     m_awake = true ;
-    m_linearDamping = 0.1;
-    m_angularDamping = 0.1;
+    m_linearDamping = 0.5;
+    m_angularDamping = 0.5;
     m_node = nullptr ;
 }
 
@@ -102,7 +102,7 @@ float PObject::getMass() const
 float PObject::getInertiaMomentum(const glm::vec3& axis) const
 {
     if (l1Norm(axis) == 0)
-        return 10000;
+        return 1000;
     vec3 a = normalize(axis);
     return dot(m_inertia*a, a);
 }

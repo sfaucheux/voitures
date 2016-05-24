@@ -4,6 +4,7 @@
 #include "../glm/gtc/matrix_access.hpp"
 #include <iostream>
 #include <iomanip>
+#include "../collision/pointcontact.h"
 
 using namespace glm ;
 using namespace std ;
@@ -27,14 +28,14 @@ bool Collisions::collide(const Sphere* obj1, const Sphere* obj2)
     return distance2(obj1->getPosition(), obj2->getPosition()) <= square(obj1->getRadius() + obj2->getRadius());
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* obj1, const Sphere* obj2)
+Contact* Collisions::collisionPoints(const Sphere* obj1, const Sphere* obj2)
 {
     //On retourne la moyenne des centres ponderees par les rayons.
     //La normale est définie comme le vecteur formé par les deux centres.
     //Suppose que les spheres sont en collision (c'est le cas, la broadphase est exacte pour les solides de base).
     vec3 point((obj1->getRadius() * obj1->getPosition() + obj2->getRadius() * obj2->getPosition()) / (obj1->getRadius() + obj2->getRadius()));
     vec3 normal(obj2->getPosition()- obj1->getPosition());
-    return vector<tuple<vec3,vec3>>({make_tuple(point, normal)});
+    return new PointContact(point, normal);
 }
 
 bool Collisions::collide(const Sphere* s, const Box* b)
@@ -80,7 +81,7 @@ bool Collisions::collide(const Box* b, const Sphere* s)
     return collide(s, b);
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box* b)
+Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
 {
     glm::vec3 collisionPoint;
     // calculating s's position relative to b
@@ -108,7 +109,7 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
                 collisionPoint = glm::vec3(sphPos.x, sgn(sphPos.y) * b->getHeight() / 2.0, sgn(sphPos.z) * b->getDepth() / 2.0);
         }
         else
-            return vector<tuple<vec3,vec3>>();
+            return NULL;
     }
     else if (yc <= b->getHeight() / 2.0)
     {
@@ -123,7 +124,7 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
                 collisionPoint = glm::vec3(sgn(sphPos.x) * b->getWidth() / 2.0, sphPos.y, sgn(sphPos.z) * b->getDepth() / 2.0);
         }
         else
-            return vector<tuple<vec3,vec3>>();
+            return NULL;
     }
     else if (zc <= b->getDepth() / 2.0)
     {
@@ -133,7 +134,7 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
                 collisionPoint = glm::vec3(sgn(sphPos.x) * b->getWidth() / 2.0, sgn(sphPos.y) * b->getHeight() / 2.0, sphPos.z);
         }
         else
-            return vector<tuple<vec3,vec3>>();
+            return NULL;
     }
     else if ((xc <= b->getWidth() / 2.0 + r) && (yc <= b->getHeight() / 2.0 + r) && (zc <= b->getDepth() / 2.0 + r))
     {
@@ -142,19 +143,16 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Box*
     }
     else
     {
-        return vector<tuple<vec3,vec3>>();
+        return NULL;
     }
-    return vector<tuple<vec3,vec3>>({make_tuple(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos))});
+    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos));
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* b, const Sphere* s)
+Contact* Collisions::collisionPoints(const Box* b, const Sphere* s)
 {
-    vector<tuple<vec3,vec3>> r = collisionPoints(s,b);
-    for(auto it = r.begin() ; it != r.end() ; it++)
-    {
-        get<1>(*it) = -get<1>(*it) ;
-    }
-    return r;
+    Contact* c = collisionPoints(s,b);
+    c->inverse();
+    return c;
 }
 
 bool Collisions::collide(const Sphere* s, const Mesh* m)
@@ -167,14 +165,14 @@ bool Collisions::collide(const Mesh* m, const Sphere* s)
     return collide(s, m);
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Sphere* s, const Mesh* m)
+Contact* Collisions::collisionPoints(const Sphere* s, const Mesh* m)
 {
-    return vector<tuple<vec3,vec3>>();
+    return NULL;
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Mesh* m, const Sphere* s)
+Contact* Collisions::collisionPoints(const Mesh* m, const Sphere* s)
 {
-    return vector<tuple<vec3,vec3>>();
+    return NULL;
 }
 inline bool overlap(const Box* b1, const Box* b2, vec3 n)
 {
@@ -267,7 +265,7 @@ bool Collisions::collide(const Box* obj1, const Box* obj2)
 
     return true;
 }
-vector<tuple<vec3,vec3>> collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isMin, vec3 n)
+Contact* collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isMin, vec3 n)
 {
     vec3 s1 = b1->getSize();
     vec3 s2 = b2->getSize();
@@ -352,12 +350,10 @@ vector<tuple<vec3,vec3>> collisionEdges(const Box* b1, const Box* b2, int i, int
     if(dot(n, b1->getPosition() - c) < 0)
         n = -n;
 
-    vector<tuple<vec3,vec3>> p;
-    p.push_back({make_tuple(c,n)});
-    return p;
+    return new PointContact(c,n);
 }
 
-vector<tuple<vec3,vec3>> collisionPlane(const Box* b1, const Box* b2, int i, bool obj1isMin, vec3 n)
+Contact* collisionPlane(const Box* b1, const Box* b2, int i, bool obj1isMin, vec3 n)
 {
     vec3 s1 = b1->getSize();
     vec3 s2 = b2->getSize();
@@ -386,31 +382,34 @@ vector<tuple<vec3,vec3>> collisionPlane(const Box* b1, const Box* b2, int i, boo
         //Encore une fois pour les erreurs de projection.
         if(fabs(d - extrem) < 0.0001)
         {
-            cout << fixed << setprecision(20) << d << endl ;
+            //cout << fixed << setprecision(20) << d << endl ;
             q[count] = j ;
             count++;
         }
         else if((d < extrem) == obj1isMin)
         {
-            cout << d << endl ;
             count = 1 ;
             extrem = d ;
             q[0] = j ;
         }
     }
 
-    vector<tuple<vec3,vec3>> p;
+    Contact* p = NULL;
     if(count == 1)
     {
-        cout << "plan/point" << endl;
         vec3 po = vertices[q[0]] - 0.5f*(extrem-dot(p1,n))*n; ;
-        p.push_back({make_tuple(po,n)});
+        return new PointContact(po,n);
 
     }
 
     else if(count == 2)
     {
         cout << "plan/arrete" << endl ;
+
+        //vec3 po = vertices[q[0]] *n; ;
+        //p.push_back({make_tuple(po,n)});
+        //po = vertices[q[1]] *n; ;
+        //p.push_back({make_tuple(po,n)});
     }
     else if(count == 4)
     {
@@ -420,17 +419,18 @@ vector<tuple<vec3,vec3>> collisionPlane(const Box* b1, const Box* b2, int i, boo
     {
         cout << "cout : " << count << " impossible..." << endl ; 
     }
+    /*
     p.push_back({make_tuple(p1,n)});
     p.push_back({make_tuple(p2,n)});
     p.push_back({make_tuple(p3,n)});
-    p.push_back({make_tuple(p4,n)});
-    for(int i = 0 ; i < count ; i++)
+    p.push_back({make_tuple(p4,n)});*/
+    /*for(int i = 0 ; i < count ; i++)
     {
         p.push_back({make_tuple(vertices[q[i]],n)});
-    }
+    }*/
     return p;
 }
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* obj1, const Box* obj2)
+Contact* Collisions::collisionPoints(const Box* obj1, const Box* obj2)
 {
     mat3 r1 = mat3(obj1->getRotationMatrix());
     mat3 r2 = mat3(obj2->getRotationMatrix()); 
@@ -483,10 +483,14 @@ vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* obj1, const Box*
     }
     else if(minIndex < 6)
     {
+        if(obj1IsMin)
+            n[minIndex] = -n[minIndex] ;
         return collisionPlane(obj2, obj1, minIndex - 3, !obj1IsMin, n[minIndex]);
     }
     else
     {
+        if(obj1IsMin)
+            n[minIndex] = -n[minIndex] ;
         return collisionEdges(obj1, obj2, (minIndex-6)/3, (minIndex-6)%3, obj1IsMin, n[minIndex]);
     }
 }
@@ -501,14 +505,14 @@ bool Collisions::collide(const Mesh* m, const Box* b)
     return collide(b, m);
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Box* b, const Mesh* m)
+Contact* Collisions::collisionPoints(const Box* b, const Mesh* m)
 {
-    return vector<tuple<vec3,vec3>>();
+    return NULL;
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Mesh* m, const Box* b)
+Contact* Collisions::collisionPoints(const Mesh* m, const Box* b)
 {
-    return vector<tuple<vec3,vec3>>();
+    return NULL;
 }
 
 bool Collisions::collide(const Mesh* obj1, const Mesh* obj2)
@@ -516,7 +520,7 @@ bool Collisions::collide(const Mesh* obj1, const Mesh* obj2)
     return false;
 }
 
-vector<tuple<vec3,vec3>> Collisions::collisionPoints(const Mesh* obj1, const Mesh* obj2)
+Contact* Collisions::collisionPoints(const Mesh* obj1, const Mesh* obj2)
 {
-    return vector<tuple<vec3,vec3>>();
+    return NULL;
 }

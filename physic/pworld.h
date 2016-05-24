@@ -11,6 +11,7 @@
 
 #include "pobject.h"
 #include "octree.h"
+#include "../collision/contact.h"
 
 class PWorld 
 {
@@ -36,7 +37,7 @@ class PWorld
         Octree m_octree;
         glm::vec3 m_gravity;
         std::vector<std::array<PObject*,2>> m_potentialCollisions;
-        std::vector<std::tuple<PObject*, PObject*, std::vector<std::tuple<glm::vec3, glm::vec3>>>> m_contacts ;
+        std::vector<std::tuple<Contact*, PObject*, PObject*>> m_contacts ;
 };
 
 #endif
