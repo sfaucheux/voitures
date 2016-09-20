@@ -6,7 +6,7 @@
 class PointContact : public Contact
 {
     public:
-        PointContact(glm::vec3 point, glm::vec3 normal);
+        PointContact(glm::vec3 point, glm::vec3 normal, float overlap);
         virtual ~PointContact();
 
         virtual glm::vec3 solveImpulse(PObject* p1, PObject* p2) ; 
@@ -16,6 +16,8 @@ class PointContact : public Contact
     //private:
         glm::vec3 m_point;
         glm::vec3 m_normal;
+        float m_overlap;
+
 };
 
 #endif

@@ -3,7 +3,7 @@
 
 using namespace glm;
 
-PointContact::PointContact(vec3 point, vec3 normal) : m_point(point), m_normal(normalize(normal))
+PointContact::PointContact(vec3 point, vec3 normal, float overlap) : m_point(point), m_normal(normalize(normal)), m_overlap(overlap)
 {
 }
 
@@ -18,7 +18,7 @@ vec3 PointContact::solveImpulse(PObject* obj1, PObject* obj2)
     {   
 
         //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
-        float e = 0.5;
+        float e = 0.1;
 
         //masse des deux objet.
         float m1 = obj1->getMass(), m2 = obj2->getMass() ;
@@ -79,6 +79,18 @@ vec3 PointContact::solveImpulse(PObject* obj1, PObject* obj2)
 vec3 PointContact::solvePosition(PObject* p1, PObject* p2)
 {
 
+    int static1 = (p1->isStatic()) ? 1 : 0;
+    int static2 = (p2->isStatic()) ? 1 : 0;
+
+    float offset = m_overlap/(1 + static1 + static2);
+    if(!static1)
+        //p1->tempTranslate(offset*m_normal);
+        p1->translate(offset*m_normal);
+    if(!static2)
+        //p2->tempTranslate(-offset*m_normal);
+        p2->translate(-offset*m_normal);
+
+    m_overlap = 0;
 }
 
 void PointContact::inverse()

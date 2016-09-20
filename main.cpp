@@ -120,32 +120,32 @@ int main(int argc, char** argv)
     //obj.translate(glm::vec3(50, 0, 0));*/
 
 
-    Object b1(Box(1200, 1200, 20));
+    Object b1(Box(1200, 1200, 60));
     world.addObject(b1);
-    Object b2(Box(1200, 1200, 20));
+    Object b2(Box(1200, 1200, 60));
     world.addObject(b2);
 
     b1.getPObject()->setStatic(true);
     b2.getPObject()->setStatic(true);
 
     world.translateObject(b1, vec3(-600, -500, 0)); 
-    world.rotateObject(b1, vec3(-0.25, 0.2, 0)); 
+    world.rotateObject(b1, vec3(-0.25, 0.0, 0)); 
     world.translateObject(b2, vec3(-600 ,500, 0)); 
-    world.rotateObject(b2, vec3(0.25 , 0.2, 0)); 
+    world.rotateObject(b2, vec3(0.25 , 0.0, 0)); 
 
     for (int i = 0 ; i < 10 ; i++)
     {
         for(int j = 0 ; j < 10 ; j++)
         {
-            /*Object* s = new Object(Sphere(20));
+            Object* s = new Object(Sphere(20));
             s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));*/
+            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));
 
-            Object* s = new Object(Box(20, 20, 20));
+           /* Object* s = new Object(Box(20, 20, 20));
             s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));
+            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));*/
         }
     }
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");

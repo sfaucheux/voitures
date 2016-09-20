@@ -37,15 +37,17 @@ vec3 Node::getPosition() const
 {
     return m_position ;
 }
-void Node::removeObject(PObject* obj)
+void Node::removeObject(int obj)
 {
     m_objects.remove(obj);
-    obj->setNode(nullptr);
+    //FIXME
+    //obj->setNode(nullptr);
 }
-void Node::addObject(PObject* obj)
+void Node::addObject(int obj)
 {
     m_objects.push_back(obj);
-    obj->setNode(this);
+    //FIXME
+    //obj->setNode(this);
 }
 void Node::setParent(Node* parent)
 {

@@ -35,7 +35,8 @@ Contact* Collisions::collisionPoints(const Sphere* obj1, const Sphere* obj2)
     //Suppose que les spheres sont en collision (c'est le cas, la broadphase est exacte pour les solides de base).
     vec3 point((obj1->getRadius() * obj1->getPosition() + obj2->getRadius() * obj2->getPosition()) / (obj1->getRadius() + obj2->getRadius()));
     vec3 normal(obj2->getPosition()- obj1->getPosition());
-    return new PointContact(point, normal);
+    float overlap = obj1->getRadius() + obj2->getRadius() - length(obj1->getPosition() - obj2->getPosition()) ;
+    return new PointContact(point, normal, overlap);
 }
 
 bool Collisions::collide(const Sphere* s, const Box* b)
@@ -145,7 +146,8 @@ Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
     {
         return NULL;
     }
-    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos));
+    //TODO OVERLAP
+    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos), 1);
 }
 
 Contact* Collisions::collisionPoints(const Box* b, const Sphere* s)
@@ -350,7 +352,7 @@ Contact* collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isM
     if(dot(n, b1->getPosition() - c) > 0)
         n = -n;
 
-    return new PointContact(c,n);
+    return new PointContact(c,n,1);
 }
 
 Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, bool obj1isMin, vec3 n)
@@ -400,13 +402,17 @@ Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, b
         vec3 po = vertices[q[0]] - 0.5f*(extrem-dot(p1,n))*n; ;
         if(dot(first->getPosition() - po, n) > 0)
             n = -n;
-        return new PointContact(po,n);
+        return new PointContact(po,n,1);
     }
 
     else if(count == 2)
     {
         cout << "plan/arrete" << endl ;
 
+        vec3 po = 0.5f*(vertices[q[0]] + vertices[q[1]]) ;
+        if(dot(first->getPosition() - po, n) > 0)
+            n = -n;
+        return new PointContact(po,n,1);
         //vec3 po = vertices[q[0]] *n; ;
         //p.push_back({make_tuple(po,n)});
         //po = vertices[q[1]] *n; ;
@@ -415,6 +421,10 @@ Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, b
     else if(count == 4)
     {
         cout << "plan/plan" << endl ;
+        vec3 po = 0.25f*(vertices[q[0]] + vertices[q[1]]+ vertices[q[2]]+ vertices[q[3]]) ;
+        if(dot(first->getPosition() - po, n) > 0)
+            n = -n;
+        return new PointContact(po,n, 1);
     }
     else
     {

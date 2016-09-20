@@ -11,11 +11,11 @@ using namespace std;
 
 PObject::PObject(Geometry& geo) : m_position(0), m_rotation(0), m_geometry(geo), m_AABB(geo.getAABB()), m_boundingSphere(geo.getBoundingSphere()), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
 {
-    m_mass = 1;
+    m_mass = 10;
     m_static = false;
     m_awake = true ;
-    m_linearDamping = 0.1;
-    m_angularDamping = 0.1;
+    m_linearDamping = 0.01;
+    m_angularDamping = 0.01;
     m_node = nullptr ;
 }
 
@@ -29,6 +29,10 @@ const vec3 PObject::getPosition() const
     return m_position;
 }
 
+const vec3 PObject::getTempPosition() const
+{
+    return m_tempPosition;
+}
 const vec3& PObject::getVelocity() const
 {
     return m_velocity;
@@ -183,6 +187,10 @@ void PObject::setInertia(mat3 inertia)
     m_inertiaInv = inverse(inertia);
 }
 
+void PObject::tempTranslate(glm::vec3 t)
+{
+    m_tempPosition += t;
+}
 void PObject::translate(glm::vec3 t)
 {
     m_position += t;
