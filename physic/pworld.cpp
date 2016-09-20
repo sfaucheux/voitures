@@ -10,6 +10,7 @@ using namespace std;
 PWorld::PWorld(vec3 gravity)
 {
     m_gravity = gravity ;
+    m_root = nullptr;
 }
 
 PWorld::~PWorld()
@@ -37,13 +38,14 @@ void PWorld::addObject(PObject* object)
         vec3 objSize = object->getAABB().getSize();
         float size = 2.5f*std::max(std::max(objSize.x,objSize.y),objSize.z);
         m_root = new Node(object->getAABB().getPosition() - 1.5f*objSize, size, nullptr);
-        vec3 pos = m_root->getPosition();
     }
     //On ajoute l'objet à la racine.
     m_objects.push_back(object);
+    cout << "ajout : " << m_objects.size() << endl;
     m_parents.push_back(nullptr);
+    cout << "ajout : " << m_parents.size() << endl;
 	object->setId(m_objects.size()-1);
-    addObject(m_root, m_objects.size() - 1);
+    addObject(m_root, object->getId());
 }
 
 void PWorld::addObject(Node* n, int object)
@@ -537,35 +539,10 @@ vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 norma
 }*/
 void PWorld::integrate(float step)
 {
-    vector<PObject*> objVector ;
-    objVector.resize(m_objects.size());
-
-    PObject* obj ;
-    stack<Node*> s;
-    if(m_root != nullptr)
-        s.push(m_root);
-
-    int i = 0 ;
-    while(!s.empty())
+    cout << m_objects.size() << "objets" << endl;
+    for(auto it = m_objects.begin() ; it != m_objects.end() ; it++)
     {
-        Node* node = s.top();
-        s.pop();
-        for(int i = 0 ; i < 8 ; i++)
-        {
-            if(node->getChildren()[i] != nullptr)
-            {
-                s.push(node->getChildren()[i]);
-            }
-        }
-        for(auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
-        {
-            objVector[i] = m_objects[*it] ;
-            ++i;
-        }
-    }
-    for(int j = 0 ; j < i ; j++)
-    {
-        obj = objVector[j];
+        PObject* obj = *it;
         //On calcule les forces à partir des accélérations.
         obj->setAcceleration(obj->getForces()/obj->getMass());
         obj->setAngularAcceleration(obj->getInertiaInv()*obj->getTorques());
@@ -586,7 +563,8 @@ void PWorld::integrate(float step)
 void PWorld::translateObject(PObject* obj, vec3 t)
 {
     obj->translate(t);
-    updateObject(obj->getId());
+    //FIXME
+    //updateObject(obj->getId());
 }
 const Node* PWorld::getOctree() const
 {

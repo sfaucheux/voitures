@@ -174,6 +174,7 @@ int main(int argc, char** argv)
         renderer.setDefaultShader(&greenShdr);
         world.getGWorld().draw(renderer, GL_LINE);
         //drawOctree(renderer, world);
+
         /*if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
         {
             vector<tuple<vec3,vec3>> z = b1.getPObject()->getGeometry().collisionPoints(&b2.getPObject()->getGeometry());
