@@ -39,7 +39,6 @@ void drawOctree(Renderer& renderer, World& world)
         }
         AABB a = node->getAABB();
         Object boite = Object(Box(a.getSize().x, a.getSize().y, a.getSize().z));
-
         boite.getDrawable()->setShader(&greenShdr);
         world.translateObject(boite, a.getPosition());
         renderer.draw(*boite.getDrawable(), GL_LINE); 
@@ -173,7 +172,7 @@ int main(int argc, char** argv)
         world.getGWorld().draw(renderer);
         renderer.setDefaultShader(&greenShdr);
         world.getGWorld().draw(renderer, GL_LINE);
-        //drawOctree(renderer, world);
+        drawOctree(renderer, world);
 
         /*if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
         {

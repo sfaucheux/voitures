@@ -41,9 +41,7 @@ void PWorld::addObject(PObject* object)
     }
     //On ajoute l'objet à la racine.
     m_objects.push_back(object);
-    cout << "ajout : " << m_objects.size() << endl;
     m_parents.push_back(nullptr);
-    cout << "ajout : " << m_parents.size() << endl;
 	object->setId(m_objects.size()-1);
     addObject(m_root, object->getId());
 }
@@ -111,7 +109,6 @@ void PWorld::addObjectToChildren(Node* node, int object)
 
 void PWorld::updateObject(int object)
 {
-    //OPTIMIZE ME !!!!!!
     if(m_parents[object] == nullptr)
         return;
 
@@ -152,22 +149,22 @@ void PWorld::addObjectOutsideWorld(int object)
 
 void PWorld::removeObject(PObject *object)
 {
-    removeObject(m_parents[object->getId()], object->getId());
+	int id = object->getId();
+	object->setId(-1);
+	(*m_objects.end())->setId(id);
+    swap(m_parents[id], *m_parents.end());
+    swap(m_objects[id], *m_objects.end());
+	m_objects.pop_back();
+	m_parents.pop_back();
+    removeObject(m_parents[id], id);
 }
 
 void PWorld::removeObject(Node* node, int object)
 {
-
     node->removeObject(object);
+	m_parents[object] = nullptr;
     updateNodeMerge(node);
     updateRoot();
-	m_objects[m_objects.size()-1]->setId(object);
-    swap(m_parents[object], m_parents[m_parents.size()-1]);
-    swap(m_objects[object], m_objects[m_objects.size()-1]);
-	m_objects.pop_back();
-	m_parents.pop_back();
-    //--m_objectCount;
-
 }
 
 void PWorld::updateNodeMerge(Node* node)
@@ -563,8 +560,11 @@ void PWorld::integrate(float step)
 void PWorld::translateObject(PObject* obj, vec3 t)
 {
     obj->translate(t);
-    //FIXME
-    //updateObject(obj->getId());
+
+	if (obj->getId() < 0)
+		return;
+
+    updateObject(obj->getId());
 }
 const Node* PWorld::getOctree() const
 {
