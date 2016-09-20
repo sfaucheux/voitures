@@ -25,6 +25,7 @@ class PObject
         virtual ~PObject();
 
         /*Accesseurs*/
+		int getId() const;
         const glm::vec3 getPosition() const;
         const glm::vec3 getTempPosition() const;
         const glm::vec3& getVelocity() const;
@@ -51,6 +52,7 @@ class PObject
         Node* getNode() const;
 
         /*Modificateurs*/
+		void setId(int id);
         void setMass(float m);
         void setVelocity(glm::vec3 s);
         void setAcceleration(glm::vec3 a);
@@ -73,7 +75,8 @@ class PObject
 
 
     private:
-
+		
+		int m_id;
         glm::vec3 m_position;
         glm::vec3 m_tempPosition;
         glm::vec3 m_rotation;

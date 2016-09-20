@@ -1,6 +1,7 @@
-#include "octree.h"
+#include "node.h"
 #include <stack>
 #include <iostream>
+#include "../glm/glm.hpp"
 
 using namespace glm ;
 using namespace std ;
@@ -19,6 +20,13 @@ Node::~Node()
     {
         if(m_children[i] != nullptr)
             delete m_children[i];
+    }
+}
+void Node::disconnect()
+{
+	for(int i = 0 ; i < 8 ; i++)
+    {
+        m_children[i] = nullptr;
     }
 }
 Node* Node::getParent() const
@@ -40,18 +48,18 @@ vec3 Node::getPosition() const
 void Node::removeObject(int obj)
 {
     m_objects.remove(obj);
-    //FIXME
-    //obj->setNode(nullptr);
 }
 void Node::addObject(int obj)
 {
     m_objects.push_back(obj);
-    //FIXME
-    //obj->setNode(this);
 }
 void Node::setParent(Node* parent)
 {
     m_parent = parent ;
+}
+unsigned int Node::getChildrenCount() const
+{
+    return m_childrenCount ;
 }
 bool Node::hasChildren() const
 {
@@ -66,7 +74,7 @@ unsigned int Node::getObjectCount() const
 {
     return m_objects.size();
 }
-const std::list<PObject*>& Node::getObjects() const
+const std::list<int>& Node::getObjects() const
 {
     return m_objects;
 }

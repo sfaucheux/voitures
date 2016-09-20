@@ -11,6 +11,7 @@ using namespace std;
 
 PObject::PObject(Geometry& geo) : m_position(0), m_rotation(0), m_geometry(geo), m_AABB(geo.getAABB()), m_boundingSphere(geo.getBoundingSphere()), m_inertia(1), m_inertiaInv(1), m_velocity(0), m_angularVelocity(0), m_acceleration(0), m_angularAcceleration(0) 
 {
+	m_id = -1;
     m_mass = 10;
     m_static = false;
     m_awake = true ;
@@ -24,6 +25,10 @@ PObject::~PObject()
 }
 
 /*Accesseurs*/
+int PObject::getId() const
+{
+	return m_id;
+}
 const vec3 PObject::getPosition() const
 {
     return m_position;
@@ -130,6 +135,10 @@ const AABB& PObject::getAABB() const
     return m_AABB ;
 }
 /*Modificateurs*/
+void PObject::setId(int id)
+{
+	m_id = id;
+}
 void PObject::setMass(float m)
 {
     m = fabs(m);

@@ -32,8 +32,8 @@ class Object
 
     protected:
         Geometry* m_geom;
-		Drawable* m_gObj;
-		PObject* m_pObj;
+	Drawable* m_gObj;
+	PObject* m_pObj;
 
 };
 

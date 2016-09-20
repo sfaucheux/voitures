@@ -22,13 +22,13 @@ void drawOctree(Renderer& renderer, World& world)
 {
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
     Shader redShdr("shaders/rouge.vert", "shaders/couleur3D.frag");
-    stack<Node*> s;
-    if(world.getPWorld().getOctree().getRoot() != nullptr)
-        s.push(world.getPWorld().getOctree().getRoot());
+    stack<const Node*> s;
+    if(world.getPWorld().getOctree() != nullptr)
+        s.push(world.getPWorld().getOctree());
 
     while(!s.empty())
     {
-        Node* node = s.top();
+        const Node* node = s.top();
         s.pop();
         for(int i = 0 ; i < 8 ; i++)
         {
@@ -46,7 +46,7 @@ void drawOctree(Renderer& renderer, World& world)
         //cout << "nombre d'objet dans le noeud : " << node->getObjects().size() + node->getObjectCount() << endl;
         for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
         {
-            AABB b = (*it)->getAABB();
+            AABB b = world.getPWorld().getPObject((*it))->getAABB();
             Object b2 = Object(Box(b.getSize().x, b.getSize().y, b.getSize().z));
 
             b2.getDrawable()->setShader(&redShdr);
