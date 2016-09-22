@@ -34,10 +34,6 @@ const vec3 PObject::getPosition() const
     return m_position;
 }
 
-const vec3 PObject::getTempPosition() const
-{
-    return m_tempPosition;
-}
 const vec3& PObject::getVelocity() const
 {
     return m_velocity;
@@ -196,10 +192,6 @@ void PObject::setInertia(mat3 inertia)
     m_inertiaInv = inverse(inertia);
 }
 
-void PObject::tempTranslate(glm::vec3 t)
-{
-    m_tempPosition += t;
-}
 void PObject::translate(glm::vec3 t)
 {
     m_position += t;

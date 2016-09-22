@@ -39,11 +39,11 @@ void drawOctree(Renderer& renderer, World& world)
         }
         AABB a = node->getAABB();
         Object boite = Object(Box(a.getSize().x, a.getSize().y, a.getSize().z));
-        boite.getDrawable()->setShader(&greenShdr);
+        boite.getDrawable()->setShader(&redShdr);
         world.translateObject(boite, a.getPosition());
         renderer.draw(*boite.getDrawable(), GL_LINE); 
         //cout << "nombre d'objet dans le noeud : " << node->getObjects().size() + node->getObjectCount() << endl;
-        for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
+        /*for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
         {
             AABB b = world.getPWorld().getPObject((*it))->getAABB();
             Object b2 = Object(Box(b.getSize().x, b.getSize().y, b.getSize().z));
@@ -52,7 +52,7 @@ void drawOctree(Renderer& renderer, World& world)
             world.translateObject(b2, b.getPosition());
             renderer.draw(*b2.getDrawable(), GL_LINE); 
 
-        }
+        }*/
 
     }
 
@@ -127,24 +127,34 @@ int main(int argc, char** argv)
     b1.getPObject()->setStatic(true);
     b2.getPObject()->setStatic(true);
 
-    world.translateObject(b1, vec3(-600, -500, 0)); 
+    world.translateObject(b1, vec3(-600, -600, 0)); 
     world.rotateObject(b1, vec3(-0.25, 0.0, 0)); 
-    world.translateObject(b2, vec3(-600 ,500, 0)); 
+    world.translateObject(b2, vec3(-600 ,600, 0)); 
     world.rotateObject(b2, vec3(0.25 , 0.0, 0)); 
+
+    Texture tex;
+    tex.load("textures/mushroom.png");
+    //obj.getDrawable()->setTexture(&tex);
 
     for (int i = 0 ; i < 10 ; i++)
     {
         for(int j = 0 ; j < 10 ; j++)
         {
             Object* s = new Object(Sphere(20));
-            s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
+            s->getPObject()->setVelocity(vec3(rand()%10 -10,rand()%10 -10,rand()%10 -10));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 400));
+            world.translateObject(*s, vec3(i*60 - 1001, j*60 , 400));
 
-           /* Object* s = new Object(Box(20, 20, 20));
-            s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
+            //s->getDrawable()->setTexture(&tex);
+            
+            //s = new Object(Box(20, 20, 20));
+            s = new Object(Sphere(40));
+            //s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*50 - 1000, j*50 , 500));*/
+            world.translateObject(*s, vec3(i*82 - 1200, j*82 , 190));
+            s->getPObject()->setStatic(true);
+
+            //s->getDrawable()->setTexture(&tex);
         }
     }
     Shader greenShdr("shaders/vert.vert", "shaders/couleur3D.frag");
@@ -152,9 +162,6 @@ int main(int argc, char** argv)
     Shader grayShdr("shaders/gris.vert", "shaders/texture.frag");
     renderer.setDefaultShader(&grayShdr);
 
-    Texture tex;
-    tex.load("textures/mushroom.png");
-    //obj.getDrawable()->setTexture(&tex);
     while (context.eventLoop())
     {
         chrono::time_point<chrono::system_clock> begin, ph, aff, cl;
@@ -172,7 +179,7 @@ int main(int argc, char** argv)
         world.getGWorld().draw(renderer);
         renderer.setDefaultShader(&greenShdr);
         world.getGWorld().draw(renderer, GL_LINE);
-        drawOctree(renderer, world);
+        //drawOctree(renderer, world);
 
         /*if(b1.getPObject()->getGeometry().collide(&b2.getPObject()->getGeometry()))
         {

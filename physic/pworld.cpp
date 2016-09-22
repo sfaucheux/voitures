@@ -176,9 +176,9 @@ void PWorld::updateNodeMerge(Node* node)
         if(!current->hasChildren() && current->getObjectCount() == 0)
         {
             Node* n = current ;
-            //parent existe ? (crash si supression du dernier object de la racine)
             current = current->getParent() ;
-            current->setChild(n, nullptr) ;
+            if (current)
+                current->setChild(n, nullptr) ;
             continue;
         }
         else if(current->hasChildren())
@@ -297,71 +297,78 @@ void PWorld::updateRoot()
         }
     }
 }
+
+void PWorld::translateObject(PObject* obj, vec3 t)
+{
+    obj->translate(t);
+
+	if (obj->getId() < 0)
+		return;
+
+    updateObject(obj->getId());
+}
+
+const Node* PWorld::getOctree() const
+{
+    return m_root ;
+}
+
 void PWorld::update(float step)
 {
-    chrono::time_point<chrono::system_clock> begin, par, broad, narrow, col, end;
+    chrono::time_point<chrono::system_clock> begin, intp, broad, narrow, repp, intv, end;
     begin = chrono::system_clock::now();
 
- 
-    PObject* obj ;
-    stack<Node*> s;
+    //On calcule les nouvelles positions
+    computePositions(step);
+    intp = chrono::system_clock::now();
 
-    if(m_root != nullptr)
-        s.push(m_root);
-
-    while(!s.empty())
-    {
-        Node* node = s.top() ;
-        s.pop() ;
-        for(int i = 0 ; i < 8 ; i++)
-        {
-            if(node->getChildren()[i] != nullptr)
-            {
-                s.push(node->getChildren()[i]);
-            }
-        }
-        for (auto it = node->getObjects().begin() ; it != node->getObjects().end() ; it++)
-        {
-            obj = m_objects[*it] ;
-
-            //On ajoute la gravité.
-            obj->addForce(m_gravity*obj->getMass());
-
-            //On ajoute les forces de frottement.
-            obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
-            obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
-        }
-    }
-    par = chrono::system_clock::now();
     //Determination des objets potentiellements en contact.
     broadPhase();
     broad = chrono::system_clock::now();
-    //Determiantion des points et normales de contacts (s'il y en a).
+
+    //Determination des contacts.
     narrowPhase();
     narrow = chrono::system_clock::now();
-    //Reponse aux collisions.
-    collisionResponse();
-    col = chrono::system_clock::now();
-    //Integration des grandeurs.
-    integrate(step);
+
+    //Reponse en position aux collisions.
+    positionsResponse();
+    repp = chrono::system_clock::now();
+
+    //Integration des vitesses.
+    computeVelocities(step);
+    intv = chrono::system_clock::now();
+
+    //Reponse en vitesse aux collisions.
+    velocitiesResponse();
     end = chrono::system_clock::now();
-    /*
-    cout << "parcourt : " << 
-        chrono::duration_cast<chrono::microseconds>(par-begin).count() << "µs" << endl;
-    cout << "broadPhase : " << 
-        chrono::duration_cast<chrono::microseconds>(broad - par).count() << "µs" << endl ;
-    cout << "narrowPhase : " << 
-        chrono::duration_cast<chrono::microseconds>(narrow - broad).count() << "µs" << endl ;
-    cout << "calcul reponses : " << 
-        chrono::duration_cast<chrono::microseconds>(col - narrow).count() << "µs" << endl ;
-    cout << "integration : " << 
-        chrono::duration_cast<chrono::microseconds>(end - col).count() << "µs" << endl << endl ;*/
+
+    for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
+    {
+        delete get<0>(*it);
+    }
+    m_contacts.clear();
+/*
+       cout << "inté positions : " << 
+       chrono::duration_cast<chrono::microseconds>(intp-begin).count() << "µs" << endl;
+       cout << "broadPhase : " << 
+       chrono::duration_cast<chrono::microseconds>(broad - intp).count() << "µs" << endl ;
+       cout << "narrowPhase : " << 
+       chrono::duration_cast<chrono::microseconds>(narrow - broad).count() << "µs" << endl ;
+       cout << "calcul reponses pos : " << 
+       chrono::duration_cast<chrono::microseconds>(repp - narrow).count() << "µs" << endl ;
+       cout << "inté vit : " << 
+       chrono::duration_cast<chrono::microseconds>(intv - repp).count() << "µs" << endl ;
+       cout << "calcul rep vit : " << 
+       chrono::duration_cast<chrono::microseconds>(end - intv).count() << "µs" << endl << endl ;
+       cout << "total : " << 
+       chrono::duration_cast<chrono::microseconds>(end - begin).count() << "µs" << endl << endl ;
+       */
 }
 
 void PWorld::broadPhase()
 {
     queue<pair<Node*, list<int>&>> s;
-	
+
     if(m_root != nullptr)
         s.push({m_root, *new list<int>()});
 
@@ -436,29 +443,12 @@ void PWorld::narrowPhase()
     m_potentialCollisions.clear();
 }
 
-void PWorld::collisionResponse()
+void PWorld::positionsResponse()
 {
-    vector<vec3> impulses;
-    impulses.resize(m_objects.size());
-    vector<vec3> positions;
-    positions.resize(m_objects.size());
-
+    vector<vec3> deltaPositions(m_objects.size(),vec3(0));
+    vector<vec3> deltaRotations(m_objects.size(),vec3(0));
 
     int obj1, obj2;
-    vec3 normal, point ;
-    for (int i = 0 ; i < 1 ; i++) 
-    {
-        for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
-        {
-            obj1 = get<1>(*it);
-            obj2 = get<2>(*it);
-            Contact* c = get<0>((*it));
-            vec3 impulse = c->solvePosition(m_objects[obj1], m_objects[obj2]);
-
-       
-        }
-    }
-
     for (int i = 0 ; i < 50 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
@@ -466,81 +456,47 @@ void PWorld::collisionResponse()
             obj1 = get<1>(*it);
             obj2 = get<2>(*it);
             Contact* c = get<0>((*it));
-            vec3 impulse = c->solveImpulse(m_objects[obj1], m_objects[obj2]);
+            c->solvePosition(m_objects[obj1], m_objects[obj2], &deltaPositions[obj1], &deltaPositions[obj2], &deltaRotations[obj1], &deltaRotations[obj2]);
        
         }
     }
-    for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
-    {
-        delete get<0>(*it);
-    }
 
-    m_contacts.clear();
+    for (int i = 0 ; i < m_objects.size() ; i++)
+    {
+        translateObject(m_objects[i], deltaPositions[i]);
+    }
 
 }
-/*
-vec3 PWorld::computeImpulse(PObject* obj1, PObject* obj2, vec3 point, vec3 normal)
+
+void PWorld::velocitiesResponse()
 {
-   //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
-    float e = 1;
-
-    //masse des deux objet.
-    float m1 = obj1->getMass(), m2 = obj2->getMass() ;
-
-    //On calcule la vitesse relative.
-    vec3 v12 =  obj2->getPointVelocity(point - obj2->getPosition()) - obj1->getPointVelocity(point - obj1->getPosition());
-
-    vec3 impulse = normal ; //Support de l'impulsion.
-
-    float r1 = 0, r2 = 0 ; //Distance centre d'inertie/point de contact au carré ou s'appliquerait l'impulsion si elle était orthgonale.
-    float I1 = 1, I2 = 1 ; //Moments d'inertie.
-
-    //Si la réaction n'est pas une simple translation.
-    if(l1Norm(cross(v12, normal)) != 0)
+    int obj1, obj2;
+    for (int i = 0 ; i < 50 ; i++) 
     {
-        vec3 tan = normalize(cross(normal, cross(v12, normal)));
-        
-        //Coefficient de frottement dynamique.
-        //Pour le statique c'est plus compliqué à simuler.
-        float f =  0.4;
-
-        float tangentVelocity = dot(v12, tan) ;
-        float normalVelocity = dot(v12, normal) ;
-
-        //Si glissement.
-        if(tangentVelocity > f*normalVelocity)
-            tangentVelocity = f*normalVelocity ;
-
-        //On calcule le support de l'impulsion.
-        impulse = normalize(normalVelocity*normal + tangentVelocity*tan) ;
-
-        //On calcule les deux axes de rotation.
-        vec3 axis1 = cross(point - obj1->getPosition(),impulse) ;
-        vec3 axis2 = cross(point - obj2->getPosition(),impulse) ;
-
-        //On recupere les moments d'inertie associes aux axes
-        I1 = obj1->getInertiaMomentum(axis1);
-        I2 = obj2->getInertiaMomentum(axis2);
-
-        //Distance entre le centres d'inertie et le point de collision au carre.
-        r1 = length2(cross(point - obj1->getPosition(), impulse));
-        r2 = length2(cross(point - obj2->getPosition(), impulse));
+        for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
+        {
+            obj1 = get<1>(*it);
+            obj2 = get<2>(*it);
+            Contact* c = get<0>((*it));
+            c->solveImpulse(m_objects[obj1], m_objects[obj2]);
+       
+        }
     }
-
-    //Si les objets sont statiques, leur masse est infinie.
-    //On utilise alors 0 ou 1 en fateur des expression ou l'on divise par une masse.
-    float static1 =(obj1->isStatic()) ? 0 : 1 ;
-    float static2 =(obj2->isStatic()) ? 0 : 1 ;
-
-    return (1+e)*dot(v12, impulse)/(static1/m1 + static2/m2 + static1*r1/I1 + static2*r2/I2) * impulse ;
-}*/
-void PWorld::integrate(float step)
+}
+void PWorld::computeVelocities(float step)
 {
-    cout << m_objects.size() << "objets" << endl;
     for(auto it = m_objects.begin() ; it != m_objects.end() ; it++)
     {
         PObject* obj = *it;
-        //On calcule les forces à partir des accélérations.
+
+        //On ajoute la gravité.
+        obj->addForce(m_gravity*obj->getMass());
+
+        //On ajoute les forces de frottement.
+        obj->addForce(-obj->getLinearDamping()*obj->getVelocity());
+        obj->addTorque(-obj->getAngularDamping()*obj->getAngularVelocity());
+
+        //On calcule les accélérations à partir des forces.
         obj->setAcceleration(obj->getForces()/obj->getMass());
         obj->setAngularAcceleration(obj->getInertiaInv()*obj->getTorques());
 
@@ -548,27 +504,21 @@ void PWorld::integrate(float step)
         obj->setVelocity(obj->getVelocity() + obj->getAcceleration() * step);
         obj->setAngularVelocity(obj->getAngularVelocity() + obj->getAngularAcceleration() * step);
 
-        //On integre les vitesses.
-        translateObject(obj, obj->getVelocity() * step);
-        obj->rotate(obj->getAngularVelocity() * step);
-
         //On réinitialise les forces et couples.
         obj->resetActions();
 
     }
 }
-void PWorld::translateObject(PObject* obj, vec3 t)
+void PWorld::computePositions(float step)
 {
-    obj->translate(t);
+    for(auto it = m_objects.begin() ; it != m_objects.end() ; it++)
+    {
+        PObject* obj = *it;
+        //On integre les vitesses.
+        translateObject(obj, obj->getVelocity() * step);
+        obj->rotate(obj->getAngularVelocity() * step);
+    }
 
-	if (obj->getId() < 0)
-		return;
-
-    updateObject(obj->getId());
-}
-const Node* PWorld::getOctree() const
-{
-    return m_root ;
 }
 /*
 void Octree::print(Node* node) const

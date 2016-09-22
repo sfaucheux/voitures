@@ -34,7 +34,7 @@ Contact* Collisions::collisionPoints(const Sphere* obj1, const Sphere* obj2)
     //La normale est définie comme le vecteur formé par les deux centres.
     //Suppose que les spheres sont en collision (c'est le cas, la broadphase est exacte pour les solides de base).
     vec3 point((obj1->getRadius() * obj1->getPosition() + obj2->getRadius() * obj2->getPosition()) / (obj1->getRadius() + obj2->getRadius()));
-    vec3 normal(obj2->getPosition()- obj1->getPosition());
+    vec3 normal(obj1->getPosition() - obj2->getPosition());
     float overlap = obj1->getRadius() + obj2->getRadius() - length(obj1->getPosition() - obj2->getPosition()) ;
     return new PointContact(point, normal, overlap);
 }
@@ -147,7 +147,7 @@ Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
         return NULL;
     }
     //TODO OVERLAP
-    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (collisionPoint - sphPos), 1);
+    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (sphPos - collisionPoint), 0);
 }
 
 Contact* Collisions::collisionPoints(const Box* b, const Sphere* s)
@@ -407,7 +407,7 @@ Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, b
 
     else if(count == 2)
     {
-        cout << "plan/arrete" << endl ;
+        //cout << "plan/arrete" << endl ;
 
         vec3 po = 0.5f*(vertices[q[0]] + vertices[q[1]]) ;
         if(dot(first->getPosition() - po, n) > 0)
@@ -420,7 +420,7 @@ Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, b
     }
     else if(count == 4)
     {
-        cout << "plan/plan" << endl ;
+        //cout << "plan/plan" << endl ;
         vec3 po = 0.25f*(vertices[q[0]] + vertices[q[1]]+ vertices[q[2]]+ vertices[q[3]]) ;
         if(dot(first->getPosition() - po, n) > 0)
             n = -n;

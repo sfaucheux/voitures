@@ -27,17 +27,17 @@ bool Sphere::collide(const Geometry* obj) const
 
 bool Sphere::collide(const Sphere *s) const
 {
-    return Collisions::collide(this, s);
+    return Collisions::collide(s, this);
 }
 
 bool Sphere::collide(const Box* b) const
 {
-    return Collisions::collide(this, b);
+    return Collisions::collide(b, this);
 }
 
 bool Sphere::collide(const Mesh* m) const
 {
-    return Collisions::collide(this, m);
+    return Collisions::collide(m, this);
 }
 
 Contact* Sphere::collisionPoints(const Geometry* obj) const
@@ -47,17 +47,17 @@ Contact* Sphere::collisionPoints(const Geometry* obj) const
 
 Contact* Sphere::collisionPoints(const Sphere* s) const
 {
-    return Collisions::collisionPoints(this, s);
+    return Collisions::collisionPoints(s, this);
 }
 
 Contact* Sphere::collisionPoints(const Box* b) const
 {
-    return Collisions::collisionPoints(this, b);
+    return Collisions::collisionPoints(b, this);
 }
 
 Contact* Sphere::collisionPoints(const Mesh* m) const
 {
-    return Collisions::collisionPoints(this, m);
+    return Collisions::collisionPoints(m, this);
 }
 AABB Sphere::getAABB() const
 {

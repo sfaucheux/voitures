@@ -13,5 +13,5 @@ void main()
     //On affiche du gris si pas de texture.
     //Affiche aussi du gris pour les textures quand le point vaut (0,0).
     if(coordTexture == vec2(0,0))
-        out_Color = vec4(0.3,0.3,0.3,1.0);
+        out_Color = vec4(0.3,0.3,0.3,1);
 }

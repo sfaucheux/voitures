@@ -9,6 +9,7 @@ gSphere::gSphere(Sphere& s) : Drawable(s)
     float radius = s.getRadius();
     std::vector<glm::vec3> vertices;
     std::vector<glm::uvec3> indices;
+    //std::vector<glm::vec2> textures;
 
     static const int nbPointsUnitSphere = 20;
     int nbPoints = nbPointsUnitSphere;
@@ -30,11 +31,13 @@ gSphere::gSphere(Sphere& s) : Drawable(s)
             int d = (j == nextJ) ? topVertexIndex : GET_INDEX(nextI, nextJ);
             indices.push_back(glm::uvec3(a, b, c));
             indices.push_back(glm::uvec3(b, d, c));
+            //textures.push_back(glm::vec2(nbPoints*i%2, 1-j%2));
+            //textures.push_back(glm::vec2(1-nbPoints*i%2, j%2));
         }
     }
     vertices.push_back(glm::vec3(0, 0, radius));
 
-    load(vertices, indices);
+    load(vertices, indices);//, &textures);
 }
 
 gSphere::~gSphere()

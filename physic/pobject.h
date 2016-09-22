@@ -27,7 +27,6 @@ class PObject
         /*Accesseurs*/
 		int getId() const;
         const glm::vec3 getPosition() const;
-        const glm::vec3 getTempPosition() const;
         const glm::vec3& getVelocity() const;
         const glm::vec3& getAcceleration() const;
         const glm::vec3 getRotation() const;
@@ -65,7 +64,6 @@ class PObject
         void setNode(Node* node);
 
         void translate(glm::vec3 t);
-        void tempTranslate(glm::vec3 t);
         void rotate(glm::vec3 angle);
 
         void addForce(glm::vec3 f);
