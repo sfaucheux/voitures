@@ -98,16 +98,22 @@ Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
         {
             if (zc - r <= b->getDepth() / 2.0)
                 collisionPoint = sphPos - sgn(sphPos.z) * glm::vec3(0, 0, r);
+            else
+                return NULL;
         }
         else if (zc <= b->getDepth() / 2.0)
         {
             if (yc - r <= b->getHeight() / 2.0)
                 collisionPoint = sphPos - sgn(sphPos.y) * glm::vec3(0, r, 0);
+            else
+                return NULL;
         }
         else if (yc <= b->getHeight() / 2.0 + r)
         {
             if (square(yc - (b->getHeight() / 2.0)) + square(zc - (b->getDepth() / 2.0)) <= square(r))
                 collisionPoint = glm::vec3(sphPos.x, sgn(sphPos.y) * b->getHeight() / 2.0, sgn(sphPos.z) * b->getDepth() / 2.0);
+            else
+                return NULL;
         }
         else
             return NULL;
@@ -118,11 +124,15 @@ Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
         {
             if (xc - r <= b->getWidth() / 2.0)
                 collisionPoint = sphPos - sgn(sphPos.x) * glm::vec3(r, 0, 0);
+            else
+                return NULL;
         }
         else if (zc <= b->getDepth() / 2.0 + r)
         {
             if (square(xc - (b->getWidth() / 2.0)) + square(zc - (b->getDepth() / 2.0)) <= square(r))
                 collisionPoint = glm::vec3(sgn(sphPos.x) * b->getWidth() / 2.0, sphPos.y, sgn(sphPos.z) * b->getDepth() / 2.0);
+            else
+                return NULL;
         }
         else
             return NULL;
@@ -133,6 +143,8 @@ Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
         {
             if (square(xc - (b->getWidth() / 2.0)) + square(yc - (b->getHeight() / 2.0)) <= square(r))
                 collisionPoint = glm::vec3(sgn(sphPos.x) * b->getWidth() / 2.0, sgn(sphPos.y) * b->getHeight() / 2.0, sphPos.z);
+            else
+                return NULL;
         }
         else
             return NULL;
@@ -141,13 +153,14 @@ Contact* Collisions::collisionPoints(const Sphere* s, const Box* b)
     {
         if (square(xc - (b->getWidth() / 2.0)) + square(yc - (b->getHeight() / 2.0)) + square(zc - (b->getDepth() / 2.0)) <= square(r))
             collisionPoint = glm::vec3(sgn(sphPos.x) * b->getWidth() / 2.0, sgn(sphPos.y) * b->getHeight() / 2.0, sgn(sphPos.z) * b->getDepth() / 2.0);
+        else
+            return NULL;
     }
     else
     {
         return NULL;
     }
-    //TODO OVERLAP
-    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (sphPos - collisionPoint), 0);
+    return new PointContact(b->getWorldPoint(collisionPoint), mat3(b->getRotationMatrix()) * (sphPos - collisionPoint), r - length(sphPos - collisionPoint));
 }
 
 Contact* Collisions::collisionPoints(const Box* b, const Sphere* s)
