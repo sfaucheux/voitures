@@ -11,12 +11,15 @@ class PointContact : public Contact
 
         virtual void solveImpulse(PObject* obj1, PObject* obj2) ; 
         virtual void solvePosition(PObject* obj1, PObject* obj2, glm::vec3* t1, glm::vec3* t2, glm::vec3* r1, glm::vec3* r2);
+        virtual void init(PObject* obj1, PObject* obj2);
         virtual void inverse();
 
     private:
         glm::vec3 m_point;
         glm::vec3 m_normal;
         float m_overlap;
+
+        float m_A,m_B,m_C;
 
 };
 

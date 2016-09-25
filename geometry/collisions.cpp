@@ -216,6 +216,7 @@ inline bool overlap(const Box* b1, const Box* b2, vec3 n)
 }
 inline float overlapDepth(const Box* b1, const Box* b2, vec3 n, bool& obj1Min)
 {
+    //Suppose n normalisée.
     mat3 r1 = mat3(b1->getRotationMatrix());
     mat3 r2 = mat3(b2->getRotationMatrix());
 
@@ -238,7 +239,7 @@ inline float overlapDepth(const Box* b1, const Box* b2, vec3 n, bool& obj1Min)
     float min = (min1 > min2) ? min1 : min2 ;
     float max = (max1 < max2) ? max1 : max2 ;
     obj1Min = (min1 < min2);
-    return fabs(max - min)/l2Norm(n);
+    return fabs(max - min);
 }
 
 bool Collisions::collide(const Box* obj1, const Box* obj2)
@@ -280,7 +281,7 @@ bool Collisions::collide(const Box* obj1, const Box* obj2)
 
     return true;
 }
-Contact* collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isMin, vec3 n)
+Contact* collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isMin, vec3 n, float overlap)
 {
     vec3 s1 = b1->getSize();
     vec3 s2 = b2->getSize();
@@ -360,15 +361,16 @@ Contact* collisionEdges(const Box* b1, const Box* b2, int i, int j, bool obj1isM
     float d = determinant(mat2(C1, C2));
     float t1 = determinant(mat2(B, C2)) / d;
     float t2 = determinant(mat2(C1, B)) / d;
+
     vec3 c = 0.5f * ((p1 + t1 * A1) + (p3 + t2 * A2));
 
-    if(dot(n, b1->getPosition() - c) > 0)
+    if(dot(n, b1->getPosition() - c) < 0)
         n = -n;
 
-    return new PointContact(c,n,1);
+    return new PointContact(c,n,overlap);
 }
 
-Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, bool obj1isMin, vec3 n)
+Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, bool obj1isMin, vec3 n, float overlap)
 {
     vec3 s1 = b1->getSize();
     vec3 s2 = b2->getSize();
@@ -395,13 +397,13 @@ Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, b
     {
         float d = dot(vertices[j], n) ;
         //Encore une fois pour les erreurs de projection.
-        if(fabs(d - extrem) < 0.0001)
+        /*if(fabs(d - extrem) < 0.0001)
         {
             //cout << fixed << setprecision(20) << d << endl ;
             q[count] = j ;
             count++;
-        }
-        else if((d < extrem) == obj1isMin)
+        }*/
+        /*else*/ if((d < extrem) == obj1isMin)
         {
             count = 1 ;
             extrem = d ;
@@ -412,46 +414,33 @@ Contact* collisionPlane(const Box* b1, const Box* b2, const Box* first, int i, b
     Contact* c = NULL;
     if(count == 1)
     {
-        vec3 po = vertices[q[0]] - 0.5f*(extrem-dot(p1,n))*n; ;
-        if(dot(first->getPosition() - po, n) > 0)
+        vec3 po = vertices[q[0]] - 0.5f*overlap*n; ;
+        if(dot(first->getPosition() - po, n) < 0)
             n = -n;
-        return new PointContact(po,n,1);
+        return new PointContact(po,n,overlap);
     }
 
     else if(count == 2)
     {
-        //cout << "plan/arrete" << endl ;
+        cout << "plan/arrete" << endl ;
 
         vec3 po = 0.5f*(vertices[q[0]] + vertices[q[1]]) ;
-        if(dot(first->getPosition() - po, n) > 0)
+        if(dot(first->getPosition() - po, n) < 0)
             n = -n;
-        return new PointContact(po,n,1);
-        //vec3 po = vertices[q[0]] *n; ;
-        //p.push_back({make_tuple(po,n)});
-        //po = vertices[q[1]] *n; ;
-        //p.push_back({make_tuple(po,n)});
+        return new PointContact(po,n,overlap);
     }
     else if(count == 4)
     {
-        //cout << "plan/plan" << endl ;
+        cout << "plan/plan" << endl ;
         vec3 po = 0.25f*(vertices[q[0]] + vertices[q[1]]+ vertices[q[2]]+ vertices[q[3]]) ;
-        if(dot(first->getPosition() - po, n) > 0)
+        if(dot(first->getPosition() - po, n) < 0)
             n = -n;
-        return new PointContact(po,n, 1);
+        return new PointContact(po,n, overlap);
     }
     else
     {
         cout << "cout : " << count << " impossible..." << endl ; 
     }
-    /*
-    p.push_back({make_tuple(p1,n)});
-    p.push_back({make_tuple(p2,n)});
-    p.push_back({make_tuple(p3,n)});
-    p.push_back({make_tuple(p4,n)});*/
-    /*for(int i = 0 ; i < count ; i++)
-    {
-        p.push_back({make_tuple(vertices[q[i]],n)});
-    }*/
     return c;
 }
 Contact* Collisions::collisionPoints(const Box* obj1, const Box* obj2)
@@ -486,6 +475,7 @@ Contact* Collisions::collisionPoints(const Box* obj1, const Box* obj2)
     {
         if(l1Norm(n[i]) != 0)
         {
+            n[i] = normalize(n[i]);
             float depth = overlapDepth(obj1, obj2, n[i], temp) ;
             //Permet de compenser les erreurs avec les produits vectoriels.
             //Sinon la collision arrete/arrete est privilégiée lorsque les boite sont alignées.
@@ -501,15 +491,15 @@ Contact* Collisions::collisionPoints(const Box* obj1, const Box* obj2)
 
     if(minIndex < 3)
     {
-        return collisionPlane(obj1, obj2, obj1, minIndex, obj1IsMin, n[minIndex]);
+        return collisionPlane(obj1, obj2, obj1, minIndex, obj1IsMin, n[minIndex], minDepth);
     }
     else if(minIndex < 6)
     {
-        return collisionPlane(obj2, obj1, obj1, minIndex - 3, !obj1IsMin, n[minIndex]);
+        return collisionPlane(obj2, obj1, obj1, minIndex - 3, !obj1IsMin, n[minIndex], minDepth);
     }
     else
     {
-        return collisionEdges(obj1, obj2, (minIndex-6)/3, (minIndex-6)%3, obj1IsMin, n[minIndex]);
+        return collisionEdges(obj1, obj2, (minIndex-6)/3, (minIndex-6)%3, obj1IsMin, n[minIndex], minDepth);
     }
 }
 

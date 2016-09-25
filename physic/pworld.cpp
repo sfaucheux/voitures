@@ -447,8 +447,15 @@ void PWorld::positionsResponse()
 {
     vector<vec3> deltaPositions(m_objects.size(),vec3(0));
     vector<vec3> deltaRotations(m_objects.size(),vec3(0));
-
     int obj1, obj2;
+    for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
+    {
+        obj1 = get<1>(*it);
+        obj2 = get<2>(*it);
+        Contact* c = get<0>((*it));
+        c->init(m_objects[obj1], m_objects[obj2]);
+
+    }
     for (int i = 0 ; i < 50 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
@@ -457,7 +464,7 @@ void PWorld::positionsResponse()
             obj2 = get<2>(*it);
             Contact* c = get<0>((*it));
             c->solvePosition(m_objects[obj1], m_objects[obj2], &deltaPositions[obj1], &deltaPositions[obj2], &deltaRotations[obj1], &deltaRotations[obj2]);
-       
+
         }
     }
 
@@ -479,7 +486,7 @@ void PWorld::velocitiesResponse()
             obj2 = get<2>(*it);
             Contact* c = get<0>((*it));
             c->solveImpulse(m_objects[obj1], m_objects[obj2]);
-       
+
         }
     }
 }
