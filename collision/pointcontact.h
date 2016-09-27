@@ -2,6 +2,7 @@
 #define POINTCONTACT_H
 
 #include "contact.h"
+#include "../glm/glm.hpp"
 
 class PointContact : public Contact
 {
@@ -18,9 +19,9 @@ class PointContact : public Contact
         glm::vec3 m_point;
         glm::vec3 m_normal;
         float m_overlap;
-
-        float m_A,m_B,m_C;
-
+        
+        float m_e, m_m1, m_m2, m_m1inv, m_m2inv, m_jr, m_js, m_jd;
+        glm::vec3 m_r1, m_r2, m_moment1, m_moment2, m_t;
 };
 
 #endif

@@ -107,7 +107,7 @@ float PObject::getMass() const
 float PObject::getInertiaMomentum(const glm::vec3& axis) const
 {
     if (l1Norm(axis) == 0)
-        return 10000;
+        return 1;
     vec3 a = normalize(axis);
     return dot(m_inertia*a, a);
 }

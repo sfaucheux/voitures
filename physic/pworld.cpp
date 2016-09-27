@@ -456,7 +456,7 @@ void PWorld::positionsResponse()
         c->init(m_objects[obj1], m_objects[obj2]);
 
     }
-    for (int i = 0 ; i < 50 ; i++) 
+    for (int i = 0 ; i < 1 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {
@@ -470,7 +470,7 @@ void PWorld::positionsResponse()
 
     for (int i = 0 ; i < m_objects.size() ; i++)
     {
-        translateObject(m_objects[i], deltaPositions[i]);
+        //translateObject(m_objects[i], deltaPositions[i]);
     }
 
 }
@@ -478,7 +478,7 @@ void PWorld::positionsResponse()
 void PWorld::velocitiesResponse()
 {
     int obj1, obj2;
-    for (int i = 0 ; i < 50 ; i++) 
+    for (int i = 0 ; i < 1 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {

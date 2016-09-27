@@ -141,18 +141,18 @@ int main(int argc, char** argv)
         for(int j = 0 ; j < 10 ; j++)
         {
             Object* s = new Object(Sphere(20));
-            s->getPObject()->setVelocity(vec3(rand()%10 -10,rand()%10 -10,rand()%10 -10));
+            //s->getPObject()->setVelocity(vec3(rand()%10 -10,rand()%10 -10,rand()%10 -10));
             world.addObject(*s);
             world.translateObject(*s, vec3(i*60 - 1001, j*60 , 400));
 
             //s->getDrawable()->setTexture(&tex);
-            
+           /* 
             //s = new Object(Box(20, 20, 20));
-            s = new Object(Sphere(40));
+            s = new Object(Box(65,65,65));
             //s->getPObject()->setVelocity(vec3(rand()%20 -20,rand()%20 -20,rand()%20 -20));
             world.addObject(*s);
-            world.translateObject(*s, vec3(i*82 - 1200, j*82 , 190));
-            s->getPObject()->setStatic(true);
+            world.translateObject(*s, vec3(i*92 - 1200, j*92 , 190));
+            s->getPObject()->setStatic(true);*/
 
             //s->getDrawable()->setTexture(&tex);
         }
