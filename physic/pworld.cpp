@@ -478,7 +478,7 @@ void PWorld::positionsResponse()
 void PWorld::velocitiesResponse()
 {
     int obj1, obj2;
-    for (int i = 0 ; i < 1 ; i++) 
+    for (int i = 0 ; i < 10 ; i++) 
     {
         for(auto it = m_contacts.begin() ; it != m_contacts.end(); it++)
         {

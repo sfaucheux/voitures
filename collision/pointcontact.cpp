@@ -38,10 +38,10 @@ void PointContact::solveImpulse(PObject* obj1, PObject* obj2)
 {
     //On calcule la vitesse relative.
     vec3 vr = obj2->getPointVelocity(m_r2) - obj1->getPointVelocity(m_r1);
-    //float dV = dot(m_normal, v12);
+    float dV = dot(m_normal, vr);
 
-    //if(dV <= 0)
-        //return;
+    if(dV <= 0)
+		return;
 
     float jr = (m_e+1)*m_jr*dot(vr, m_normal);
 
@@ -61,42 +61,35 @@ void PointContact::solveImpulse(PObject* obj1, PObject* obj2)
     float dynamic2 = m_m2*vt;
     float jf1;
     float jf2;
-    float m_js = 0.5*jr;
-    float m_jd = 0.4*jr;
+    float m_js = abs(0.8*jr);
+    float m_jd = abs(0.7*jr);
 
-    /*
-    if (vt == 0 && m_m1*vt < dynamic1 <= m_js)
+    if (vt == 0 || dynamic1 <= m_js)
     {
-        jf1 = m_m1*dot(v12, m_t);
+        jf1 = m_m1*vt;
     }
     else
     {
         jf1 = m_jd;
     }
-    if (vt == 0 && m_m2*vt < dynamic2 <= m_js)
+
+    if (vt == 0 || dynamic2 <= m_js)
     {
-        jf2 = m_m2*dot(v12, m_t);
+        jf2 = m_m2*vt;
     }
     else
     {
         jf2 = m_jd;
     }
-*/
-
-    jf1 = 0.5*abs(jr);
-    jf2 = 0.5*abs(jr);
 
     vec3 moment1f = obj1->getInertiaInv() * cross(m_r1, m_t);
     vec3 moment2f = obj2->getInertiaInv() * cross(m_r2, m_t);
      
-    cout << "mom1f" << moment1f.x << " " << moment1f.y << " " << moment1f.z << endl;
-    cout << "m_mom" << m_moment1.x << " " << m_moment1.y << " " << m_moment1.z << endl;
+    obj1->setVelocity(obj1->getVelocity() - m_m1inv*(jr * m_normal - jf1 * m_t));
+    obj2->setVelocity(obj2->getVelocity() + m_m2inv*(jr * m_normal - jf2 * m_t));
 
-    obj1->setVelocity(obj1->getVelocity() - (jr * m_normal - jf1 * m_t)*m_m1inv);
-    obj2->setVelocity(obj2->getVelocity() + (jr * m_normal - jf2 * m_t)*m_m2inv);
-
-    obj1->setAngularVelocity(obj1->getAngularVelocity() - (jr*m_moment1));//+ jf1*moment1f));
-    obj2->setAngularVelocity(obj2->getAngularVelocity() - (jr*m_moment2));// + jf2*moment2f));
+    obj1->setAngularVelocity(obj1->getAngularVelocity() - jr*m_moment1 + jf1*moment1f);
+    obj2->setAngularVelocity(obj2->getAngularVelocity() + jr*m_moment2 - jf2*moment2f);
 /*
     //Coefficient de restitution (1 = choc elastique, 0 = choc plastique)
     float e = 0.1;

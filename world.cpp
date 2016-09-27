@@ -3,7 +3,7 @@
 using namespace std;
 using namespace glm;
 
-World::World() : m_pworld(vec3(0,0,-10))
+World::World() : m_pworld(vec3(0,0,-100))
 {
 
 }
